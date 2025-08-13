@@ -73,7 +73,7 @@ export default function AlumniSearchBox() {
         autoComplete="off"
       />
       {show && (
-        <div className="absolute left-0 mt-2 w-full bg-white dark:bg-neutral-900 border border-gray-200 dark:border-neutral-800 rounded-xl shadow-lg z-50 max-h-72 overflow-y-auto">
+        <div className="absolute left-0 mt-2 w-full bg-white dark:bg-neutral-800 border border-gray-200 dark:border-neutral-800 rounded-xl shadow-lg z-50 max-h-72 overflow-y-auto">
           {results.length > 0 ? (
             results.map((alumni) => (
               <a

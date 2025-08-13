@@ -201,7 +201,7 @@ export default function NavbarMenuItems() {
           <Sheet>
             <SheetTrigger asChild>
               <Button variant="ghost" size="icon">
-                <Menu className="h-6 w-6" />
+                <Menu className="h-12 w-12" />
               </Button>
             </SheetTrigger>
             <SheetContent

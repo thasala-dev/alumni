@@ -43,7 +43,7 @@ export default function NavbarAccountMenu() {
       </button>
       {/* Dropdown menu */}
       {open && (
-        <div className="absolute right-0 mt-2 w-56 bg-white dark:bg-neutral-900 border border-gray-200 dark:border-neutral-800 rounded-lg shadow-lg py-2 z-50 animate-fade-in">
+        <div className="absolute right-0 mt-2 w-56 bg-white dark:bg-neutral-800 border border-gray-200 dark:border-neutral-800 rounded-lg shadow-lg py-2 z-50 animate-fade-in">
           <a
             href="/dashboard/settings"
             className="flex items-center gap-2 px-4 py-2 text-gray-800 dark:text-gray-100 hover:bg-blue-50 dark:hover:bg-neutral-800 transition text-sm"
