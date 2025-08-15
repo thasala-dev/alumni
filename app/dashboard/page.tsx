@@ -496,7 +496,7 @@ export default function DashboardPage() {
         {/* Main Feed */}
         <div className="lg:col-span-2 space-y-6">
           {/* Create Post */}
-          <Card className="bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 p-0">
+          <Card className="bg-white dark:bg-gray-900/80 border-gray-200 dark:border-gray-700 p-0">
             <CardContent className="p-6">
               <div className="flex items-start space-x-4">
                 <Avatar className="w-12 h-12">
@@ -543,7 +543,7 @@ export default function DashboardPage() {
           {posts.map((post) => (
             <Card
               key={post.id}
-              className="bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 p-0"
+              className="bg-white dark:bg-gray-900/80 border-gray-200 dark:border-gray-700 p-0"
             >
               <CardContent className="p-6">
                 {/* Post Header */}
@@ -706,7 +706,7 @@ export default function DashboardPage() {
 
           {/* Loading indicator */}
           {loading && (
-            <Card className="bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700">
+            <Card className="bg-white dark:bg-gray-900/80 border-gray-200 dark:border-gray-700">
               <CardContent className="p-8">
                 <div className="flex items-center justify-center space-x-3">
                   <div className="animate-spin rounded-full h-8 w-8 border-2 border-gray-300 dark:border-gray-600 border-t-blue-600 dark:border-t-blue-400"></div>
@@ -723,7 +723,7 @@ export default function DashboardPage() {
 
           {/* End of posts message */}
           {!hasMore && !loading && (
-            <Card className="bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700">
+            <Card className="bg-white dark:bg-gray-900/80 border-gray-200 dark:border-gray-700">
               <CardContent className="p-6">
                 <div className="text-center text-gray-500 dark:text-gray-400">
                   <MessageSquare className="h-8 w-8 mx-auto mb-2 opacity-50" />
@@ -740,7 +740,7 @@ export default function DashboardPage() {
         {/* Sidebar */}
         <div className="space-y-6">
           {/* Recent News */}
-          <Card className="bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700">
+          <Card className="bg-white dark:bg-gray-900/80 border-gray-200 dark:border-gray-700">
             <CardHeader>
               <div className="flex items-center justify-between">
                 <h3 className="text-lg font-semibold flex items-center">
@@ -781,7 +781,7 @@ export default function DashboardPage() {
           </Card>
 
           {/* Quick Links */}
-          <Card className="bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700">
+          <Card className="bg-white dark:bg-gray-900/80 border-gray-200 dark:border-gray-700">
             <CardHeader>
               <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
                 ลิงก์ด่วน

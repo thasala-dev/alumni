@@ -163,7 +163,7 @@ export default function MapPage() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Map Visualization */}
         <div className="lg:col-span-2">
-          <Card className="shadow-md rounded-xl dark:bg-gray-800 dark:border-gray-700">
+          <Card className="shadow-md rounded-xl dark:bg-gray-900/80 dark:border-gray-700">
             {" "}
             {/* Added shadow and rounded corners */}
             <CardHeader>
@@ -250,7 +250,7 @@ export default function MapPage() {
 
         {/* Province Details */}
         <div className="space-y-6">
-          <Card className="shadow-md rounded-xl dark:bg-gray-800 dark:border-gray-700">
+          <Card className="shadow-md rounded-xl dark:bg-gray-900/80 dark:border-gray-700">
             {" "}
             {/* Added shadow and rounded corners */}
             <CardHeader>
@@ -288,7 +288,7 @@ export default function MapPage() {
             </CardContent>
           </Card>
 
-          <Card className="shadow-md rounded-xl dark:bg-gray-800 dark:border-gray-700">
+          <Card className="shadow-md rounded-xl dark:bg-gray-900/80 dark:border-gray-700">
             {" "}
             {/* Added shadow and rounded corners */}
             <CardHeader>
@@ -336,7 +336,7 @@ export default function MapPage() {
           </Card>
 
           {selectedProvince && (
-            <Card className="shadow-md rounded-xl dark:bg-gray-800 dark:border-gray-700">
+            <Card className="shadow-md rounded-xl dark:bg-gray-900/80 dark:border-gray-700">
               {" "}
               {/* Added shadow and rounded corners */}
               <CardHeader>

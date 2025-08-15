@@ -139,7 +139,7 @@ export default function DiscussionBoardPage() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {filteredCategories.map((category) => (
           <Link key={category.id} href={`/dashboard/discussion/${category.id}`}>
-            <Card className="h-full hover:shadow-lg dark:hover:shadow-gray-900/20 transition-shadow cursor-pointer dark:bg-gray-800 dark:border-gray-700">
+            <Card className="h-full hover:shadow-lg dark:hover:shadow-gray-900/20 transition-shadow cursor-pointer dark:bg-gray-900/80 dark:border-gray-700">
               <CardContent className="p-6 flex flex-col justify-between h-full">
                 <div className="flex items-center mb-4">
                   <Folder className="h-6 w-6 text-blue-600 dark:text-blue-400 mr-3" />
@@ -161,7 +161,7 @@ export default function DiscussionBoardPage() {
       </div>
 
       {filteredCategories.length === 0 && (
-        <Card className="dark:bg-gray-800 dark:border-gray-700">
+        <Card className="dark:bg-gray-900/80 dark:border-gray-700">
           <CardContent className="p-12 text-center">
             <Folder className="mx-auto h-12 w-12 text-gray-400 dark:text-gray-500 mb-4" />
             <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">

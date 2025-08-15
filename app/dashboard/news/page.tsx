@@ -266,7 +266,7 @@ export default function NewsPage() {
             {filteredNews.map((item) => (
               <Card
                 key={item.id}
-                className={`cursor-pointer shadow-md hover:shadow-xl transition-all duration-300 rounded-xl dark:bg-gray-800 dark:border-gray-700 dark:hover:shadow-gray-900/20 ${
+                className={`cursor-pointer shadow-md hover:shadow-xl transition-all duration-300 rounded-xl dark:bg-gray-900/80 dark:border-gray-700 dark:hover:shadow-gray-900/20 ${
                   /* Enhanced shadow and hover */
                   selectedNews?.id === item.id
                     ? "ring-2 ring-blue-500 border-blue-500 dark:ring-blue-400 dark:border-blue-400"
@@ -338,7 +338,7 @@ export default function NewsPage() {
           </div>
 
           {filteredNews.length === 0 && (
-            <Card className="shadow-md rounded-xl dark:bg-gray-800 dark:border-gray-700">
+            <Card className="shadow-md rounded-xl dark:bg-gray-900/80 dark:border-gray-700">
               {" "}
               {/* Added shadow and rounded corners */}
               <CardContent className="p-12 text-center">
@@ -361,7 +361,7 @@ export default function NewsPage() {
         <div className="space-y-6">
           {selectedNews ? (
             <>
-              <Card className="shadow-md rounded-xl dark:bg-gray-800 dark:border-gray-700">
+              <Card className="shadow-md rounded-xl dark:bg-gray-900/80 dark:border-gray-700">
                 {" "}
                 {/* Added shadow and rounded corners */}
                 <CardHeader className="pb-4">
@@ -396,7 +396,7 @@ export default function NewsPage() {
               </Card>
 
               {/* Comments */}
-              <Card className="shadow-md rounded-xl dark:bg-gray-800 dark:border-gray-700">
+              <Card className="shadow-md rounded-xl dark:bg-gray-900/80 dark:border-gray-700">
                 {" "}
                 {/* Added shadow and rounded corners */}
                 <CardHeader className="pb-4">
@@ -483,7 +483,7 @@ export default function NewsPage() {
               </Card>
             </>
           ) : (
-            <Card className="shadow-md rounded-xl dark:bg-gray-800 dark:border-gray-700\">
+            <Card className="shadow-md rounded-xl dark:bg-gray-900/80 dark:border-gray-700\">
               {" "}
               {/* Added shadow and rounded corners */}
               <CardContent className="p-12 text-center">

@@ -219,7 +219,7 @@ export default function AlumniPage() {
         {/* Larger text */}
       </div>
       {/* Search and Filter */}
-      <Card className="shadow-md rounded-xl bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700">
+      <Card className="shadow-md rounded-xl bg-white dark:bg-gray-900/80 border-gray-200 dark:border-gray-700">
         {" "}
         {/* Added shadow and rounded corners */}
         <CardContent className="p-6">
@@ -243,7 +243,7 @@ export default function AlumniPage() {
                 {/* Rounded corners, consistent focus ring */}
                 <SelectValue placeholder="ทุกจังหวัด" />
               </SelectTrigger>
-              <SelectContent className="bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700">
+              <SelectContent className="bg-white dark:bg-gray-900/80 border-gray-200 dark:border-gray-700">
                 <SelectItem
                   value="all"
                   className="text-gray-900 dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700"
@@ -267,7 +267,7 @@ export default function AlumniPage() {
                 {/* Rounded corners, consistent focus ring */}
                 <SelectValue placeholder="ทุกรุ่น" />
               </SelectTrigger>
-              <SelectContent className="bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700">
+              <SelectContent className="bg-white dark:bg-gray-900/80 border-gray-200 dark:border-gray-700">
                 <SelectItem
                   value="all"
                   className="text-gray-900 dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700"
@@ -318,7 +318,7 @@ export default function AlumniPage() {
         {filteredAlumni.map((person) => (
           <Card
             key={person.id}
-            className="shadow-md hover:shadow-xl transition-shadow duration-300 rounded-xl dark:bg-gray-800 dark:border-gray-700 dark:hover:shadow-gray-900/20"
+            className="shadow-md hover:shadow-xl transition-shadow duration-300 rounded-xl dark:bg-gray-900/80 dark:border-gray-700 dark:hover:shadow-gray-900/20"
           >
             {" "}
             {/* Enhanced shadow and hover */}
@@ -420,7 +420,7 @@ export default function AlumniPage() {
         ))}
       </div>
       {filteredAlumni.length === 0 && (
-        <Card className="shadow-md rounded-xl dark:bg-gray-800 dark:border-gray-700">
+        <Card className="shadow-md rounded-xl dark:bg-gray-900/80 dark:border-gray-700">
           {" "}
           {/* Added shadow and rounded corners */}
           <CardContent className="p-12 text-center">

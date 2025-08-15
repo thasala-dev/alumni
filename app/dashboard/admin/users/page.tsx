@@ -252,7 +252,7 @@ export default function AdminUsersPage() {
 
   if (!currentUser || currentUser.role !== "admin") {
     return (
-      <Card className="w-full max-w-md mx-auto mt-10 dark:bg-gray-800 dark:border-gray-700">
+      <Card className="w-full max-w-md mx-auto mt-10 dark:bg-gray-900/80 dark:border-gray-700">
         <CardHeader className="text-center">
           <CardTitle className="text-2xl font-bold text-red-600 dark:text-red-400">
             ไม่ได้รับอนุญาต
@@ -317,7 +317,7 @@ export default function AdminUsersPage() {
 
       {/* Quick Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card className="dark:bg-gray-800 dark:border-gray-700">
+        <Card className="dark:bg-gray-900/80 dark:border-gray-700">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
@@ -332,7 +332,7 @@ export default function AdminUsersPage() {
             </div>
           </CardContent>
         </Card>
-        <Card className="dark:bg-gray-800 dark:border-gray-700">
+        <Card className="dark:bg-gray-900/80 dark:border-gray-700">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
@@ -351,7 +351,7 @@ export default function AdminUsersPage() {
             </div>
           </CardContent>
         </Card>
-        <Card className="dark:bg-gray-800 dark:border-gray-700">
+        <Card className="dark:bg-gray-900/80 dark:border-gray-700">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
@@ -366,7 +366,7 @@ export default function AdminUsersPage() {
             </div>
           </CardContent>
         </Card>
-        <Card className="dark:bg-gray-800 dark:border-gray-700">
+        <Card className="dark:bg-gray-900/80 dark:border-gray-700">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
@@ -384,7 +384,7 @@ export default function AdminUsersPage() {
       </div>
 
       {/* Search and Filter */}
-      <Card className="dark:bg-gray-800 dark:border-gray-700">
+      <Card className="dark:bg-gray-900/80 dark:border-gray-700">
         <CardContent className="p-6">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="relative">
@@ -489,7 +489,7 @@ export default function AdminUsersPage() {
       </Card>
 
       {/* Users Table */}
-      <Card className="dark:bg-gray-800 dark:border-gray-700">
+      <Card className="dark:bg-gray-900/80 dark:border-gray-700">
         <CardContent className="p-0">
           <Table>
             <TableHeader>
@@ -578,7 +578,7 @@ export default function AdminUsersPage() {
                         </DropdownMenuTrigger>
                         <DropdownMenuContent
                           align="end"
-                          className="dark:bg-gray-800 dark:border-gray-700"
+                          className="dark:bg-gray-900/80 dark:border-gray-700"
                         >
                           <DropdownMenuItem
                             onClick={() => alert(`ดูรายละเอียด ${user.email}`)}
