@@ -581,7 +581,11 @@ export default function AdminUsersPage() {
                           className="dark:bg-gray-900/80 dark:border-gray-700"
                         >
                           <DropdownMenuItem
-                            onClick={() => alert(`ดูรายละเอียด ${user.email}`)}
+                            onClick={() => {
+                              if (typeof window !== 'undefined') {
+                                alert(`ดูรายละเอียด ${user.email}`);
+                              }
+                            }}
                             className="dark:text-gray-200 dark:hover:bg-gray-700"
                           >
                             ดูรายละเอียด

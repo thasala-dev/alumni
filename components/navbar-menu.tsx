@@ -140,7 +140,7 @@ export default function NavbarMenuItems() {
             </span>
           </Link>
 
-          <div className="hidden md:block w-72">
+          <div className="hidden lg:block w-72">
             <AlumniSearchBox />
           </div>
         </div>
@@ -270,7 +270,7 @@ export default function NavbarMenuItems() {
           {/* User avatar */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <button className="flex items-center gap-3 p-2 rounded-2xl hover:bg-blue-50/80 dark:hover:bg-neutral-800/50 transition-all duration-300 group ml-2">
+              <button className="flex items-center gap-3 py-2 rounded-2xl hover:bg-blue-50/80 dark:hover:bg-neutral-800/50 transition-all duration-300 group">
                 <div className="relative">
                   <div className="absolute -inset-0.5 rounded-full transition duration-300"></div>
                   <img

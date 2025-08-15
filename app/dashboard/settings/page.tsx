@@ -302,7 +302,11 @@ export default function SettingsPage() {
                     variant="outline"
                     size="icon"
                     className="absolute bottom-0 right-0 rounded-full bg-white dark:bg-gray-900/80 shadow-lg border-2 border-white dark:border-gray-700 hover:scale-110 transition-transform"
-                    onClick={() => alert("อัปโหลดรูปภาพโปรไฟล์")}
+                    onClick={() => {
+                      if (typeof window !== 'undefined') {
+                        alert("อัปโหลดรูปภาพโปรไฟล์");
+                      }
+                    }}
                   >
                     <Camera className="h-4 w-4 text-blue-500" />
                     <span className="sr-only">อัปโหลดรูปภาพ</span>

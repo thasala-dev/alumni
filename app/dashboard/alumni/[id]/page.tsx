@@ -184,36 +184,40 @@ export default function AlumniDetailPage() {
   };
 
   const handleShare = () => {
-    if (navigator.share && alumni) {
-      navigator.share({
-        title: `โปรไฟล์ ${alumni.first_name} ${alumni.last_name}`,
-        text: `ดูโปรไฟล์ของ ${alumni.first_name} ${alumni.last_name} - ${alumni.major} รุ่น ${alumni.graduation_year}`,
-        url: window.location.href,
-      });
-    } else {
-      // Fallback: copy to clipboard
-      navigator.clipboard.writeText(window.location.href);
-      alert("ลิงก์ถูกคัดลอกแล้ว!");
+    if (typeof window !== 'undefined') {
+      if (navigator.share && alumni) {
+        navigator.share({
+          title: `โปรไฟล์ ${alumni.first_name} ${alumni.last_name}`,
+          text: `ดูโปรไฟล์ของ ${alumni.first_name} ${alumni.last_name} - ${alumni.major} รุ่น ${alumni.graduation_year}`,
+          url: window.location.href,
+        });
+      } else {
+        // Fallback: copy to clipboard
+        navigator.clipboard.writeText(window.location.href);
+        alert("ลิงก์ถูกคัดลอกแล้ว!");
+      }
     }
   };
 
   const handleContact = (type: string, value?: string) => {
-    switch (type) {
-      case "email":
-        window.open(`mailto:${alumni?.email}`);
-        break;
-      case "phone":
-        window.open(`tel:${value}`);
-        break;
-      case "line":
-        window.open(`https://line.me/ti/p/~${value}`);
-        break;
-      case "facebook":
-        window.open(value);
-        break;
-      case "linkedin":
-        window.open(value);
-        break;
+    if (typeof window !== 'undefined') {
+      switch (type) {
+        case "email":
+          window.open(`mailto:${alumni?.email}`);
+          break;
+        case "phone":
+          window.open(`tel:${value}`);
+          break;
+        case "line":
+          window.open(`https://line.me/ti/p/~${value}`);
+          break;
+        case "facebook":
+          window.open(value);
+          break;
+        case "linkedin":
+          window.open(value);
+          break;
+      }
     }
   };
 

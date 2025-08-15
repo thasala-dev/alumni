@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -17,7 +18,16 @@ import {
   Phone,
   MapIcon,
 } from "lucide-react";
-import { MapOverview } from "@/components/map-overview"; // Import the new MapOverview component
+
+// Dynamically import MapOverview to prevent SSR issues
+const MapOverview = dynamic(() => import("@/components/map-overview").then(mod => ({ default: mod.MapOverview })), {
+  ssr: false,
+  loading: () => (
+    <div className="h-64 bg-gray-100 dark:bg-gray-800 rounded-lg animate-pulse flex items-center justify-center">
+      <div className="text-gray-500 dark:text-gray-400">Loading map...</div>
+    </div>
+  )
+});
 
 export default function HomePage() {
   const [stats, setStats] = useState({
