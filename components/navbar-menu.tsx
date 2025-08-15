@@ -3,7 +3,13 @@
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { useTheme } from "next-themes";
+import {
+  Sheet,
+  SheetContent,
+  SheetTrigger,
+  SheetTitle,
+} from "@/components/ui/sheet";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -24,13 +30,20 @@ import {
   UserPlus,
   ChevronDown,
   Bell,
+  Sun,
+  Moon,
+  Monitor,
+  Home,
 } from "lucide-react";
 import { signOut } from "@/lib/auth";
 
 export default function NavbarMenuItems() {
+  const { theme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
   const [notifications] = useState([
-    { id: 1, message: "มีการอนุมัติสมาชิกใหม่แล้ว" },
-    { id: 2, message: "มีข่าวสารใหม่ในระบบ" },
+    { id: 1, message: "ประกาศรับสมัครงานเภสัชกรใหม่" },
+    { id: 2, message: "การประชุมใหญ่สมาคมศิษย์เก่าประจำปี 2568" },
+    { id: 3, message: "อัปเดตข้อมูลใบประกอบวิชาชีพเภสัชกรรม" },
   ]);
 
   const [user, setUser] = useState<any>(null);
@@ -38,19 +51,21 @@ export default function NavbarMenuItems() {
   const pathname = usePathname();
 
   useEffect(() => {
+    setMounted(true);
     // Mock login (replace with real auth session in production)
     setUser({ name: "Admin", role: "admin" });
   }, []);
 
   const navigation = [
-    { name: "ศิษย์เก่า", href: "/dashboard/alumni", icon: Users },
-    { name: "แผนที่", href: "/dashboard/map", icon: Map },
-    { name: "ข่าวสาร", href: "/dashboard/news", icon: Newspaper },
-    { name: "เว็บบอร์ด", href: "/dashboard/discussion", icon: MessageSquare },
+    { name: "หน้าหลัก", href: "/dashboard", icon: Home },
+    { name: "เภสัชกรศิษย์เก่า", href: "/dashboard/alumni", icon: Users },
+    { name: "แผนที่การกระจาย", href: "/dashboard/map", icon: Map },
+    { name: "ข่าวสารและงาน", href: "/dashboard/news", icon: Newspaper },
+
     ...(user?.role === "admin"
       ? [
           {
-            name: "จัดการผู้ใช้",
+            name: "จัดการสมาชิก",
             href: "/dashboard/admin/users",
             icon: UserPlus,
           },
@@ -71,23 +86,61 @@ export default function NavbarMenuItems() {
     }
   };
 
+  const getThemeIcon = () => {
+    if (!mounted)
+      return (
+        <Monitor className="h-5 w-5 text-gray-600 dark:text-gray-300 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-300" />
+      );
+
+    switch (theme) {
+      case "light":
+        return (
+          <Sun className="h-5 w-5 text-gray-600 dark:text-gray-300 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-300" />
+        );
+      case "dark":
+        return (
+          <Moon className="h-5 w-5 text-gray-600 dark:text-gray-300 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-300" />
+        );
+      default:
+        return (
+          <Monitor className="h-5 w-5 text-gray-600 dark:text-gray-300 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-300" />
+        );
+    }
+  };
+
+  const getThemeLabel = () => {
+    if (!mounted) return "ระบบ";
+
+    switch (theme) {
+      case "light":
+        return "สว่าง";
+      case "dark":
+        return "มืด";
+      default:
+        return "ระบบ";
+    }
+  };
+
   return (
-    <nav className="sticky top-0 z-30 w-full bg-white/90 dark:bg-neutral-950 border-b border-gray-200 dark:border-neutral-800 shadow-sm backdrop-blur supports-[backdrop-filter]:backdrop-blur-md">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+    <nav className="sticky top-0 z-50 w-full bg-white/80 dark:bg-gray-900/80 backdrop-blur-lg border-b border-gray-200/50 dark:border-neutral-700/50 shadow-lg supports-[backdrop-filter]:backdrop-blur-lg">
+      <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-10 h-18 flex items-center justify-between">
         {/* Left section */}
-        <div className="flex items-center gap-4 w-full md:w-auto">
-          <Link href="/dashboard" className="flex items-center gap-2">
-            <img
-              src="/placeholder-logo.svg"
-              alt="Logo"
-              className="h-8 w-8 rounded bg-blue-600 p-1"
-            />
-            <span className="text-xl font-extrabold text-blue-700 dark:text-blue-400">
-              Alumni
+        <div className="flex items-center gap-6 w-full md:w-auto">
+          <Link href="/dashboard" className="flex items-center gap-3 group">
+            {/* <div className="relative">
+              <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-xl transition duration-300"></div>
+              <img
+                src="/placeholder-logo.svg"
+                alt="Logo"
+                className="relative h-10 w-10 rounded-xl bg-gradient-to-br from-blue-600 to-indigo-600 p-2"
+              />
+            </div> */}
+            <span className="text-2xl font-black bg-gradient-to-r from-blue-700 via-indigo-600 to-blue-800 bg-clip-text text-transparent dark:from-blue-400 dark:via-indigo-400 dark:to-blue-500">
+              WU Pharmacy
             </span>
           </Link>
 
-          <div className="hidden md:block w-64">
+          <div className="hidden md:block w-72">
             <AlumniSearchBox />
           </div>
         </div>
@@ -100,15 +153,22 @@ export default function NavbarMenuItems() {
               <Link
                 key={item.href}
                 href={item.href}
-                className={`flex items-center gap-2 text-sm px-3 py-2 rounded transition font-medium
+                className={`relative flex items-center justify-center p-3 rounded-2xl transition-all duration-300 font-medium group
                   ${
                     isActive
-                      ? "text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-neutral-800"
-                      : "text-gray-700 dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400"
+                      ? "text-white bg-gradient-to-r from-blue-600 to-indigo-600"
+                      : "bg-gray-100 dark:bg-[#252728] text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50/80 dark:hover:bg-neutral-800/50"
                   }`}
+                title={item.name}
               >
-                <item.icon className="h-4 w-4" />
-                {item.name}
+                {isActive && (
+                  <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl"></div>
+                )}
+                <item.icon
+                  className={`relative h-5 w-5 transition-transform duration-300 group-hover:scale-110 ${
+                    isActive ? "drop-shadow-sm" : ""
+                  }`}
+                />
               </Link>
             );
           })}
@@ -116,10 +176,10 @@ export default function NavbarMenuItems() {
           {/* Notifications */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <button className="relative p-2 rounded-full hover:bg-gray-100 dark:hover:bg-neutral-800 transition">
-                <Bell className="h-6 w-6 text-gray-700 dark:text-gray-200" />
+              <button className="bg-gray-100 dark:bg-[#252728] relative p-3 rounded-2xl hover:bg-blue-50/80 dark:hover:bg-neutral-800/50 transition-all duration-300 group">
+                <Bell className="h-5 w-5 text-gray-600 dark:text-gray-300 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-300" />
                 {notifications.length > 0 && (
-                  <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full px-1.5">
+                  <span className="absolute -top-1 -right-1 bg-gradient-to-r from-red-500 to-pink-500 text-white text-xs rounded-full px-1.5 py-0.5 shadow-lg animate-pulse">
                     {notifications.length}
                   </span>
                 )}
@@ -127,20 +187,22 @@ export default function NavbarMenuItems() {
             </DropdownMenuTrigger>
             <DropdownMenuContent
               align="end"
-              className="w-80 p-0 rounded-xl shadow-lg bg-white dark:bg-neutral-950"
+              className="w-80 p-0 rounded-2xl shadow-2xl bg-white/95 dark:bg-[#252728]/95 backdrop-blur-xl border border-gray-200/50 dark:border-neutral-700/50"
             >
-              <div className="font-semibold px-5 py-3 border-b dark:border-neutral-800 flex items-center gap-2">
-                <Bell className="h-5 w-5 text-blue-500" />
-                การแจ้งเตือน
-              </div>
-              <div className="max-h-80 overflow-y-auto divide-y dark:divide-neutral-900">
+              <div className="max-h-80 overflow-y-auto divide-y divide-gray-100 dark:divide-neutral-700">
                 {notifications.map((n) => (
-                  <DropdownMenuItem key={n.id} className="px-5 py-4 text-sm">
-                    <div className="flex items-start gap-2">
-                      <span className="h-2 w-2 mt-1 bg-blue-500 rounded-full" />
-                      <div>
-                        {n.message}
-                        <div className="text-xs text-gray-400 mt-1">
+                  <DropdownMenuItem
+                    key={n.id}
+                    className="px-6 py-4 text-sm hover:bg-blue-50/50 dark:hover:bg-neutral-800/50 transition-colors duration-200"
+                  >
+                    <div className="flex items-start gap-3">
+                      <div className="h-2 w-2 mt-2 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full shadow-sm" />
+                      <div className="flex-1">
+                        <p className="text-gray-900 dark:text-gray-100 leading-relaxed">
+                          {n.message}
+                        </p>
+                        <div className="text-xs text-gray-500 dark:text-gray-400 mt-1 flex items-center gap-1">
+                          <div className="h-1 w-1 bg-gray-400 rounded-full"></div>
                           เมื่อสักครู่
                         </div>
                       </div>
@@ -148,49 +210,105 @@ export default function NavbarMenuItems() {
                   </DropdownMenuItem>
                 ))}
               </div>
-              <div className="border-t dark:border-neutral-800 px-5 py-2 text-center">
+              <div className="border-t border-gray-100 dark:border-neutral-700 px-6 py-3 text-center bg-gray-50/50 dark:bg-neutral-800/30">
                 <Link
                   href="/dashboard/news"
-                  className="text-blue-600 dark:text-blue-400 hover:underline text-sm"
+                  className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 text-sm font-medium transition-colors duration-200"
                 >
-                  ดูการแจ้งเตือนทั้งหมด
+                  ดูการแจ้งเตือนทั้งหมด →
                 </Link>
               </div>
+            </DropdownMenuContent>
+          </DropdownMenu>
+
+          {/* Theme Toggle */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button className="bg-gray-100 dark:bg-[#252728] relative p-3 rounded-2xl hover:bg-blue-50/80 dark:hover:bg-neutral-800/50 transition-all duration-300 group">
+                {getThemeIcon()}
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent
+              align="end"
+              className="w-48 rounded-2xl shadow-2xl bg-white/95 dark:bg-[#252728]/95 backdrop-blur-xl border border-gray-200/50 dark:border-neutral-700/50 p-2"
+            >
+              <DropdownMenuItem
+                onClick={() => setTheme("light")}
+                className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-blue-50 dark:hover:bg-neutral-800/50 transition-all duration-200"
+              >
+                <Sun className="h-4 w-4 text-gray-600 dark:text-gray-300" />
+                <span className="text-gray-900 dark:text-gray-100">สว่าง</span>
+                {theme === "light" && mounted && (
+                  <div className="ml-auto w-2 h-2 bg-blue-600 rounded-full"></div>
+                )}
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => setTheme("dark")}
+                className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-blue-50 dark:hover:bg-neutral-800/50 transition-all duration-200"
+              >
+                <Moon className="h-4 w-4 text-gray-600 dark:text-gray-300" />
+                <span className="text-gray-900 dark:text-gray-100">มืด</span>
+                {theme === "dark" && mounted && (
+                  <div className="ml-auto w-2 h-2 bg-blue-600 rounded-full"></div>
+                )}
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => setTheme("system")}
+                className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-blue-50 dark:hover:bg-neutral-800/50 transition-all duration-200"
+              >
+                <Monitor className="h-4 w-4 text-gray-600 dark:text-gray-300" />
+                <span className="text-gray-900 dark:text-gray-100">
+                  ตามระบบ
+                </span>
+                {theme === "system" && mounted && (
+                  <div className="ml-auto w-2 h-2 bg-blue-600 rounded-full"></div>
+                )}
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
 
           {/* User avatar */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <button className="flex items-center gap-2 group">
-                <img
-                  src="/placeholder-user.jpg"
-                  alt="User"
-                  className="h-9 w-9 rounded-full border-2 border-blue-200 dark:border-blue-700 object-cover"
-                />
-                <span className="hidden md:inline text-sm font-semibold text-gray-800 dark:text-gray-100">
+              <button className="flex items-center gap-3 p-2 rounded-2xl hover:bg-blue-50/80 dark:hover:bg-neutral-800/50 transition-all duration-300 group ml-2">
+                <div className="relative">
+                  <div className="absolute -inset-0.5 rounded-full transition duration-300"></div>
+                  <img
+                    src="/placeholder-user.jpg"
+                    alt="User"
+                    className="relative h-10 w-10 rounded-full border-2 border-white dark:border-neutral-700 object-cover"
+                  />
+                </div>
+                <span className="hidden lg:inline text-sm font-semibold text-gray-800 dark:text-gray-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-300">
                   บัญชีของฉัน
                 </span>
-                <ChevronDown className="w-4 h-4 text-gray-500" />
+                <ChevronDown className="w-4 h-4 text-gray-500 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-all duration-300 group-hover:rotate-180" />
               </button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-48">
+            <DropdownMenuContent
+              align="end"
+              className="w-52 rounded-2xl shadow-2xl bg-white/95 dark:bg-[#252728]/95 backdrop-blur-xl border border-gray-200/50 dark:border-neutral-700/50 p-2"
+            >
               <DropdownMenuItem asChild>
                 <Link
                   href="/dashboard/settings"
-                  className="flex items-center gap-2"
+                  className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-blue-50 dark:hover:bg-neutral-800/50 transition-all duration-200"
                 >
-                  <Settings className="w-4 h-4" />
-                  ตั้งค่า
+                  <div className="p-1.5 rounded-lg bg-gray-100 dark:bg-neutral-800">
+                    <Settings className="w-4 h-4 text-gray-600 dark:text-gray-400" />
+                  </div>
+                  <span className="font-medium">ตั้งค่า</span>
                 </Link>
               </DropdownMenuItem>
-              <DropdownMenuSeparator />
+              <DropdownMenuSeparator className="my-2 bg-gray-200 dark:bg-neutral-700" />
               <DropdownMenuItem
                 onClick={handleSignOut}
-                className="text-red-600 flex items-center gap-2"
+                className="flex items-center gap-3 px-4 py-3 rounded-xl text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all duration-200"
               >
-                <LogOut className="w-4 h-4" />
-                ออกจากระบบ
+                <div className="p-1.5 rounded-lg bg-red-100 dark:bg-red-900/30">
+                  <LogOut className="w-4 h-4" />
+                </div>
+                <span className="font-medium">ออกจากระบบ</span>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -200,53 +318,113 @@ export default function NavbarMenuItems() {
         <div className="md:hidden">
           <Sheet>
             <SheetTrigger asChild>
-              <Button variant="ghost" size="icon">
-                <Menu className="h-12 w-12" />
+              <Button
+                variant="ghost"
+                size="icon"
+                className="rounded-2xl hover:bg-blue-50/80 dark:hover:bg-neutral-800/50 transition-all duration-300"
+              >
+                <Menu className="h-6 w-6 text-gray-600 dark:text-gray-300" />
               </Button>
             </SheetTrigger>
             <SheetContent
               side="left"
-              className="w-64 bg-white dark:bg-neutral-950"
+              className="w-72 bg-white/95 dark:bg-[#252728]/95 backdrop-blur-xl border-r border-gray-200/50 dark:border-neutral-700/50"
             >
-              <div className="p-4 border-b dark:border-neutral-800 flex items-center gap-2">
-                <img
-                  src="/placeholder-logo.svg"
-                  alt="Alumni Logo"
-                  className="h-8 w-8 rounded bg-blue-600 p-1"
-                />
-                <span className="font-extrabold text-xl text-blue-700 dark:text-blue-400">
-                  Alumni
+              <SheetTitle className="sr-only">เมนูนำทาง</SheetTitle>
+              <div className="p-6 border-b border-gray-100 dark:border-neutral-700 flex items-center gap-3">
+                <div className="relative">
+                  <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-xl blur opacity-75"></div>
+                  <img
+                    src="/placeholder-logo.svg"
+                    alt="Alumni Logo"
+                    className="relative h-10 w-10 rounded-xl bg-gradient-to-br from-blue-600 to-indigo-600 p-2"
+                  />
+                </div>
+                <span className="font-black text-xl bg-gradient-to-r from-blue-700 to-indigo-600 bg-clip-text text-transparent dark:from-blue-400 dark:to-indigo-400">
+                  WU Pharmacy
                 </span>
               </div>
-              <div className="px-4 mt-4">
+              <div className="px-6 mt-6">
                 <AlumniSearchBox />
               </div>
-              <nav className="flex flex-col gap-1 p-4">
+              <nav className="flex flex-col gap-2 p-6">
                 {navigation.map((item) => {
                   const isActive = pathname.startsWith(item.href);
                   return (
                     <Link
                       key={item.href}
                       href={item.href}
-                      className={`flex items-center gap-3 px-3 py-2 rounded-lg font-medium
+                      className={`flex items-center gap-4 px-4 py-3 rounded-2xl font-medium transition-all duration-300
                         ${
                           isActive
-                            ? "bg-blue-100 text-blue-700 dark:bg-neutral-800 dark:text-blue-400"
-                            : "text-gray-800 dark:text-gray-100 hover:bg-blue-50 dark:hover:bg-neutral-800"
+                            ? "bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg shadow-blue-500/25"
+                            : "text-gray-800 dark:text-gray-100 hover:bg-blue-50 dark:hover:bg-neutral-800/50"
                         }`}
                     >
                       <item.icon className="h-5 w-5" />
-                      {item.name}
+                      <span>{item.name}</span>
                     </Link>
                   );
                 })}
+
+                {/* Theme Toggle in Mobile */}
+                <div className="mt-4 pt-4 border-t border-gray-200 dark:border-neutral-700">
+                  <div className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-3 px-4">
+                    ธีมการแสดงผล
+                  </div>
+                  <div className="flex flex-col gap-2">
+                    <button
+                      onClick={() => setTheme("light")}
+                      className={`flex items-center gap-4 px-4 py-3 rounded-2xl font-medium transition-all duration-300 ${
+                        theme === "light" && mounted
+                          ? "bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400"
+                          : "text-gray-800 dark:text-gray-100 hover:bg-blue-50 dark:hover:bg-neutral-800/50"
+                      }`}
+                    >
+                      <Sun className="h-5 w-5" />
+                      <span>สว่าง</span>
+                      {theme === "light" && mounted && (
+                        <div className="ml-auto w-2 h-2 bg-blue-600 rounded-full"></div>
+                      )}
+                    </button>
+                    <button
+                      onClick={() => setTheme("dark")}
+                      className={`flex items-center gap-4 px-4 py-3 rounded-2xl font-medium transition-all duration-300 ${
+                        theme === "dark" && mounted
+                          ? "bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400"
+                          : "text-gray-800 dark:text-gray-100 hover:bg-blue-50 dark:hover:bg-neutral-800/50"
+                      }`}
+                    >
+                      <Moon className="h-5 w-5" />
+                      <span>มืด</span>
+                      {theme === "dark" && mounted && (
+                        <div className="ml-auto w-2 h-2 bg-blue-600 rounded-full"></div>
+                      )}
+                    </button>
+                    <button
+                      onClick={() => setTheme("system")}
+                      className={`flex items-center gap-4 px-4 py-3 rounded-2xl font-medium transition-all duration-300 ${
+                        theme === "system" && mounted
+                          ? "bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400"
+                          : "text-gray-800 dark:text-gray-100 hover:bg-blue-50 dark:hover:bg-neutral-800/50"
+                      }`}
+                    >
+                      <Monitor className="h-5 w-5" />
+                      <span>ตามระบบ</span>
+                      {theme === "system" && mounted && (
+                        <div className="ml-auto w-2 h-2 bg-blue-600 rounded-full"></div>
+                      )}
+                    </button>
+                  </div>
+                </div>
+
                 <Button
                   variant="ghost"
                   onClick={handleSignOut}
-                  className="mt-4 text-red-600 flex items-center gap-2"
+                  className="mt-6 text-red-600 dark:text-red-400 flex items-center gap-4 px-4 py-3 rounded-2xl hover:bg-red-50 dark:hover:bg-red-900/20 transition-all duration-300"
                 >
                   <LogOut className="h-5 w-5" />
-                  ออกจากระบบ
+                  <span>ออกจากระบบ</span>
                 </Button>
               </nav>
             </SheetContent>

@@ -207,11 +207,14 @@ export default function NewsPage() {
     return (
       <div className="space-y-6">
         <div className="animate-pulse">
-          <div className="h-10 bg-gray-200 rounded w-1/4 mb-8"></div>{" "}
+          <div className="h-10 bg-gray-200 dark:bg-gray-700 rounded w-1/4 mb-8"></div>{" "}
           {/* Larger placeholder for title */}
           <div className="space-y-4">
             {[...Array(3)].map((_, i) => (
-              <div key={i} className="h-32 bg-gray-200 rounded-xl"></div>
+              <div
+                key={i}
+                className="h-32 bg-gray-200 dark:bg-gray-700 rounded-xl"
+              ></div>
             ))}
           </div>
         </div>
@@ -225,15 +228,17 @@ export default function NewsPage() {
       {/* Increased overall spacing */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-extrabold text-gray-900">ข่าวสาร</h1>{" "}
+          <h1 className="text-3xl font-extrabold text-gray-900 dark:text-gray-100">
+            ข่าวสาร
+          </h1>{" "}
           {/* Bolder title */}
-          <p className="text-lg text-gray-600">
+          <p className="text-lg text-gray-600 dark:text-gray-400">
             ข่าวประชาสัมพันธ์และกิจกรรมต่างๆ (ข้อมูลตัวอย่าง)
           </p>{" "}
           {/* Larger text */}
         </div>
         {user?.role === "admin" && (
-          <Button className="rounded-lg bg-blue-600 hover:bg-blue-700 transition-colors">
+          <Button className="rounded-lg bg-blue-600 hover:bg-blue-700 dark:bg-blue-600 dark:hover:bg-blue-700 transition-colors">
             {" "}
             {/* Rounded button */}
             <Plus className="mr-2 h-4 w-4" />
@@ -246,13 +251,13 @@ export default function NewsPage() {
         <div className="lg:col-span-2 space-y-6">
           {/* Search */}
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />{" "}
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 dark:text-gray-500" />{" "}
             {/* Centered icon */}
             <Input
               placeholder="ค้นหาข่าว..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10 rounded-lg focus-visible:ring-blue-500"
+              className="pl-10 rounded-lg focus-visible:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100 dark:placeholder-gray-400"
             />
           </div>
 
@@ -261,10 +266,10 @@ export default function NewsPage() {
             {filteredNews.map((item) => (
               <Card
                 key={item.id}
-                className={`cursor-pointer shadow-md hover:shadow-xl transition-all duration-300 rounded-xl ${
+                className={`cursor-pointer shadow-md hover:shadow-xl transition-all duration-300 rounded-xl dark:bg-gray-800 dark:border-gray-700 dark:hover:shadow-gray-900/20 ${
                   /* Enhanced shadow and hover */
                   selectedNews?.id === item.id
-                    ? "ring-2 ring-blue-500 border-blue-500"
+                    ? "ring-2 ring-blue-500 border-blue-500 dark:ring-blue-400 dark:border-blue-400"
                     : "" /* Enhanced selected state */
                 }`}
                 onClick={() => handleNewsClick(item)}
@@ -274,27 +279,27 @@ export default function NewsPage() {
                     <div className="flex-1 pr-4">
                       {" "}
                       {/* Added right padding */}
-                      <h3 className="text-xl font-semibold text-gray-900 mb-2\">
+                      <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2\">
                         {item.title}
                       </h3>{" "}
                       {/* Larger, bolder title */}\
-                      <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-gray-500">
+                      <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-gray-500 dark:text-gray-400">
                         {" "}
                         {/* Added flex-wrap and gap */}
                         <div className="flex items-center">
-                          <Edit className="mr-1.5 h-4 w-4 text-gray-400" />{" "}
+                          <Edit className="mr-1.5 h-4 w-4 text-gray-400 dark:text-gray-500" />{" "}
                           {/* Adjusted spacing, added text color to icon */}
                           {item.author.name}
                         </div>
                         <div className="flex items-center">
-                          <Calendar className="mr-1.5 h-4 w-4 text-gray-400" />{" "}
+                          <Calendar className="mr-1.5 h-4 w-4 text-gray-400 dark:text-gray-500" />{" "}
                           {/* Adjusted spacing, added text color to icon */}
                           {new Date(item.created_at).toLocaleDateString(
                             "th-TH"
                           )}
                         </div>
                         <div className="flex items-center">
-                          <MessageCircle className="mr-1.5 h-4 w-4 text-gray-400" />{" "}
+                          <MessageCircle className="mr-1.5 h-4 w-4 text-gray-400 dark:text-gray-500" />{" "}
                           {/* Adjusted spacing, added text color to icon */}
                           {item.comments_count} ความคิดเห็น
                         </div>
@@ -305,7 +310,7 @@ export default function NewsPage() {
                         <Button
                           variant="ghost"
                           size="icon"
-                          className="rounded-full hover:bg-gray-100"
+                          className="rounded-full hover:bg-gray-100 dark:hover:bg-gray-700"
                         >
                           {" "}
                           {/* Changed to icon size, rounded */}
@@ -314,7 +319,7 @@ export default function NewsPage() {
                         <Button
                           variant="ghost"
                           size="icon"
-                          className="rounded-full hover:bg-gray-100 text-red-500 hover:text-red-600"
+                          className="rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 text-red-500 hover:text-red-600 dark:text-red-400 dark:hover:text-red-300"
                         >
                           {" "}
                           {/* Changed to icon size, rounded, added red color */}
@@ -323,7 +328,7 @@ export default function NewsPage() {
                       </div>
                     )}
                   </div>
-                  <p className="text-gray-700 line-clamp-3 leading-relaxed">
+                  <p className="text-gray-700 dark:text-gray-300 line-clamp-3 leading-relaxed">
                     {item.content.substring(0, 200)}...
                   </p>{" "}
                   {/* Adjusted text color and line height */}
@@ -333,17 +338,17 @@ export default function NewsPage() {
           </div>
 
           {filteredNews.length === 0 && (
-            <Card className="shadow-md rounded-xl">
+            <Card className="shadow-md rounded-xl dark:bg-gray-800 dark:border-gray-700">
               {" "}
               {/* Added shadow and rounded corners */}
               <CardContent className="p-12 text-center">
-                <Newspaper className="mx-auto h-16 w-16 text-gray-400 mb-6" />{" "}
+                <Newspaper className="mx-auto h-16 w-16 text-gray-400 dark:text-gray-500 mb-6" />{" "}
                 {/* Larger icon, increased spacing */}
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">
                   ไม่พบข่าวสาร
                 </h3>{" "}
                 {/* Larger, bolder title */}
-                <p className="text-gray-600 text-base">
+                <p className="text-gray-600 dark:text-gray-400 text-base">
                   ลองเปลี่ยนคำค้นหา
                 </p>{" "}
                 {/* Larger text */}
@@ -356,17 +361,17 @@ export default function NewsPage() {
         <div className="space-y-6">
           {selectedNews ? (
             <>
-              <Card className="shadow-md rounded-xl">
+              <Card className="shadow-md rounded-xl dark:bg-gray-800 dark:border-gray-700">
                 {" "}
                 {/* Added shadow and rounded corners */}
                 <CardHeader className="pb-4">
                   {" "}
                   {/* Adjusted padding */}
-                  <CardTitle className="text-xl font-semibold text-gray-900">
+                  <CardTitle className="text-xl font-semibold text-gray-900 dark:text-gray-100">
                     {selectedNews.title}
                   </CardTitle>{" "}
                   {/* Larger, bolder title */}
-                  <CardDescription className="text-gray-600">
+                  <CardDescription className="text-gray-600 dark:text-gray-400">
                     โดย {selectedNews.author.name} •{" "}
                     {new Date(selectedNews.created_at).toLocaleDateString(
                       "th-TH"
@@ -376,7 +381,7 @@ export default function NewsPage() {
                 <CardContent className="pt-0">
                   {" "}
                   {/* Adjusted padding */}
-                  <div className="prose prose-sm max-w-none text-gray-800 leading-relaxed">
+                  <div className="prose prose-sm max-w-none text-gray-800 dark:text-gray-200 leading-relaxed">
                     {" "}
                     {/* Adjusted text color and line height */}
                     {selectedNews.content
@@ -391,16 +396,16 @@ export default function NewsPage() {
               </Card>
 
               {/* Comments */}
-              <Card className="shadow-md rounded-xl">
+              <Card className="shadow-md rounded-xl dark:bg-gray-800 dark:border-gray-700">
                 {" "}
                 {/* Added shadow and rounded corners */}
                 <CardHeader className="pb-4">
                   {" "}
                   {/* Adjusted padding */}
-                  <CardTitle className="flex items-center text-xl font-semibold">
+                  <CardTitle className="flex items-center text-xl font-semibold dark:text-gray-100">
                     {" "}
                     {/* Larger, bolder title */}
-                    <MessageCircle className="mr-2 h-5 w-5 text-blue-600" />{" "}
+                    <MessageCircle className="mr-2 h-5 w-5 text-blue-600 dark:text-blue-400" />{" "}
                     {/* Added text color to icon */}
                     ความคิดเห็น ({comments.length})
                   </CardTitle>
@@ -416,12 +421,12 @@ export default function NewsPage() {
                         value={newComment}
                         onChange={(e) => setNewComment(e.target.value)}
                         rows={4}
-                        className="rounded-lg focus-visible:ring-blue-500"
+                        className="rounded-lg focus-visible:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100 dark:placeholder-gray-400"
                       />
                       <Button
                         onClick={handleAddComment}
                         disabled={!newComment.trim()}
-                        className="rounded-lg bg-blue-600 hover:bg-blue-700 transition-colors"
+                        className="rounded-lg bg-blue-600 hover:bg-blue-700 dark:bg-blue-600 dark:hover:bg-blue-700 transition-colors"
                       >
                         {" "}
                         {/* Rounded button */}
@@ -436,28 +441,28 @@ export default function NewsPage() {
                         <Avatar className="h-9 w-9">
                           {" "}
                           {/* Slightly larger avatar */}
-                          <AvatarFallback className="bg-gray-100 text-gray-600 text-sm font-medium">
+                          <AvatarFallback className="bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 text-sm font-medium">
                             {" "}
                             {/* Adjusted text size */}
                             {comment.author.name.charAt(0)}
                           </AvatarFallback>
                         </Avatar>
                         <div className="flex-1">
-                          <div className="bg-gray-50 rounded-lg p-4 border border-gray-100 shadow-sm">
+                          <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 border border-gray-100 dark:border-gray-600 shadow-sm">
                             {" "}
                             {/* Enhanced comment bubble styling */}
                             <div className="flex items-center justify-between mb-1">
-                              <span className="text-sm font-semibold text-gray-800">
+                              <span className="text-sm font-semibold text-gray-800 dark:text-gray-200">
                                 {comment.author.name}
                               </span>{" "}
                               {/* Bolder text */}
-                              <span className="text-xs text-gray-500">
+                              <span className="text-xs text-gray-500 dark:text-gray-400">
                                 {new Date(
                                   comment.created_at
                                 ).toLocaleDateString("th-TH")}
                               </span>
                             </div>
-                            <p className="text-sm text-gray-700 leading-relaxed">
+                            <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
                               {comment.content}
                             </p>{" "}
                             {/* Adjusted text color and line height */}
@@ -467,8 +472,8 @@ export default function NewsPage() {
                     ))}
                   </div>
                   {comments.length === 0 && (
-                    <div className="text-center py-8 text-gray-500">
-                      <MessageCircle className="mx-auto h-12 w-12 mb-4 text-gray-400" />{" "}
+                    <div className="text-center py-8 text-gray-500 dark:text-gray-400">
+                      <MessageCircle className="mx-auto h-12 w-12 mb-4 text-gray-400 dark:text-gray-500" />{" "}
                       {/* Larger icon, increased spacing */}
                       <p className="text-base">ยังไม่มีความคิดเห็น</p>{" "}
                       {/* Larger text */}
@@ -478,17 +483,17 @@ export default function NewsPage() {
               </Card>
             </>
           ) : (
-            <Card className="shadow-md rounded-xl\">
+            <Card className="shadow-md rounded-xl dark:bg-gray-800 dark:border-gray-700\">
               {" "}
               {/* Added shadow and rounded corners */}
               <CardContent className="p-12 text-center">
-                <Newspaper className="mx-auto h-16 w-16 text-gray-400 mb-6" />{" "}
+                <Newspaper className="mx-auto h-16 w-16 text-gray-400 dark:text-gray-500 mb-6" />{" "}
                 {/* Larger icon, increased spacing */}
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">
                   เลือกข่าวที่ต้องการอ่าน
                 </h3>{" "}
                 {/* Larger, bolder title */}
-                <p className="text-gray-600 text-base">
+                <p className="text-gray-600 dark:text-gray-400 text-base">
                   คลิกที่ข่าวในรายการเพื่อดูรายละเอียดและความคิดเห็น
                 </p>{" "}
                 {/* Larger text */}

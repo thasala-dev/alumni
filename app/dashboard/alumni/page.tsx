@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -52,12 +53,13 @@ const demoAlumni: AlumniProfile[] = [
     last_name: "ใจดี",
     nickname: "ชาย",
     graduation_year: 2018,
-    major: "วิศวกรรมคอมพิวเตอร์",
+    major: "เภสัชศาสตร์",
     current_work: {
-      company_name: "บริษัท เทคโนโลยี จำกัด",
-      position: "Software Engineer",
-      province: "กรุงเทพมหานคร",
+      company_name: "โรงพยาบาลสงขลา",
+      position: "เภสัชกร",
+      province: "สงขลา",
     },
+    profile_image_url: "/placeholder-user.jpg",
   },
   {
     id: "2",
@@ -65,41 +67,44 @@ const demoAlumni: AlumniProfile[] = [
     first_name: "มาลี",
     last_name: "สวยงาม",
     nickname: "มาลี",
-    graduation_year: 2019,
-    major: "บริหารธุรกิจ",
+    graduation_year: 2020,
+    major: "เภสัชศาสตร์",
     current_work: {
-      company_name: "บริษัท การเงิน จำกัด",
-      position: "Business Analyst",
-      province: "เชียงใหม่",
+      company_name: "บริษัทเภสัชกรรมไทย จำกัด",
+      position: "นักวิจัยและพัฒนา",
+      province: "กรุงเทพมหานคร",
     },
+    profile_image_url: "/placeholder-user.jpg",
   },
   {
     id: "3",
-    email: "kamon@example.com",
-    first_name: "กมล",
-    last_name: "ทำดี",
-    nickname: "กมล",
-    graduation_year: 2020,
-    major: "การตลาด",
+    email: "narong@example.com",
+    first_name: "ณรงค์",
+    last_name: "เก่งกาจ",
+    nickname: "ณรงค์",
+    graduation_year: 2015,
+    major: "เภสัชศาสตร์",
     current_work: {
-      company_name: "บริษัท โฆษณา จำกัด",
-      position: "Marketing Manager",
-      province: "ขอนแก่น",
+      company_name: "เครือข่ายร้านยาณรงค์",
+      position: "ผู้ก่อตั้งและประธานเจ้าหน้าที่บริหาร",
+      province: "นครศรีธรรมราช",
     },
+    profile_image_url: "/placeholder-user.jpg",
   },
   {
     id: "4",
-    email: "somsak@example.com",
-    first_name: "สมศักดิ์",
-    last_name: "เก่งมาก",
-    nickname: "ศักดิ์",
-    graduation_year: 2017,
-    major: "วิทยาการคอมพิวเตอร์",
+    email: "siriwan@example.com",
+    first_name: "ศิริวรรณ",
+    last_name: "เก่งเก้อ",
+    nickname: "วรรณ",
+    graduation_year: 2019,
+    major: "เภสัชศาสตร์",
     current_work: {
-      company_name: "ธนาคารไทย",
-      position: "Data Scientist",
+      company_name: "โรงพยาบาลจุฬาลงกรณ์",
+      position: "เภสัชกรคลินิก",
       province: "กรุงเทพมหานคร",
     },
+    profile_image_url: "/placeholder-user.jpg",
   },
   {
     id: "5",
@@ -107,13 +112,14 @@ const demoAlumni: AlumniProfile[] = [
     first_name: "พรชัย",
     last_name: "มีสุข",
     nickname: "ชัย",
-    graduation_year: 2015,
-    major: "วิศวกรรมโยธา",
+    graduation_year: 2017,
+    major: "เภสัชศาสตร์",
     current_work: {
-      company_name: "บริษัท ก่อสร้าง จำกัด",
-      position: "Project Engineer",
-      province: "ชลบุรี",
+      company_name: "สำนักงานอาหารและยา",
+      position: "เภสัชกรควบคุมยา",
+      province: "นนทบุรี",
     },
+    profile_image_url: "/placeholder-user.jpg",
   },
   {
     id: "6",
@@ -122,12 +128,13 @@ const demoAlumni: AlumniProfile[] = [
     last_name: "ใจดี",
     nickname: "พร",
     graduation_year: 2021,
-    major: "นิเทศศาสตร์",
+    major: "เภสัชศาสตร์",
     current_work: {
-      company_name: "สถานีโทรทัศน์",
-      position: "Content Creator",
-      province: "กรุงเทพมหานคร",
+      company_name: "ร้านยาสุภาพร",
+      position: "เภสัชกรเจ้าของร้าน",
+      province: "เชียงใหม่",
     },
+    profile_image_url: "/placeholder-user.jpg",
   },
 ];
 
@@ -202,59 +209,77 @@ export default function AlumniPage() {
       {" "}
       {/* Increased overall spacing */}
       <div>
-        <h1 className="text-3xl font-extrabold text-gray-900">
+        <h1 className="text-3xl font-extrabold text-gray-900 dark:text-gray-100">
           ข้อมูลศิษย์เก่า
         </h1>{" "}
         {/* Bolder title */}
-        <p className="text-lg text-gray-600">
+        <p className="text-lg text-gray-600 dark:text-gray-400">
           รายชื่อและข้อมูลศิษย์เก่าทั้งหมด (ข้อมูลตัวอย่าง)
         </p>{" "}
         {/* Larger text */}
       </div>
       {/* Search and Filter */}
-      <Card className="shadow-md rounded-xl">
+      <Card className="shadow-md rounded-xl bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700">
         {" "}
         {/* Added shadow and rounded corners */}
         <CardContent className="p-6">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />{" "}
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 dark:text-gray-500" />{" "}
               {/* Centered icon */}
               <Input
                 placeholder="ค้นหาชื่อ, สาขา, บริษัท..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 rounded-lg focus-visible:ring-blue-500"
+                className="pl-10 rounded-lg focus-visible:ring-blue-500 bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100 placeholder:text-gray-500 dark:placeholder:text-gray-400"
               />
             </div>
             <Select
               value={selectedProvince}
               onValueChange={setSelectedProvince}
             >
-              <SelectTrigger className="rounded-lg focus-visible:ring-blue-500">
+              <SelectTrigger className="rounded-lg focus-visible:ring-blue-500 bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100">
                 {" "}
                 {/* Rounded corners, consistent focus ring */}
                 <SelectValue placeholder="ทุกจังหวัด" />
               </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">ทุกจังหวัด</SelectItem>
+              <SelectContent className="bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700">
+                <SelectItem
+                  value="all"
+                  className="text-gray-900 dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700"
+                >
+                  ทุกจังหวัด
+                </SelectItem>
                 {provinces.map((province) => (
-                  <SelectItem key={province} value={province}>
+                  <SelectItem
+                    key={province}
+                    value={province}
+                    className="text-gray-900 dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700"
+                  >
                     {province}
                   </SelectItem>
                 ))}
               </SelectContent>
             </Select>
             <Select value={selectedYear} onValueChange={setSelectedYear}>
-              <SelectTrigger className="rounded-lg focus-visible:ring-blue-500">
+              <SelectTrigger className="rounded-lg focus-visible:ring-blue-500 bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100">
                 {" "}
                 {/* Rounded corners, consistent focus ring */}
                 <SelectValue placeholder="ทุกรุ่น" />
               </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">ทุกรุ่น</SelectItem>
+              <SelectContent className="bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700">
+                <SelectItem
+                  value="all"
+                  className="text-gray-900 dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700"
+                >
+                  ทุกรุ่น
+                </SelectItem>
                 {graduationYears.map((year) => (
-                  <SelectItem key={year} value={year.toString()}>
+                  <SelectItem
+                    key={year}
+                    value={year.toString()}
+                    className="text-gray-900 dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700"
+                  >
                     รุ่น {year}
                   </SelectItem>
                 ))}
@@ -267,7 +292,7 @@ export default function AlumniPage() {
                 setSelectedProvince("");
                 setSelectedYear("");
               }}
-              className="rounded-lg border-gray-300 hover:border-blue-500 hover:text-blue-600 transition-colors"
+              className="rounded-lg border-gray-300 dark:border-gray-600 hover:border-blue-500 dark:hover:border-blue-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
             >
               <Filter className="mr-2 h-4 w-4" />
               ล้างตัวกรอง
@@ -280,8 +305,8 @@ export default function AlumniPage() {
         {" "}
         {/* Added vertical padding */}
         <div className="flex items-center space-x-2">
-          <Users className="h-5 w-5 text-gray-500" />
-          <span className="text-base text-gray-700">
+          <Users className="h-5 w-5 text-gray-500 dark:text-gray-400" />
+          <span className="text-base text-gray-700 dark:text-gray-300">
             {" "}
             {/* Larger text */}
             แสดง {filteredAlumni.length} จาก {alumni.length} คน
@@ -293,7 +318,7 @@ export default function AlumniPage() {
         {filteredAlumni.map((person) => (
           <Card
             key={person.id}
-            className="shadow-md hover:shadow-xl transition-shadow duration-300 rounded-xl\"
+            className="shadow-md hover:shadow-xl transition-shadow duration-300 rounded-xl dark:bg-gray-800 dark:border-gray-700 dark:hover:shadow-gray-900/20"
           >
             {" "}
             {/* Enhanced shadow and hover */}
@@ -311,7 +336,7 @@ export default function AlumniPage() {
                     }
                   />{" "}
                   {/* Added query to placeholder */}
-                  <AvatarFallback className="bg-blue-100 text-blue-600 text-2xl font-semibold">
+                  <AvatarFallback className="bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-200 text-2xl font-semibold">
                     {" "}
                     {/* Larger fallback text */}
                     {person.first_name.charAt(0)}
@@ -321,16 +346,18 @@ export default function AlumniPage() {
                 <div className="flex-1 min-w-0 pt-1">
                   {" "}
                   {/* Adjusted padding */}
-                  <h3 className="text-xl font-semibold text-gray-900 truncate mb-0.5">
+                  <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100 truncate mb-0.5">
                     {" "}
                     {/* Larger, bolder title */}
                     {person.first_name} {person.last_name}
                   </h3>
-                  <p className="text-base text-gray-500">({person.nickname})</p>{" "}
+                  <p className="text-base text-gray-500 dark:text-gray-400">
+                    ({person.nickname})
+                  </p>{" "}
                   {/* Larger text */}
                   <Badge
                     variant="secondary"
-                    className="mt-2 px-3 py-1 text-sm rounded-full"
+                    className="mt-2 px-3 py-1 text-sm rounded-full dark:bg-gray-700 dark:text-gray-200"
                   >
                     {" "}
                     {/* Enhanced badge styling */}
@@ -342,66 +369,68 @@ export default function AlumniPage() {
               <div className="mt-4 space-y-3">
                 {" "}
                 {/* Increased spacing */}
-                <div className="flex items-center text-base text-gray-700">
+                <div className="flex items-center text-base text-gray-700 dark:text-gray-300">
                   {" "}
                   {/* Larger text */}
-                  <Calendar className="mr-2 h-4 w-4 text-gray-500" />{" "}
+                  <Calendar className="mr-2 h-4 w-4 text-gray-500 dark:text-gray-400" />{" "}
                   {/* Added text color to icon */}
                   {person.major}
                 </div>
-                <div className="flex items-center text-base text-gray-700">
+                <div className="flex items-center text-base text-gray-700 dark:text-gray-300">
                   {" "}
                   {/* Larger text */}
-                  <Briefcase className="mr-2 h-4 w-4 text-gray-500" />{" "}
+                  <Briefcase className="mr-2 h-4 w-4 text-gray-500 dark:text-gray-400" />{" "}
                   {/* Added text color to icon */}
                   <div className="truncate">
                     <div className="font-medium">
                       {person.current_work.position}
                     </div>
-                    <div className="text-sm text-gray-600">
+                    <div className="text-sm text-gray-600 dark:text-gray-400">
                       {person.current_work.company_name}
                     </div>{" "}
                     {/* Adjusted text size */}
                   </div>
                 </div>
-                <div className="flex items-center text-base text-gray-700">
+                <div className="flex items-center text-base text-gray-700 dark:text-gray-300">
                   {" "}
                   {/* Larger text */}
-                  <MapPin className="mr-2 h-4 w-4 text-gray-500" />{" "}
+                  <MapPin className="mr-2 h-4 w-4 text-gray-500 dark:text-gray-400" />{" "}
                   {/* Added text color to icon */}
                   {person.current_work.province}
                 </div>
               </div>
 
-              <div className="mt-6 pt-4 border-t border-gray-200">
+              <div className="mt-6 pt-4 border-t border-gray-200 dark:border-gray-700">
                 {" "}
                 {/* Increased spacing, added border color */}
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="w-full bg-transparent rounded-lg border-gray-300 hover:border-blue-500 hover:text-blue-600 transition-colors"
-                >
-                  {" "}
-                  {/* Enhanced outline button */}
-                  ดูรายละเอียด
-                </Button>
+                <Link href={`/dashboard/alumni/${person.id}`}>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="w-full bg-transparent rounded-lg border-gray-300 dark:border-gray-600 hover:border-blue-500 hover:text-blue-600 dark:hover:border-blue-400 dark:hover:text-blue-400 dark:text-gray-200 transition-colors"
+                  >
+                    {" "}
+                    {/* Enhanced outline button */}
+                    ดูรายละเอียด
+                  </Button>
+                </Link>
               </div>
             </CardContent>
           </Card>
         ))}
       </div>
       {filteredAlumni.length === 0 && (
-        <Card className="shadow-md rounded-xl">
+        <Card className="shadow-md rounded-xl dark:bg-gray-800 dark:border-gray-700">
           {" "}
           {/* Added shadow and rounded corners */}
           <CardContent className="p-12 text-center">
-            <Users className="mx-auto h-16 w-16 text-gray-400 mb-6" />{" "}
+            <Users className="mx-auto h-16 w-16 text-gray-400 dark:text-gray-500 mb-6" />{" "}
             {/* Larger icon, increased spacing */}
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">
+            <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">
               ไม่พบข้อมูลศิษย์เก่า
             </h3>{" "}
             {/* Larger, bolder title */}
-            <p className="text-gray-600 text-base">
+            <p className="text-gray-600 dark:text-gray-400 text-base">
               ลองเปลี่ยนเงื่อนไขการค้นหาหรือตัวกรอง
             </p>{" "}
             {/* Larger text */}

@@ -21,39 +21,41 @@ import { MapOverview } from "@/components/map-overview"; // Import the new MapOv
 
 export default function HomePage() {
   const [stats, setStats] = useState({
-    totalAlumni: 1247,
-    totalNews: 45,
-    totalDiscussions: 156,
-    provinces: 25,
+    totalAlumni: 2847,
+    totalNews: 65,
+    totalDiscussions: 298,
+    provinces: 45,
   });
 
   const features = [
     {
       icon: Users,
-      title: "เครือข่ายศิษย์เก่า",
+      title: "เครือข่ายเภสัชกร",
       description:
-        "เชื่อมต่อกับเพื่อนศิษย์เก่าทั่วประเทศ ค้นหาและติดต่อได้ง่าย",
+        "เชื่อมต่อกับเภสัชกรศิษย์เก่าทั่วประเทศ แลกเปลี่ยนประสบการณ์วิชาชีพและโอกาสในการทำงาน",
       color: "text-blue-600",
       bgColor: "bg-blue-50",
     },
     {
       icon: MapPin,
-      title: "แผนที่การกระจายตัว",
-      description: "ดูการกระจายตัวของศิษย์เก่าตามจังหวัดและภูมิภาค",
+      title: "แผนที่การกระจายตัวเภสัชกร",
+      description:
+        "ดูการกระจายตัวของเภสัชกรศิษย์เก่าตามจังหวัดและสถานประกอบการ",
       color: "text-green-600",
       bgColor: "bg-green-50",
     },
     {
       icon: Newspaper,
-      title: "ข่าวสารและกิจกรรม",
-      description: "อัปเดตข่าวสาร กิจกรรม และประกาศต่างๆ จากสมาคม",
+      title: "ข่าวสารวิชาชีพและงาน",
+      description: "อัปเดตข่าวสารวงการเภสัชกรรม ตำแหน่งงาน และกิจกรรมสำคัญ",
       color: "text-purple-600",
       bgColor: "bg-purple-50",
     },
     {
       icon: MessageSquare,
-      title: "เว็บบอร์ดสนทนา",
-      description: "แลกเปลี่ยนความคิดเห็น ประสบการณ์ และความรู้",
+      title: "เว็บบอร์ดวิชาชีพ",
+      description:
+        "แลกเปลี่ยนความคิดเห็น ประสบการณ์การทำงาน และความรู้ทางเภสัชศาสตร์",
       color: "text-orange-600",
       bgColor: "bg-orange-50",
     },
@@ -62,24 +64,24 @@ export default function HomePage() {
   const recentNews = [
     {
       id: 1,
-      title: "ประกาศการจัดงานสังสรรค์ศิษย์เก่าประจำปี 2024",
-      date: "15 มกราคม 2567",
+      title: "ประกาศการจัดงานประชุมใหญ่สมาคมเภสัชกรศิษย์เก่า ประจำปี 2568",
+      date: "15 มกราคม 2568",
       excerpt:
-        "เชิญร่วมงานสังสรรค์ศิษย์เก่าประจำปี 2024 ในวันเสาร์ที่ 15 มิถุนายน 2024...",
+        "เชิญร่วมงานประชุมใหญ่สมาคมเภสัชกรศิษย์เก่า ประจำปี 2568 ในวันเสาร์ที่ 15 มิถุนายน 2568...",
     },
     {
       id: 2,
-      title: "เปิดรับสมัครทุนการศึกษาสำหรับบุตรศิษย์เก่า",
-      date: "10 มกราคม 2567",
+      title: "เปิดรับสมัครทุนวิจัยด้านเภสัชศาสตร์สำหรับศิษย์เก่า",
+      date: "10 มกราคม 2568",
       excerpt:
-        "สมาคมศิษย์เก่าขอประกาศเปิดรับสมัครทุนการศึกษาสำหรับบุตรศิษย์เก่า...",
+        "สมาคมศิษย์เก่าขอประกาศเปิดรับสมัครทุนวิจัยด้านเภสัชศาสตร์สำหรับเภสัชกรศิษย์เก่า...",
     },
     {
       id: 3,
-      title: "ผลการประชุมคณะกรรมการสมาคมศิษย์เก่า ครั้งที่ 1/2567",
-      date: "5 มกราคม 2567",
+      title: "อัปเดตแนวทางปฏิบัติทางเภสัชกรรมใหม่ประจำปี 2568",
+      date: "5 มกราคม 2568",
       excerpt:
-        "สรุปผลการประชุมคณะกรรมการสมาคมศิษย์เก่า เรื่องแผนงานประจำปี 2567...",
+        "สภาเภสัชกรรมประกาศแนวทางปฏิบัติใหม่สำหรับเภสัชกร เพื่อยกระดับมาตรฐานวิชาชีพ...",
     },
   ];
 
@@ -102,17 +104,17 @@ export default function HomePage() {
               variant="secondary"
               className="mb-4 px-5 py-2 text-base rounded-full shadow-md bg-white/80 backdrop-blur border border-blue-100 animate-fade-in"
             >
-              เชื่อมต่อ • แลกเปลี่ยน • เติบโต
+              เชื่อมต่อ • แลกเปลี่ยน • พัฒนาวิชาชีพ
             </Badge>
             <h1 className="text-5xl md:text-7xl font-extrabold text-gray-900 mb-6 leading-tight drop-shadow-lg animate-fade-in-up">
               เครือข่าย
-              <span className="text-blue-600"> ศิษย์เก่า</span>
+              <span className="text-blue-600"> เภสัชกร</span>
               <br />
-              ที่แข็งแกร่ง
+              สำนักเภสัชศาสตร์ วลัยลักษณ์
             </h1>
             <p className="text-2xl text-gray-700 mb-12 max-w-3xl mx-auto leading-relaxed animate-fade-in-up delay-100">
-              เชื่อมต่อกับเพื่อนศิษย์เก่าทั่วประเทศ แลกเปลี่ยนประสบการณ์
-              และร่วมสร้างอนาคตที่ดีกว่าไปด้วยกัน
+              เชื่อมต่อกับเภสัชกรศิษย์เก่าทั่วประเทศ แลกเปลี่ยนประสบการณ์วิชาชีพ
+              และร่วมพัฒนาวงการเภสัชกรรมไทยไปด้วยกัน
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in-up delay-200">
               <Link href="/auth/login">
@@ -143,7 +145,9 @@ export default function HomePage() {
               <div className="text-5xl md:text-6xl font-extrabold text-blue-600 mb-2 drop-shadow group-hover:scale-110 transition-transform duration-200">
                 {stats.totalAlumni.toLocaleString()}
               </div>
-              <div className="text-gray-700 text-lg font-medium">ศิษย์เก่า</div>
+              <div className="text-gray-700 text-lg font-medium">
+                เภสัชกรศิษย์เก่า
+              </div>
             </div>
             <div className="text-center group transition-all">
               <div className="text-5xl md:text-6xl font-extrabold text-green-600 mb-2 drop-shadow group-hover:scale-110 transition-transform duration-200">
@@ -161,7 +165,9 @@ export default function HomePage() {
               <div className="text-5xl md:text-6xl font-extrabold text-orange-500 mb-2 drop-shadow group-hover:scale-110 transition-transform duration-200">
                 {stats.totalDiscussions}
               </div>
-              <div className="text-gray-700 text-lg font-medium">กระทู้</div>
+              <div className="text-gray-700 text-lg font-medium">
+                กระทู้วิชาชีพ
+              </div>
             </div>
           </div>
         </div>
@@ -181,11 +187,12 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 mb-4">
-              ฟีเจอร์หลัก
+              ฟีเจอร์สำหรับเภสัชกร
             </h2>{" "}
             {/* Bolder title */}
             <p className="text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
-              ระบบจัดการศิษย์เก่าที่ครบครันและใช้งานง่าย
+              ระบบเครือข่ายเภสัชกรที่ครบครันและใช้งานง่าย
+              เพื่อการพัฒนาวิชาชีพร่วมกัน
             </p>
           </div>
 
@@ -233,10 +240,10 @@ export default function HomePage() {
             {/* Adjusted for responsiveness */}
             <div>
               <h2 className="text-3xl font-extrabold text-gray-900 mb-2">
-                ข่าวสารล่าสุด
+                ข่าวสารวิชาชีพล่าสุด
               </h2>
               <p className="text-lg text-gray-600">
-                อัปเดตข่าวสารและกิจกรรมจากสมาคม
+                อัปเดตข่าวสารวงการเภสัชกรรมและกิจกรรมสำคัญ
               </p>
             </div>
             <Link href="/auth/login">
@@ -307,11 +314,11 @@ export default function HomePage() {
         {/* Ensured text is white */}
         <div className="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl md:text-4xl font-extrabold mb-4">
-            พร้อมเข้าร่วมเครือข่ายแล้วหรือยัง?
+            พร้อมเข้าร่วมเครือข่ายเภสัชกรแล้วหรือยัง?
           </h2>{" "}
           {/* Bolder title */}
           <p className="text-xl text-blue-100 mb-10 leading-relaxed">
-            เข้าสู่ระบบเพื่อเชื่อมต่อกับเพื่อนศิษย์เก่าและเข้าถึงฟีเจอร์ทั้งหมด
+            เข้าสู่ระบบเพื่อเชื่อมต่อกับเภสัชกรศิษย์เก่าและเข้าถึงฟีเจอร์ทั้งหมด
           </p>{" "}
           {/* Increased spacing, relaxed leading */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -350,12 +357,14 @@ export default function HomePage() {
             {" "}
             {/* Increased gap */}
             <div className="col-span-1 md:col-span-2">
-              <h3 className="text-2xl font-bold mb-4">ระบบศิษย์เก่า</h3>
+              <h3 className="text-2xl font-bold mb-4">
+                เครือข่ายเภสัชกรศิษย์เก่า
+              </h3>
               <p className="text-gray-300 mb-6 max-w-md leading-relaxed">
                 {" "}
                 {/* Increased spacing, relaxed leading */}
-                เชื่อมต่อศิษย์เก่าทั่วประเทศ สร้างเครือข่ายที่แข็งแกร่ง
-                และร่วมพัฒนาสังคมไปด้วยกัน
+                เชื่อมต่อเภสัชกรศิษย์เก่าทั่วประเทศ
+                สร้างเครือข่ายวิชาชีพที่แข็งแกร่ง และร่วมพัฒนาวงการเภสัชกรรมไทย
               </p>
               <div className="flex space-x-4">
                 <Button
@@ -391,7 +400,7 @@ export default function HomePage() {
                   >
                     {" "}
                     {/* Larger text */}
-                    ข้อมูลศิษย์เก่า
+                    ข้อมูลเภสัชกรศิษย์เก่า
                   </Link>
                 </li>
                 <li>
@@ -399,7 +408,7 @@ export default function HomePage() {
                     href="/auth/login"
                     className="hover:text-white transition-colors text-base"
                   >
-                    แผนที่
+                    แผนที่เภสัชกร
                   </Link>
                 </li>
                 <li>
@@ -407,7 +416,7 @@ export default function HomePage() {
                     href="/auth/login"
                     className="hover:text-white transition-colors text-base"
                   >
-                    ข่าวสาร
+                    ข่าวสารวิชาชีพ
                   </Link>
                 </li>
                 <li>
@@ -415,7 +424,7 @@ export default function HomePage() {
                     href="/auth/login"
                     className="hover:text-white transition-colors text-base"
                   >
-                    เว็บบอร์ด
+                    เว็บบอร์ดวิชาชีพ
                   </Link>
                 </li>
               </ul>
@@ -438,7 +447,7 @@ export default function HomePage() {
                   {/* Larger text */}
                   <Mail className="mr-2 h-4 w-4 text-gray-400" />{" "}
                   {/* Added text color to icon */}
-                  info@alumni.ac.th
+                  pharmacy@wu.ac.th
                 </li>
                 <li className="flex items-start text-base">
                   {" "}
@@ -446,9 +455,9 @@ export default function HomePage() {
                   <MapIcon className="mr-2 h-4 w-4 mt-1 text-gray-400" />{" "}
                   {/* Added text color to icon */}
                   <span>
-                    123 ถนนมหาวิทยาลัย
+                    สำนักเภสัชศาสตร์ มหาวิทยาลัยวลัยลักษณ์
                     <br />
-                    เขตราชเทวี กรุงเทพฯ 10400
+                    จังหวัดนครศรีธรรมราช 80160
                   </span>
                 </li>
               </ul>
@@ -458,7 +467,10 @@ export default function HomePage() {
           <div className="border-t border-gray-800 mt-10 pt-8 text-center text-gray-400">
             {" "}
             {/* Increased spacing */}
-            <p>&copy; 2024 ระบบศิษย์เก่า. สงวนลิขสิทธิ์.</p>
+            <p>
+              &copy; 2025 ระบบเครือข่ายเภสัชกรศิษย์เก่า สำนักเภสัชศาสตร์
+              มหาวิทยาลัยวลัยลักษณ์. สงวนลิขสิทธิ์.
+            </p>
           </div>
         </div>
       </footer>

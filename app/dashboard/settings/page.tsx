@@ -203,10 +203,10 @@ export default function SettingsPage() {
     return (
       <div className="space-y-6">
         <div className="animate-pulse">
-          <div className="h-8 bg-gray-200 rounded w-1/4 mb-6"></div>
+          <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded w-1/4 mb-6"></div>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <div className="h-96 bg-gray-200 rounded"></div>
-            <div className="h-96 bg-gray-200 rounded"></div>
+            <div className="h-96 bg-gray-200 dark:bg-gray-700 rounded"></div>
+            <div className="h-96 bg-gray-200 dark:bg-gray-700 rounded"></div>
           </div>
         </div>
       </div>
@@ -215,49 +215,54 @@ export default function SettingsPage() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold text-gray-900">ตั้งค่า</h1>
-        <p className="text-gray-600">
-          จัดการข้อมูลโปรไฟล์, ความเป็นส่วนตัว และการแจ้งเตือนของคุณ
-        </p>
+      <div className="relative overflow-hidden rounded-xl bg-gradient-to-r from-blue-50 to-purple-50 dark:from-gray-900 dark:to-gray-800 p-6 shadow-lg">
+        <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-purple-500/10 dark:from-blue-500/5 dark:to-purple-500/5"></div>
+        <div className="relative">
+          <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400 bg-clip-text text-transparent">
+            ตั้งค่า
+          </h1>
+          <p className="text-gray-600 dark:text-gray-300 mt-2">
+            จัดการข้อมูลโปรไฟล์, ความเป็นส่วนตัว และการแจ้งเตือนของคุณ
+          </p>
+        </div>
       </div>
       {/* Tabs */}
-      <div className="flex flex-wrap gap-2 border-b border-gray-200 dark:border-neutral-800 mb-4">
+      <div className="flex flex-wrap gap-2 border-b border-gray-200 dark:border-gray-700 mb-4 bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm rounded-lg p-2">
         <button
-          className={`px-4 py-2 font-medium rounded-t transition focus:outline-none ${
+          className={`px-6 py-3 font-medium rounded-lg transition-all duration-200 focus:outline-none transform hover:scale-105 ${
             tab === "profile"
-              ? "bg-white dark:bg-neutral-950 border-x border-t border-b-0 border-gray-200 dark:border-neutral-800 text-blue-700 dark:text-blue-400"
-              : "text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400"
+              ? "bg-gradient-to-r from-blue-500 to-purple-500 text-white shadow-lg shadow-blue-500/25 dark:shadow-blue-500/20"
+              : "text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-gray-800"
           }`}
           onClick={() => setTab("profile")}
         >
           ข้อมูลโปรไฟล์
         </button>
         <button
-          className={`px-4 py-2 font-medium rounded-t transition focus:outline-none ${
+          className={`px-6 py-3 font-medium rounded-lg transition-all duration-200 focus:outline-none transform hover:scale-105 ${
             tab === "privacy"
-              ? "bg-white dark:bg-neutral-950 border-x border-t border-b-0 border-gray-200 dark:border-neutral-800 text-blue-700 dark:text-blue-400"
-              : "text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400"
+              ? "bg-gradient-to-r from-blue-500 to-purple-500 text-white shadow-lg shadow-blue-500/25 dark:shadow-blue-500/20"
+              : "text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-gray-800"
           }`}
           onClick={() => setTab("privacy")}
         >
           ความเป็นส่วนตัว
         </button>
         <button
-          className={`px-4 py-2 font-medium rounded-t transition focus:outline-none ${
+          className={`px-6 py-3 font-medium rounded-lg transition-all duration-200 focus:outline-none transform hover:scale-105 ${
             tab === "notification"
-              ? "bg-white dark:bg-neutral-950 border-x border-t border-b-0 border-gray-200 dark:border-neutral-800 text-blue-700 dark:text-blue-400"
-              : "text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400"
+              ? "bg-gradient-to-r from-blue-500 to-purple-500 text-white shadow-lg shadow-blue-500/25 dark:shadow-blue-500/20"
+              : "text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-gray-800"
           }`}
           onClick={() => setTab("notification")}
         >
           การแจ้งเตือน
         </button>
         <button
-          className={`px-4 py-2 font-medium rounded-t transition focus:outline-none ${
+          className={`px-6 py-3 font-medium rounded-lg transition-all duration-200 focus:outline-none transform hover:scale-105 ${
             tab === "appearance"
-              ? "bg-white dark:bg-neutral-950 border-x border-t border-b-0 border-gray-200 dark:border-neutral-800 text-blue-700 dark:text-blue-400"
-              : "text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400"
+              ? "bg-gradient-to-r from-blue-500 to-purple-500 text-white shadow-lg shadow-blue-500/25 dark:shadow-blue-500/20"
+              : "text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-gray-800"
           }`}
           onClick={() => setTab("appearance")}
         >
@@ -269,26 +274,26 @@ export default function SettingsPage() {
       {tab === "profile" && (
         <>
           {/* Profile Settings */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center">
-                <Mail className="mr-2 h-5 w-5" />
+          <Card className="backdrop-blur-sm bg-white/80 dark:bg-gray-900/80 border-gray-200/50 dark:border-gray-700/50 shadow-xl hover:shadow-2xl transition-all duration-300">
+            <CardHeader className="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-gray-800 dark:to-gray-700 rounded-t-lg">
+              <CardTitle className="flex items-center text-gray-900 dark:text-white">
+                <Mail className="mr-2 h-5 w-5 text-blue-500" />
                 ข้อมูลโปรไฟล์
               </CardTitle>
-              <CardDescription>
+              <CardDescription className="text-gray-600 dark:text-gray-300">
                 อัปเดตข้อมูลส่วนตัวและข้อมูลการศึกษาของคุณ
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-6">
+            <CardContent className="space-y-6 p-6">
               {/* ...existing profile form... */}
               <div className="flex items-center space-x-4">
                 <div className="relative">
-                  <Avatar className="h-24 w-24">
+                  <Avatar className="h-24 w-24 ring-4 ring-blue-100 dark:ring-gray-700">
                     <AvatarImage
                       src={profile.profile_image_url || "/placeholder.svg"}
                       alt={`${profile.first_name} ${profile.last_name}`}
                     />
-                    <AvatarFallback className="bg-blue-100 text-blue-600 text-3xl font-semibold">
+                    <AvatarFallback className="bg-gradient-to-r from-blue-100 to-purple-100 dark:from-blue-900 dark:to-purple-900 text-blue-600 dark:text-blue-400 text-3xl font-semibold">
                       {profile.first_name.charAt(0)}
                       {profile.last_name.charAt(0)}
                     </AvatarFallback>
@@ -296,18 +301,20 @@ export default function SettingsPage() {
                   <Button
                     variant="outline"
                     size="icon"
-                    className="absolute bottom-0 right-0 rounded-full bg-white shadow-md"
+                    className="absolute bottom-0 right-0 rounded-full bg-white dark:bg-gray-800 shadow-lg border-2 border-white dark:border-gray-700 hover:scale-110 transition-transform"
                     onClick={() => alert("อัปโหลดรูปภาพโปรไฟล์")}
                   >
-                    <Camera className="h-4 w-4" />
+                    <Camera className="h-4 w-4 text-blue-500" />
                     <span className="sr-only">อัปโหลดรูปภาพ</span>
                   </Button>
                 </div>
                 <div>
-                  <p className="text-lg font-semibold text-gray-900">
+                  <p className="text-lg font-semibold text-gray-900 dark:text-white">
                     {profile.email}
                   </p>
-                  <p className="text-sm text-gray-500">อีเมลของคุณ</p>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">
+                    อีเมลของคุณ
+                  </p>
                 </div>
               </div>
 
@@ -366,7 +373,7 @@ export default function SettingsPage() {
 
               <Separator />
 
-              <h3 className="text-lg font-semibold text-gray-900">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400 bg-clip-text text-transparent">
                 ข้อมูลการทำงานปัจจุบัน
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -398,7 +405,7 @@ export default function SettingsPage() {
 
               <Separator />
 
-              <h3 className="text-lg font-semibold text-gray-900">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400 bg-clip-text text-transparent">
                 ข้อมูลติดต่อ
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -442,20 +449,23 @@ export default function SettingsPage() {
       {tab === "privacy" && (
         <>
           {/* Privacy Settings */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center">
-                <Lock className="mr-2 h-5 w-5" />
+          <Card className="backdrop-blur-sm bg-white/80 dark:bg-gray-900/80 border-gray-200/50 dark:border-gray-700/50 shadow-xl hover:shadow-2xl transition-all duration-300">
+            <CardHeader className="bg-gradient-to-r from-green-50 to-emerald-50 dark:from-gray-800 dark:to-gray-700 rounded-t-lg">
+              <CardTitle className="flex items-center text-gray-900 dark:text-white">
+                <Lock className="mr-2 h-5 w-5 text-green-500" />
                 การตั้งค่าความเป็นส่วนตัว
               </CardTitle>
-              <CardDescription>
+              <CardDescription className="text-gray-600 dark:text-gray-300">
                 กำหนดว่าใครสามารถเห็นข้อมูลส่วนตัวของคุณได้บ้าง
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-4">
+            <CardContent className="space-y-4 p-6">
               {/* ...existing privacy form... */}
-              <div className="flex items-center justify-between">
-                <Label htmlFor="profile_privacy">
+              <div className="flex items-center justify-between p-4 rounded-lg bg-gray-50 dark:bg-gray-800/50 hover:bg-gray-100 dark:hover:bg-gray-700/50 transition-colors">
+                <Label
+                  htmlFor="profile_privacy"
+                  className="text-gray-900 dark:text-white font-medium"
+                >
                   ข้อมูลโปรไฟล์ (ชื่อ, รูป, ปีจบ, สาขา)
                 </Label>
                 <Select
@@ -477,8 +487,11 @@ export default function SettingsPage() {
                   </SelectContent>
                 </Select>
               </div>
-              <div className="flex items-center justify-between">
-                <Label htmlFor="personal_privacy">
+              <div className="flex items-center justify-between p-4 rounded-lg bg-gray-50 dark:bg-gray-800/50 hover:bg-gray-100 dark:hover:bg-gray-700/50 transition-colors">
+                <Label
+                  htmlFor="personal_privacy"
+                  className="text-gray-900 dark:text-white font-medium"
+                >
                   ข้อมูลส่วนตัว (ประวัติ, ที่ทำงาน)
                 </Label>
                 <Select
@@ -500,8 +513,13 @@ export default function SettingsPage() {
                   </SelectContent>
                 </Select>
               </div>
-              <div className="flex items-center justify-between">
-                <Label htmlFor="work_privacy">ข้อมูลการทำงาน</Label>
+              <div className="flex items-center justify-between p-4 rounded-lg bg-gray-50 dark:bg-gray-800/50 hover:bg-gray-100 dark:hover:bg-gray-700/50 transition-colors">
+                <Label
+                  htmlFor="work_privacy"
+                  className="text-gray-900 dark:text-white font-medium"
+                >
+                  ข้อมูลการทำงาน
+                </Label>
                 <Select
                   value={privacy.work_privacy}
                   onValueChange={(value) =>
@@ -521,8 +539,11 @@ export default function SettingsPage() {
                   </SelectContent>
                 </Select>
               </div>
-              <div className="flex items-center justify-between">
-                <Label htmlFor="contact_privacy">
+              <div className="flex items-center justify-between p-4 rounded-lg bg-gray-50 dark:bg-gray-800/50 hover:bg-gray-100 dark:hover:bg-gray-700/50 transition-colors">
+                <Label
+                  htmlFor="contact_privacy"
+                  className="text-gray-900 dark:text-white font-medium"
+                >
                   ข้อมูลติดต่อ (เบอร์โทร, Line, Facebook, LinkedIn)
                 </Label>
                 <Select
@@ -551,20 +572,23 @@ export default function SettingsPage() {
       {tab === "notification" && (
         <>
           {/* Notification Settings */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center">
-                <Bell className="mr-2 h-5 w-5" />
+          <Card className="backdrop-blur-sm bg-white/80 dark:bg-gray-900/80 border-gray-200/50 dark:border-gray-700/50 shadow-xl hover:shadow-2xl transition-all duration-300">
+            <CardHeader className="bg-gradient-to-r from-yellow-50 to-orange-50 dark:from-gray-800 dark:to-gray-700 rounded-t-lg">
+              <CardTitle className="flex items-center text-gray-900 dark:text-white">
+                <Bell className="mr-2 h-5 w-5 text-yellow-500" />
                 การแจ้งเตือน
               </CardTitle>
-              <CardDescription>
+              <CardDescription className="text-gray-600 dark:text-gray-300">
                 จัดการการแจ้งเตือนที่คุณต้องการรับ
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-4">
+            <CardContent className="space-y-4 p-6">
               {/* ...existing notification form... */}
-              <div className="flex items-center justify-between">
-                <Label htmlFor="email_notifications">
+              <div className="flex items-center justify-between p-4 rounded-lg bg-gray-50 dark:bg-gray-800/50 hover:bg-gray-100 dark:hover:bg-gray-700/50 transition-colors">
+                <Label
+                  htmlFor="email_notifications"
+                  className="text-gray-900 dark:text-white font-medium"
+                >
                   รับการแจ้งเตือนทางอีเมล
                 </Label>
                 <Switch
@@ -575,8 +599,11 @@ export default function SettingsPage() {
                   }
                 />
               </div>
-              <div className="flex items-center justify-between">
-                <Label htmlFor="discussion_replies">
+              <div className="flex items-center justify-between p-4 rounded-lg bg-gray-50 dark:bg-gray-800/50 hover:bg-gray-100 dark:hover:bg-gray-700/50 transition-colors">
+                <Label
+                  htmlFor="discussion_replies"
+                  className="text-gray-900 dark:text-white font-medium"
+                >
                   แจ้งเตือนเมื่อมีคนตอบกระทู้
                 </Label>
                 <Switch
@@ -587,8 +614,11 @@ export default function SettingsPage() {
                   }
                 />
               </div>
-              <div className="flex items-center justify-between">
-                <Label htmlFor="news_updates">
+              <div className="flex items-center justify-between p-4 rounded-lg bg-gray-50 dark:bg-gray-800/50 hover:bg-gray-100 dark:hover:bg-gray-700/50 transition-colors">
+                <Label
+                  htmlFor="news_updates"
+                  className="text-gray-900 dark:text-white font-medium"
+                >
                   แจ้งเตือนข่าวสารและกิจกรรมใหม่
                 </Label>
                 <Switch
@@ -599,8 +629,11 @@ export default function SettingsPage() {
                   }
                 />
               </div>
-              <div className="flex items-center justify-between">
-                <Label htmlFor="birthday_reminders">
+              <div className="flex items-center justify-between p-4 rounded-lg bg-gray-50 dark:bg-gray-800/50 hover:bg-gray-100 dark:hover:bg-gray-700/50 transition-colors">
+                <Label
+                  htmlFor="birthday_reminders"
+                  className="text-gray-900 dark:text-white font-medium"
+                >
                   แจ้งเตือนวันเกิดศิษย์เก่า
                 </Label>
                 <Switch
@@ -618,61 +651,81 @@ export default function SettingsPage() {
       {tab === "appearance" && (
         <>
           {/* Appearance Settings */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center">
-                <Moon className="mr-2 h-5 w-5" />
+          <Card className="backdrop-blur-sm bg-white/80 dark:bg-gray-900/80 border-gray-200/50 dark:border-gray-700/50 shadow-xl hover:shadow-2xl transition-all duration-300">
+            <CardHeader className="bg-gradient-to-r from-purple-50 to-indigo-50 dark:from-gray-800 dark:to-gray-700 rounded-t-lg">
+              <CardTitle className="flex items-center text-gray-900 dark:text-white">
+                <Moon className="mr-2 h-5 w-5 text-purple-500" />
                 โหมดแสดงผล
               </CardTitle>
-              <CardDescription>
+              <CardDescription className="text-gray-600 dark:text-gray-300">
                 เลือกโหมดแสงสว่างหรือโหมดมืดสำหรับการใช้งาน
               </CardDescription>
             </CardHeader>
-            <CardContent>
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between p-6 rounded-xl bg-gradient-to-r from-blue-50 to-purple-50 dark:from-gray-800 dark:to-gray-700 border border-gray-200 dark:border-gray-600">
+                <div className="flex items-center gap-3">
                   <Sun
-                    className={`h-5 w-5 ${
-                      !darkMode ? "text-yellow-500" : "text-gray-400"
+                    className={`h-6 w-6 transition-colors ${
+                      !darkMode
+                        ? "text-yellow-500"
+                        : "text-gray-400 dark:text-gray-500"
                     }`}
                   />
-                  <span className="font-medium">โหมดสว่าง</span>
+                  <span className="font-medium text-gray-900 dark:text-white">
+                    โหมดสว่าง
+                  </span>
                 </div>
                 <Switch
                   id="dark_mode"
                   checked={darkMode === "dark"}
                   onCheckedChange={handleThemeChange}
+                  className="data-[state=checked]:bg-blue-600"
                 />
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-3">
                   <Moon
-                    className={`h-5 w-5 ${
-                      darkMode ? "text-blue-700" : "text-gray-400"
+                    className={`h-6 w-6 transition-colors ${
+                      darkMode ? "text-blue-500" : "text-gray-400"
                     }`}
                   />
-                  <span className="font-medium">โหมดมืด</span>
+                  <span className="font-medium text-gray-900 dark:text-white">
+                    โหมดมืด
+                  </span>
                 </div>
               </div>
-              <p className="text-xs text-gray-500 mt-2">
-                * ตัวอย่าง UI เท่านั้น ยังไม่เชื่อมต่อกับระบบธีมจริง
-              </p>
+              <div className="mt-4 p-4 rounded-lg bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800">
+                <p className="text-sm text-blue-700 dark:text-blue-300 flex items-center">
+                  <Moon className="h-4 w-4 mr-2" />
+                  การเปลี่ยนธีมจะมีผลกับทั้งระบบทันที
+                </p>
+              </div>
             </CardContent>
           </Card>
         </>
       )}
 
       {/* Save Button and Status */}
-      <div className="flex justify-end items-center gap-4">
+      <div className="flex justify-end items-center gap-4 p-6 bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm rounded-xl border border-gray-200 dark:border-gray-700">
         {saveSuccess && (
-          <p className="text-sm text-green-600 flex items-center">
-            <CheckCircle className="mr-2 h-4 w-4" /> บันทึกการเปลี่ยนแปลงแล้ว!
-          </p>
+          <div className="flex items-center px-4 py-2 rounded-lg bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800">
+            <CheckCircle className="mr-2 h-4 w-4 text-green-600 dark:text-green-400" />
+            <p className="text-sm text-green-600 dark:text-green-400 font-medium">
+              บันทึกการเปลี่ยนแปลงแล้ว!
+            </p>
+          </div>
         )}
         {saveError && (
-          <p className="text-sm text-red-600 flex items-center">
-            <XCircle className="mr-2 h-4 w-4" /> เกิดข้อผิดพลาดในการบันทึก
-          </p>
+          <div className="flex items-center px-4 py-2 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800">
+            <XCircle className="mr-2 h-4 w-4 text-red-600 dark:text-red-400" />
+            <p className="text-sm text-red-600 dark:text-red-400 font-medium">
+              เกิดข้อผิดพลาดในการบันทึก
+            </p>
+          </div>
         )}
-        <Button onClick={handleSaveChanges} disabled={saving}>
+        <Button
+          onClick={handleSaveChanges}
+          disabled={saving}
+          className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200"
+        >
           {saving ? (
             <>
               <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>

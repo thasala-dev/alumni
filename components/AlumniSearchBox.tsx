@@ -5,36 +5,36 @@ import { useState, useRef } from "react";
 const mockAlumni = [
   {
     id: 1,
-    name: "สมชาย ใจดี",
-    major: "วิศวกรรมคอมพิวเตอร์",
+    name: "เภสัชกร สมชาย ใจดี",
+    major: "เภสัชศาสตร์",
     year: 2018,
     avatar: "/placeholder-user.jpg",
   },
   {
     id: 2,
-    name: "สมหญิง เก่งมาก",
-    major: "บัญชี",
+    name: "เภสัชกร สมหญิง เก่งมาก",
+    major: "เภสัชศาสตร์",
     year: 2017,
     avatar: "/placeholder-user.jpg",
   },
   {
     id: 3,
-    name: "อนันต์ รักเรียน",
-    major: "นิติศาสตร์",
+    name: "เภสัชกร อนันต์ รักเรียน",
+    major: "เภสัชศาสตร์",
     year: 2019,
     avatar: "/placeholder-user.jpg",
   },
   {
     id: 4,
-    name: "ปิยะพร สายใจ",
-    major: "เศรษฐศาสตร์",
+    name: "เภสัชกร ปิยะพร สายใจ",
+    major: "เภสัชศาสตร์",
     year: 2016,
     avatar: "/placeholder-user.jpg",
   },
   {
     id: 5,
-    name: "ธีรศักดิ์ ทองดี",
-    major: "วิศวกรรมไฟฟ้า",
+    name: "เภสัชกร ธีรศักดิ์ ทองดี",
+    major: "เภสัชศาสตร์",
     year: 2020,
     avatar: "/placeholder-user.jpg",
   },
@@ -67,9 +67,9 @@ export default function AlumniSearchBox() {
         }}
         onFocus={() => setShow(true)}
         onBlur={() => setTimeout(() => setShow(false), 150)}
-        placeholder="ค้นหาศิษย์เก่า..."
+        placeholder="ค้นหาเภสัชกรศิษย์เก่า..."
         className="rounded-full px-4 py-1.5 bg-gray-100 dark:bg-neutral-800 border border-gray-200 dark:border-neutral-700 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 w-full"
-        aria-label="ค้นหาศิษย์เก่า"
+        aria-label="ค้นหาเภสัชกรศิษย์เก่า"
         autoComplete="off"
       />
       {show && (

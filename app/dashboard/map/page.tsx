@@ -128,12 +128,12 @@ export default function MapPage() {
     return (
       <div className="space-y-6">
         <div className="animate-pulse">
-          <div className="h-10 bg-gray-200 rounded w-1/4 mb-8"></div>{" "}
+          <div className="h-10 bg-gray-200 dark:bg-gray-700 rounded w-1/4 mb-8"></div>{" "}
           {/* Larger placeholder for title */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <div className="lg:col-span-2 h-96 bg-gray-200 rounded-xl"></div>{" "}
+            <div className="lg:col-span-2 h-96 bg-gray-200 dark:bg-gray-700 rounded-xl"></div>{" "}
             {/* Rounded corners for skeleton cards */}
-            <div className="h-96 bg-gray-200 rounded-xl"></div>{" "}
+            <div className="h-96 bg-gray-200 dark:bg-gray-700 rounded-xl"></div>{" "}
             {/* Rounded corners for skeleton cards */}
           </div>
         </div>
@@ -151,11 +151,11 @@ export default function MapPage() {
       {" "}
       {/* Increased overall spacing */}
       <div>
-        <h1 className="text-3xl font-extrabold text-gray-900">
+        <h1 className="text-3xl font-extrabold text-gray-900 dark:text-gray-100">
           แผนที่การกระจายตัว
         </h1>{" "}
         {/* Bolder title */}
-        <p className="text-lg text-gray-600">
+        <p className="text-lg text-gray-600 dark:text-gray-400">
           การกระจายตัวของศิษย์เก่าตามจังหวัดที่ทำงาน (ข้อมูลตัวอย่าง)
         </p>{" "}
         {/* Larger text */}
@@ -163,18 +163,18 @@ export default function MapPage() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Map Visualization */}
         <div className="lg:col-span-2">
-          <Card className="shadow-md rounded-xl">
+          <Card className="shadow-md rounded-xl dark:bg-gray-800 dark:border-gray-700">
             {" "}
             {/* Added shadow and rounded corners */}
             <CardHeader>
-              <CardTitle className="flex items-center text-xl font-semibold">
+              <CardTitle className="flex items-center text-xl font-semibold dark:text-gray-100">
                 {" "}
                 {/* Larger, bolder title */}
-                <MapPin className="mr-2 h-5 w-5 text-blue-600" />{" "}
+                <MapPin className="mr-2 h-5 w-5 text-blue-600 dark:text-blue-400" />{" "}
                 {/* Added text color to icon */}
                 แผนที่ประเทศไทย
               </CardTitle>
-              <CardDescription className="text-gray-600">
+              <CardDescription className="text-gray-600 dark:text-gray-400">
                 คลิกที่จังหวัดเพื่อดูรายละเอียด
               </CardDescription>
             </CardHeader>
@@ -250,14 +250,14 @@ export default function MapPage() {
 
         {/* Province Details */}
         <div className="space-y-6">
-          <Card className="shadow-md rounded-xl">
+          <Card className="shadow-md rounded-xl dark:bg-gray-800 dark:border-gray-700">
             {" "}
             {/* Added shadow and rounded corners */}
             <CardHeader>
-              <CardTitle className="flex items-center text-xl font-semibold">
+              <CardTitle className="flex items-center text-xl font-semibold dark:text-gray-100">
                 {" "}
                 {/* Larger, bolder title */}
-                <BarChart3 className="mr-2 h-5 w-5 text-purple-600" />{" "}
+                <BarChart3 className="mr-2 h-5 w-5 text-purple-600 dark:text-purple-400" />{" "}
                 {/* Added text color to icon */}
                 สถิติรวม
               </CardTitle>
@@ -267,18 +267,20 @@ export default function MapPage() {
               {/* Added vertical padding */}
               <div className="space-y-4">
                 <div className="text-center">
-                  <div className="text-4xl font-extrabold text-blue-600">
+                  <div className="text-4xl font-extrabold text-blue-600 dark:text-blue-400">
                     {totalAlumni}
                   </div>{" "}
                   {/* Larger, bolder stats */}
-                  <p className="text-base text-gray-600">ศิษย์เก่าทั้งหมด</p>
+                  <p className="text-base text-gray-600 dark:text-gray-400">
+                    ศิษย์เก่าทั้งหมด
+                  </p>
                 </div>
                 <div className="text-center">
-                  <div className="text-3xl font-extrabold text-green-600">
+                  <div className="text-3xl font-extrabold text-green-600 dark:text-green-400">
                     {provinceData.length}
                   </div>{" "}
                   {/* Larger, bolder stats */}
-                  <p className="text-base text-gray-600">
+                  <p className="text-base text-gray-600 dark:text-gray-400">
                     จังหวัดที่มีศิษย์เก่า
                   </p>
                 </div>
@@ -286,11 +288,11 @@ export default function MapPage() {
             </CardContent>
           </Card>
 
-          <Card className="shadow-md rounded-xl">
+          <Card className="shadow-md rounded-xl dark:bg-gray-800 dark:border-gray-700">
             {" "}
             {/* Added shadow and rounded corners */}
             <CardHeader>
-              <CardTitle className="text-xl font-semibold">
+              <CardTitle className="text-xl font-semibold dark:text-gray-100">
                 จังหวัดที่มีศิษย์เก่ามากที่สุด
               </CardTitle>{" "}
               {/* Larger, bolder title */}
@@ -304,25 +306,25 @@ export default function MapPage() {
                     key={province.province}
                     className={`flex items-center justify-between p-3 rounded-lg cursor-pointer transition-colors ${
                       selectedProvince?.province === province.province
-                        ? "bg-blue-50 border border-blue-200 shadow-sm" // Enhanced selected state
-                        : "hover:bg-gray-50"
+                        ? "bg-blue-50 dark:bg-blue-900/50 border border-blue-200 dark:border-blue-700 shadow-sm" // Enhanced selected state
+                        : "hover:bg-gray-50 dark:hover:bg-gray-700"
                     }`}
                     onClick={() => setSelectedProvince(province)}
                   >
                     <div className="flex items-center">
-                      <div className="w-7 h-7 rounded-full bg-blue-100 flex items-center justify-center text-sm font-bold text-blue-600 mr-3 shadow-sm">
+                      <div className="w-7 h-7 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center text-sm font-bold text-blue-600 dark:text-blue-300 mr-3 shadow-sm">
                         {" "}
                         {/* Larger, bolder number, added shadow */}
                         {index + 1}
                       </div>
-                      <span className="font-medium text-gray-800 text-base">
+                      <span className="font-medium text-gray-800 dark:text-gray-200 text-base">
                         {province.province}
                       </span>{" "}
                       {/* Larger, bolder text */}
                     </div>
                     <Badge
                       variant="secondary"
-                      className="px-3 py-1 text-sm rounded-full"
+                      className="px-3 py-1 text-sm rounded-full dark:bg-gray-700 dark:text-gray-200"
                     >
                       {province.count} คน
                     </Badge>{" "}
@@ -334,15 +336,15 @@ export default function MapPage() {
           </Card>
 
           {selectedProvince && (
-            <Card className="shadow-md rounded-xl">
+            <Card className="shadow-md rounded-xl dark:bg-gray-800 dark:border-gray-700">
               {" "}
               {/* Added shadow and rounded corners */}
               <CardHeader>
-                <CardTitle className="text-xl font-semibold">
+                <CardTitle className="text-xl font-semibold dark:text-gray-100">
                   {selectedProvince.province}
                 </CardTitle>{" "}
                 {/* Larger, bolder title */}
-                <CardDescription className="text-gray-600">
+                <CardDescription className="text-gray-600 dark:text-gray-400">
                   {selectedProvince.count} คน
                 </CardDescription>
               </CardHeader>
@@ -355,18 +357,18 @@ export default function MapPage() {
                   {selectedProvince.alumni.slice(0, 5).map((alumni, index) => (
                     <div
                       key={index}
-                      className="border-l-4 border-blue-400 pl-4 py-1"
+                      className="border-l-4 border-blue-400 dark:border-blue-500 pl-4 py-1"
                     >
                       {" "}
                       {/* Darker border, added vertical padding */}
-                      <div className="font-medium text-base text-gray-800">
+                      <div className="font-medium text-base text-gray-800 dark:text-gray-200">
                         {alumni.name}
                       </div>{" "}
                       {/* Larger, bolder text */}
-                      <div className="text-sm text-gray-600">
+                      <div className="text-sm text-gray-600 dark:text-gray-400">
                         {alumni.position}
                       </div>
-                      <div className="text-xs text-gray-500">
+                      <div className="text-xs text-gray-500 dark:text-gray-500">
                         {alumni.company}
                       </div>
                     </div>
@@ -378,7 +380,7 @@ export default function MapPage() {
                       <Button
                         variant="link"
                         size="sm"
-                        className="text-blue-600 hover:text-blue-700 font-semibold"
+                        className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-semibold"
                       >
                         {" "}
                         {/* Changed to link variant, bolder */}
