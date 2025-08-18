@@ -582,7 +582,7 @@ export default function AdminUsersPage() {
                         >
                           <DropdownMenuItem
                             onClick={() => {
-                              if (typeof window !== 'undefined') {
+                              if (typeof window !== "undefined") {
                                 alert(`ดูรายละเอียด ${user.email}`);
                               }
                             }}

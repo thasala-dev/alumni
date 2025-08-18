@@ -184,7 +184,7 @@ export default function AlumniDetailPage() {
   };
 
   const handleShare = () => {
-    if (typeof window !== 'undefined') {
+    if (typeof window !== "undefined") {
       if (navigator.share && alumni) {
         navigator.share({
           title: `โปรไฟล์ ${alumni.first_name} ${alumni.last_name}`,
@@ -200,7 +200,7 @@ export default function AlumniDetailPage() {
   };
 
   const handleContact = (type: string, value?: string) => {
-    if (typeof window !== 'undefined') {
+    if (typeof window !== "undefined") {
       switch (type) {
         case "email":
           window.open(`mailto:${alumni?.email}`);

@@ -11,9 +11,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { MapPin, BarChart3 } from "lucide-react";
-import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
-import "leaflet/dist/leaflet.css";
-import L from "leaflet";
+import { MapOverview } from "@/components/map-overview";
 // Removed: import { supabase, isSupabaseConfigured } from "@/lib/supabase"
 
 interface ProvinceData {
@@ -179,71 +177,8 @@ export default function MapPage() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              {/* Leaflet Map */}
-              <div className="rounded-lg overflow-hidden min-h-[400px] relative z-0">
-                <MapContainer
-                  center={[15.870032, 100.992541]}
-                  zoom={6}
-                  scrollWheelZoom={false}
-                  style={{ height: 600, width: "100%" }}
-                  className="z-0"
-                >
-                  <TileLayer
-                    attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                  />
-                  {provinceData.map((province) => {
-                    // ตัวอย่าง lat/lng สำหรับบางจังหวัด (ควรใช้ฐานข้อมูลจริงใน production)
-                    const provinceCoords: Record<string, [number, number]> = {
-                      กรุงเทพมหานคร: [13.7563, 100.5018],
-                      เชียงใหม่: [18.7883, 98.9853],
-                      ขอนแก่น: [16.4419, 102.8359],
-                      สงขลา: [7.1756, 100.6144],
-                      ชลบุรี: [13.3611, 100.9847],
-                      ภูเก็ต: [7.8804, 98.3923],
-                      นครราชสีมา: [14.9799, 102.0977],
-                      ระยอง: [12.6814, 101.2789],
-                    };
-                    const coords = provinceCoords[province.province];
-                    if (!coords) return null;
-                    return (
-                      <Marker
-                        key={province.province}
-                        position={coords}
-                        icon={L.icon({
-                          iconUrl:
-                            "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
-                          iconSize: [25, 41],
-                          iconAnchor: [12, 41],
-                        })}
-                      >
-                        <Popup>
-                          <div className="font-bold text-base text-blue-700">
-                            {province.province}
-                          </div>
-                          <div className="text-sm text-gray-700">
-                            ศิษย์เก่า {province.count} คน
-                          </div>
-                          {province.alumni.length > 0 && (
-                            <ul className="mt-2 space-y-1">
-                              {province.alumni
-                                .slice(0, 3)
-                                .map((alumni, idx) => (
-                                  <li
-                                    key={idx}
-                                    className="text-xs text-gray-600"
-                                  >
-                                    {alumni.name} - {alumni.position}
-                                  </li>
-                                ))}
-                            </ul>
-                          )}
-                        </Popup>
-                      </Marker>
-                    );
-                  })}
-                </MapContainer>
-              </div>
+              {/* Map Overview Component */}
+              <MapOverview />
             </CardContent>
           </Card>
         </div>

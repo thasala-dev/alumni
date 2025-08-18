@@ -20,14 +20,20 @@ import {
 } from "lucide-react";
 
 // Dynamically import MapOverview to prevent SSR issues
-const MapOverview = dynamic(() => import("@/components/map-overview").then(mod => ({ default: mod.MapOverview })), {
-  ssr: false,
-  loading: () => (
-    <div className="h-64 bg-gray-100 dark:bg-gray-800 rounded-lg animate-pulse flex items-center justify-center">
-      <div className="text-gray-500 dark:text-gray-400">Loading map...</div>
-    </div>
-  )
-});
+const MapOverview = dynamic(
+  () =>
+    import("@/components/map-overview").then((mod) => ({
+      default: mod.MapOverview,
+    })),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="h-64 animate-pulse flex items-center justify-center">
+        <div className="text-gray-500 dark:text-gray-400">Loading map...</div>
+      </div>
+    ),
+  }
+);
 
 export default function HomePage() {
   const [stats, setStats] = useState({
@@ -56,7 +62,7 @@ export default function HomePage() {
     },
     {
       icon: Newspaper,
-      title: "ข่าวสารวิชาชีพและงาน",
+      title: "ข่าวสารศิษย์เก่าและงาน",
       description: "อัปเดตข่าวสารวงการเภสัชกรรม ตำแหน่งงาน และกิจกรรมสำคัญ",
       color: "text-purple-600",
       bgColor: "bg-purple-50",
@@ -150,90 +156,86 @@ export default function HomePage() {
             <div className="h-1 w-40 bg-gradient-to-r from-blue-400 via-indigo-400 to-purple-400 rounded-full opacity-60" />
           </div>
           {/* Stats */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-10 mt-10 animate-fade-in-up delay-400">
-            <div className="text-center group transition-all">
-              <div className="text-5xl md:text-6xl font-extrabold text-blue-600 mb-2 drop-shadow group-hover:scale-110 transition-transform duration-200">
-                {stats.totalAlumni.toLocaleString()}
-              </div>
-              <div className="text-gray-700 text-lg font-medium">
-                เภสัชกรศิษย์เก่า
-              </div>
+        </div>
+
+        <div className="max-w-7xl mx-auto text-center relative z-10">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-10 mt-10 animate-fade-in-up delay-400 items-center">
+            <div className="col-span-2">
+              <MapOverview />
             </div>
-            <div className="text-center group transition-all">
-              <div className="text-5xl md:text-6xl font-extrabold text-green-600 mb-2 drop-shadow group-hover:scale-110 transition-transform duration-200">
-                {stats.provinces}
+
+            <div className="grid grid-cols-1 gap-10 mt-10 animate-fade-in-up delay-400">
+              <div className="text-center group transition-all">
+                <div className="text-5xl md:text-6xl font-extrabold text-blue-600 mb-2 drop-shadow group-hover:scale-110 transition-transform duration-200">
+                  {stats.totalAlumni.toLocaleString()}
+                </div>
+                <div className="text-gray-700 text-lg font-medium">
+                  เภสัชกรศิษย์เก่า
+                </div>
               </div>
-              <div className="text-gray-700 text-lg font-medium">จังหวัด</div>
-            </div>
-            <div className="text-center group transition-all">
-              <div className="text-5xl md:text-6xl font-extrabold text-purple-600 mb-2 drop-shadow group-hover:scale-110 transition-transform duration-200">
-                {stats.totalNews}
+              <div className="text-center group transition-all">
+                <div className="text-5xl md:text-6xl font-extrabold text-green-600 mb-2 drop-shadow group-hover:scale-110 transition-transform duration-200">
+                  {stats.provinces}
+                </div>
+                <div className="text-gray-700 text-lg font-medium">จังหวัด</div>
               </div>
-              <div className="text-gray-700 text-lg font-medium">ข่าวสาร</div>
-            </div>
-            <div className="text-center group transition-all">
-              <div className="text-5xl md:text-6xl font-extrabold text-orange-500 mb-2 drop-shadow group-hover:scale-110 transition-transform duration-200">
-                {stats.totalDiscussions}
+              <div className="text-center group transition-all">
+                <div className="text-5xl md:text-6xl font-extrabold text-purple-600 mb-2 drop-shadow group-hover:scale-110 transition-transform duration-200">
+                  {stats.totalNews}
+                </div>
+                <div className="text-gray-700 text-lg font-medium">ข่าวสาร</div>
               </div>
-              <div className="text-gray-700 text-lg font-medium">
-                กระทู้วิชาชีพ
+              <div className="text-center group transition-all">
+                <div className="text-5xl md:text-6xl font-extrabold text-orange-500 mb-2 drop-shadow group-hover:scale-110 transition-transform duration-200">
+                  {stats.totalDiscussions}
+                </div>
+                <div className="text-gray-700 text-lg font-medium">
+                  กระทู้วิชาชีพ
+                </div>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Map Overview Section */}
-      <section className="py-20 bg-gray-50">
-        {" "}
-        {/* Changed background to gray-50 for contrast */}
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <MapOverview />
-        </div>
-      </section>
-
       {/* Features Section */}
-      <section className="py-20 bg-white">
+      <section className="py-20 bg-gradient-to-br from-blue-400 via-blue-600 to-indigo-600">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 mb-4">
+            <h2 className="text-3xl md:text-4xl font-extrabold text-white mb-4">
               ฟีเจอร์สำหรับเภสัชกร
-            </h2>{" "}
+            </h2>
             {/* Bolder title */}
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
+            <p className="text-xl text-gray-300 max-w-2xl mx-auto leading-relaxed">
               ระบบเครือข่ายเภสัชกรที่ครบครันและใช้งานง่าย
               เพื่อการพัฒนาวิชาชีพร่วมกัน
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {" "}
             {/* Increased gap */}
             {features.map((feature, index) => (
               <Card
                 key={index}
                 className="text-center shadow-md hover:shadow-xl transition-shadow duration-300 rounded-xl"
               >
-                {" "}
                 {/* Enhanced shadow and hover */}
                 <CardContent className="p-8">
-                  {" "}
                   {/* Increased padding */}
                   <div
                     className={`inline-flex p-4 rounded-full ${feature.bgColor} mb-6 shadow-sm`}
                   >
-                    {" "}
                     {/* Larger padding, added shadow */}
-                    <feature.icon className={`h-7 w-7 ${feature.color}`} />{" "}
+                    <feature.icon className={`h-7 w-7 ${feature.color}`} />
                     {/* Larger icon */}
                   </div>
                   <h3 className="text-xl font-semibold text-gray-900 mb-3">
                     {feature.title}
-                  </h3>{" "}
+                  </h3>
                   {/* Larger title */}
                   <p className="text-gray-600 text-base leading-relaxed">
                     {feature.description}
-                  </p>{" "}
+                  </p>
                   {/* Adjusted text size and line height */}
                 </CardContent>
               </Card>
@@ -250,10 +252,10 @@ export default function HomePage() {
             {/* Adjusted for responsiveness */}
             <div>
               <h2 className="text-3xl font-extrabold text-gray-900 mb-2">
-                ข่าวสารวิชาชีพล่าสุด
+                ข่าวสารศิษย์เก่าล่าสุด
               </h2>
               <p className="text-lg text-gray-600">
-                อัปเดตข่าวสารวงการเภสัชกรรมและกิจกรรมสำคัญ
+                อัปเดตข่าวสารและกิจกรรมสำคัญ
               </p>
             </div>
             <Link href="/auth/login">
@@ -319,7 +321,7 @@ export default function HomePage() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 bg-blue-600 text-white">
+      <section className="py-20 bg-gradient-to-br from-blue-400 via-blue-600 to-indigo-600 text-white">
         {" "}
         {/* Ensured text is white */}
         <div className="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">
@@ -426,7 +428,7 @@ export default function HomePage() {
                     href="/auth/login"
                     className="hover:text-white transition-colors text-base"
                   >
-                    ข่าวสารวิชาชีพ
+                    ข่าวสารศิษย์เก่า
                   </Link>
                 </li>
                 <li>

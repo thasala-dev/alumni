@@ -303,7 +303,7 @@ export default function SettingsPage() {
                     size="icon"
                     className="absolute bottom-0 right-0 rounded-full bg-white dark:bg-gray-900/80 shadow-lg border-2 border-white dark:border-gray-700 hover:scale-110 transition-transform"
                     onClick={() => {
-                      if (typeof window !== 'undefined') {
+                      if (typeof window !== "undefined") {
                         alert("อัปโหลดรูปภาพโปรไฟล์");
                       }
                     }}

@@ -356,8 +356,8 @@ export default function DashboardPage() {
 
   // Intersection Observer for infinite scroll
   useEffect(() => {
-    if (typeof window === 'undefined') return;
-    
+    if (typeof window === "undefined") return;
+
     const observer = new IntersectionObserver(
       (entries) => {
         const target = entries[0];
