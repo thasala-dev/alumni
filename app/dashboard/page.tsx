@@ -20,15 +20,17 @@ import {
   GraduationCap,
   Clock,
   Loader2,
+  Verified,
 } from "lucide-react";
 
 interface Post {
   id: number;
   author: {
     name: string;
+    admin?: boolean; // Optional admin flag
     avatar: string;
-    title: string;
-    graduationYear: number;
+    title?: string;
+    graduationYear?: number;
   };
   content: string;
   image?: string;
@@ -58,6 +60,7 @@ const mockPosts: Post[] = [
     id: 1,
     author: {
       name: "เภสัชกร สมชาย ใจดี",
+      admin: true,
       avatar: "/placeholder-user.jpg",
       title: "เภสัชกรโรงพยาบาล",
       graduationYear: 2018,
@@ -204,10 +207,9 @@ const mockPosts: Post[] = [
   {
     id: 7,
     author: {
-      name: "เภสัชกร รัชนี สวยงาม",
+      name: "แอดมิน",
+      admin: true,
       avatar: "/placeholder-user.jpg",
-      title: "เภสัชกรโรงพยาบาลเด็ก",
-      graduationYear: 2021,
     },
     content:
       "การดูแลเด็กป่วยต้องใช้ความละเอียดอ่อนเป็นพิเศษ วันนี้ได้ช่วยคุณหมอปรับขนาดยาให้น้องๆ อย่างปลอดภัย เด็กคือคนไข้พิเศษที่ต้องการความเอาใจใส่มากกว่า 👶💉",
@@ -559,14 +561,22 @@ export default function DashboardPage() {
                       />
                     </Avatar>
                     <div>
-                      <h3 className="font-semibold text-gray-900 dark:text-gray-100">
-                        {post.author.name}
-                      </h3>
+                      <div className="font-semibold text-gray-900 dark:text-gray-100 flex flex-row items-top gap-2">
+                        <div className="items-center">{post.author.name}</div>
+                        {post.author.admin === true && (
+                          <Verified className="h-5 w-5 text-blue-500" />
+                        )}
+                      </div>
                       <div className="flex items-center text-sm text-gray-500 dark:text-gray-400 space-x-2">
-                        <span>{post.author.title}</span>
-                        <span>•</span>
-                        <span>รุ่น {post.author.graduationYear}</span>
-                        <span>•</span>
+                        {(post.author.title || post.author.graduationYear) && (
+                          <>
+                            <span>{post.author.title}</span>
+                            <span>•</span>
+                            <span>รุ่น {post.author.graduationYear}</span>
+                            <span>•</span>
+                          </>
+                        )}
+
                         <Clock className="h-3 w-3" />
                         <span>{post.timestamp}</span>
                       </div>
@@ -623,14 +633,6 @@ export default function DashboardPage() {
                     >
                       <MessageCircle className="h-4 w-4 mr-2" />
                       {post.comments.length}
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="text-gray-600 hover:text-green-600"
-                    >
-                      <Share className="h-4 w-4 mr-2" />
-                      แชร์
                     </Button>
                   </div>
                 </div>
