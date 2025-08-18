@@ -77,7 +77,7 @@ export default function NavbarMenuItems() {
     try {
       const res = await signOut();
       if (!res?.error) {
-        router.push("/auth/login");
+        router.push("/");
       } else {
         console.error("Sign out error:", res.error);
       }
