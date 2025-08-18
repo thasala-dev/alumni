@@ -278,19 +278,61 @@ export function MapOverview() {
         {/* Tooltip */}
         {tooltip.visible && (
           <div
-            className="fixed z-50 px-3 py-2 text-sm text-white bg-gray-900 dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-lg shadow-lg pointer-events-none backdrop-blur-sm"
+            className="fixed z-50 px-4 py-3 text-sm bg-white/95 dark:bg-gray-900/95 border border-gray-200/80 dark:border-gray-700/80 rounded-xl shadow-2xl pointer-events-none backdrop-blur-md transition-all duration-200 ease-out"
             style={{
-              left: tooltip.x + 10,
-              top: tooltip.y - 30,
+              left: tooltip.x + 15,
+              top: tooltip.y - 50,
+              background:
+                theme === "dark"
+                  ? "linear-gradient(135deg, rgba(17, 24, 39, 0.95) 0%, rgba(31, 41, 55, 0.95) 100%)"
+                  : "linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(249, 250, 251, 0.95) 100%)",
             }}
           >
-            <strong className="text-white dark:text-gray-100">
-              {tooltip.data.provinceName || "ไม่ระบุ"}
-            </strong>
-            <br />
-            <span className="text-gray-200 dark:text-gray-300">
-              {tooltip.data.alumniCount || 0} คน
-            </span>
+            {/* Arrow pointer */}
+            <div
+              className="absolute -left-2 top-1/2 transform -translate-y-1/2 w-0 h-0 border-t-[6px] border-b-[6px] border-r-[8px] border-transparent"
+              style={{
+                borderRightColor:
+                  theme === "dark"
+                    ? "rgba(17, 24, 39, 0.95)"
+                    : "rgba(255, 255, 255, 0.95)",
+              }}
+            />
+
+            {/* Province Icon */}
+            <div className="flex items-start gap-3">
+              <div className="flex-shrink-0 w-8 h-8 bg-blue-100 dark:bg-blue-900/50 rounded-lg flex items-center justify-center mt-0.5">
+                <svg
+                  className="w-4 h-4 text-blue-600 dark:text-blue-400"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+              </div>
+
+              <div className="flex-1 min-w-0">
+                <div className="font-semibold text-gray-900 dark:text-gray-100 text-sm leading-tight">
+                  {tooltip.data.provinceName || "ไม่ระบุ"}
+                </div>
+                <div className="flex items-center gap-2 mt-1">
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-gray-600 dark:text-gray-400 text-xs font-medium">
+                      {tooltip.data.alumniCount || 0} คน
+                    </span>
+                  </div>
+                  {tooltip.data.provinceCode && (
+                    <span className="text-xs text-gray-400 dark:text-gray-500 font-mono">
+                      {tooltip.data.provinceCode}
+                    </span>
+                  )}
+                </div>
+              </div>
+            </div>
           </div>
         )}
 
