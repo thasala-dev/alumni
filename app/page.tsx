@@ -6,6 +6,7 @@ import dynamic from "next/dynamic";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { ThemeToggle } from "@/components/theme-toggle";
 import {
   Users,
   MapPin,
@@ -102,33 +103,38 @@ export default function HomePage() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 relative overflow-x-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 dark:from-gray-900 dark:via-gray-950 dark:to-gray-900 relative overflow-x-hidden">
+      {/* Theme Toggle Button */}
+      <div className="fixed top-6 right-6 z-50">
+        <ThemeToggle />
+      </div>
+      
       {/* Hero Section */}
       <section className="relative py-24 px-4 sm:px-6 lg:px-8 overflow-hidden">
         {/* Decorative blurred shape */}
         <div
-          className="absolute -top-32 -left-32 w-[500px] h-[500px] bg-gradient-to-br from-blue-200 via-indigo-200 to-purple-200 rounded-full blur-3xl opacity-40 animate-pulse z-0"
+          className="absolute -top-32 -left-32 w-[500px] h-[500px] bg-gradient-to-br from-blue-200 via-indigo-200 to-purple-200 dark:from-blue-900 dark:via-indigo-900 dark:to-purple-900 rounded-full blur-3xl opacity-40 animate-pulse z-0"
           aria-hidden="true"
         />
         <div
-          className="absolute -bottom-32 -right-32 w-[400px] h-[400px] bg-gradient-to-tr from-pink-200 via-blue-100 to-indigo-100 rounded-full blur-3xl opacity-30 animate-pulse z-0"
+          className="absolute -bottom-32 -right-32 w-[400px] h-[400px] bg-gradient-to-tr from-pink-200 via-blue-100 to-indigo-100 dark:from-pink-900 dark:via-blue-900 dark:to-indigo-900 rounded-full blur-3xl opacity-30 animate-pulse z-0"
           aria-hidden="true"
         />
         <div className="max-w-7xl mx-auto text-center relative z-10">
           <div className="mb-10">
             <Badge
               variant="secondary"
-              className="mb-4 px-5 py-2 text-base rounded-full shadow-md bg-white/80 backdrop-blur border border-blue-100 animate-fade-in"
+              className="mb-4 px-5 py-2 text-base rounded-full shadow-md bg-white/80 dark:bg-gray-900/80 backdrop-blur border border-blue-100 dark:border-gray-800 animate-fade-in"
             >
               เชื่อมต่อ • แลกเปลี่ยน • พัฒนาวิชาชีพ
             </Badge>
-            <h1 className="text-5xl md:text-7xl font-extrabold text-gray-900 mb-6 leading-tight drop-shadow-lg animate-fade-in-up">
+            <h1 className="text-5xl md:text-7xl font-extrabold text-gray-900 dark:text-white mb-6 leading-tight drop-shadow-lg animate-fade-in-up">
               เครือข่าย
-              <span className="text-blue-600"> เภสัชกร</span>
+              <span className="text-blue-600 dark:text-blue-400"> เภสัชกร</span>
               <br />
               สำนักเภสัชศาสตร์ วลัยลักษณ์
             </h1>
-            <p className="text-2xl text-gray-700 mb-12 max-w-3xl mx-auto leading-relaxed animate-fade-in-up delay-100">
+            <p className="text-2xl text-gray-700 dark:text-gray-300 mb-12 max-w-3xl mx-auto leading-relaxed animate-fade-in-up delay-100">
               เชื่อมต่อกับเภสัชกรศิษย์เก่าทั่วประเทศ แลกเปลี่ยนประสบการณ์วิชาชีพ
               และร่วมพัฒนาวงการเภสัชกรรมไทยไปด้วยกัน
             </p>
@@ -145,7 +151,7 @@ export default function HomePage() {
               <Button
                 variant="outline"
                 size="lg"
-                className="w-full sm:w-auto bg-white/80 rounded-xl text-xl font-bold border-gray-300 hover:border-blue-500 hover:text-blue-600 shadow transition-all duration-200 scale-100 hover:scale-105"
+                className="w-full sm:w-auto bg-white/80 dark:bg-gray-900/80 rounded-xl text-xl font-bold border-gray-300 dark:border-gray-700 hover:border-blue-500 hover:text-blue-600 dark:hover:text-blue-400 shadow transition-all duration-200 scale-100 hover:scale-105"
               >
                 เรียนรู้เพิ่มเติม
               </Button>
@@ -153,7 +159,7 @@ export default function HomePage() {
           </div>
           {/* Divider */}
           <div className="w-full flex justify-center my-12 animate-fade-in-up delay-300">
-            <div className="h-1 w-40 bg-gradient-to-r from-blue-400 via-indigo-400 to-purple-400 rounded-full opacity-60" />
+            <div className="h-1 w-40 bg-gradient-to-r from-blue-400 via-indigo-400 to-purple-400 dark:from-blue-700 dark:via-indigo-700 dark:to-purple-700 rounded-full opacity-60" />
           </div>
           {/* Stats */}
         </div>
@@ -166,30 +172,34 @@ export default function HomePage() {
 
             <div className="grid grid-cols-1 gap-10 mt-10 animate-fade-in-up delay-400">
               <div className="text-center group transition-all">
-                <div className="text-5xl md:text-6xl font-extrabold text-blue-600 mb-2 drop-shadow group-hover:scale-110 transition-transform duration-200">
+                <div className="text-5xl md:text-6xl font-extrabold text-blue-600 dark:text-blue-400 mb-2 drop-shadow group-hover:scale-110 transition-transform duration-200">
                   {stats.totalAlumni.toLocaleString()}
                 </div>
-                <div className="text-gray-700 text-lg font-medium">
+                <div className="text-gray-700 dark:text-gray-300 text-lg font-medium">
                   เภสัชกรศิษย์เก่า
                 </div>
               </div>
               <div className="text-center group transition-all">
-                <div className="text-5xl md:text-6xl font-extrabold text-green-600 mb-2 drop-shadow group-hover:scale-110 transition-transform duration-200">
+                <div className="text-5xl md:text-6xl font-extrabold text-green-600 dark:text-green-400 mb-2 drop-shadow group-hover:scale-110 transition-transform duration-200">
                   {stats.provinces}
                 </div>
-                <div className="text-gray-700 text-lg font-medium">จังหวัด</div>
+                <div className="text-gray-700 dark:text-gray-300 text-lg font-medium">
+                  จังหวัด
+                </div>
               </div>
               <div className="text-center group transition-all">
-                <div className="text-5xl md:text-6xl font-extrabold text-purple-600 mb-2 drop-shadow group-hover:scale-110 transition-transform duration-200">
+                <div className="text-5xl md:text-6xl font-extrabold text-purple-600 dark:text-purple-400 mb-2 drop-shadow group-hover:scale-110 transition-transform duration-200">
                   {stats.totalNews}
                 </div>
-                <div className="text-gray-700 text-lg font-medium">ข่าวสาร</div>
+                <div className="text-gray-700 dark:text-gray-300 text-lg font-medium">
+                  ข่าวสาร
+                </div>
               </div>
               <div className="text-center group transition-all">
-                <div className="text-5xl md:text-6xl font-extrabold text-orange-500 mb-2 drop-shadow group-hover:scale-110 transition-transform duration-200">
+                <div className="text-5xl md:text-6xl font-extrabold text-orange-500 dark:text-orange-400 mb-2 drop-shadow group-hover:scale-110 transition-transform duration-200">
                   {stats.totalDiscussions}
                 </div>
-                <div className="text-gray-700 text-lg font-medium">
+                <div className="text-gray-700 dark:text-gray-300 text-lg font-medium">
                   กระทู้วิชาชีพ
                 </div>
               </div>
@@ -199,7 +209,7 @@ export default function HomePage() {
       </section>
 
       {/* Features Section */}
-      <section className="py-20 bg-gradient-to-br from-blue-400 via-blue-600 to-indigo-600">
+      <section className="py-20 bg-gradient-to-br from-blue-400 via-blue-600 to-indigo-600 dark:from-blue-900 dark:via-blue-950 dark:to-indigo-900">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-extrabold text-white mb-4">
@@ -217,23 +227,25 @@ export default function HomePage() {
             {features.map((feature, index) => (
               <Card
                 key={index}
-                className="text-center shadow-md hover:shadow-xl transition-shadow duration-300 rounded-xl"
+                className="text-center shadow-md hover:shadow-xl transition-shadow duration-300 rounded-xl bg-white dark:bg-gray-900"
               >
                 {/* Enhanced shadow and hover */}
                 <CardContent className="p-8">
                   {/* Increased padding */}
                   <div
-                    className={`inline-flex p-4 rounded-full ${feature.bgColor} mb-6 shadow-sm`}
+                    className={`inline-flex p-4 rounded-full ${feature.bgColor} dark:bg-gray-800 mb-6 shadow-sm`}
                   >
                     {/* Larger padding, added shadow */}
-                    <feature.icon className={`h-7 w-7 ${feature.color}`} />
+                    <feature.icon
+                      className={`h-7 w-7 ${feature.color} dark:text-blue-300`}
+                    />
                     {/* Larger icon */}
                   </div>
-                  <h3 className="text-xl font-semibold text-gray-900 mb-3">
+                  <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-3">
                     {feature.title}
                   </h3>
                   {/* Larger title */}
-                  <p className="text-gray-600 text-base leading-relaxed">
+                  <p className="text-gray-600 dark:text-gray-300 text-base leading-relaxed">
                     {feature.description}
                   </p>
                   {/* Adjusted text size and line height */}
@@ -245,23 +257,23 @@ export default function HomePage() {
       </section>
 
       {/* Recent News Section */}
-      <section className="py-20 bg-gray-50">
+      <section className="py-20 bg-gray-50 dark:bg-gray-950">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col sm:flex-row items-center justify-between mb-12 gap-4">
             {" "}
             {/* Adjusted for responsiveness */}
             <div>
-              <h2 className="text-3xl font-extrabold text-gray-900 mb-2">
+              <h2 className="text-3xl font-extrabold text-gray-900 dark:text-white mb-2">
                 ข่าวสารศิษย์เก่าล่าสุด
               </h2>
-              <p className="text-lg text-gray-600">
+              <p className="text-lg text-gray-600 dark:text-gray-300">
                 อัปเดตข่าวสารและกิจกรรมสำคัญ
               </p>
             </div>
             <Link href="/auth/login">
               <Button
                 variant="outline"
-                className="rounded-lg border-gray-300 hover:border-blue-500 hover:text-blue-600 transition-colors"
+                className="rounded-lg border-gray-300 dark:border-gray-700 hover:border-blue-500 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
               >
                 {" "}
                 {/* Enhanced outline button */}
@@ -277,19 +289,19 @@ export default function HomePage() {
             {recentNews.map((news) => (
               <Card
                 key={news.id}
-                className="shadow-md hover:shadow-xl transition-shadow duration-300 rounded-xl"
+                className="shadow-md hover:shadow-xl transition-shadow duration-300 rounded-xl bg-white dark:bg-gray-900"
               >
                 {" "}
                 {/* Enhanced shadow and hover */}
                 <CardHeader className="pb-4">
                   {" "}
                   {/* Adjusted padding */}
-                  <div className="flex items-center text-sm text-gray-500 mb-2">
-                    <Calendar className="mr-2 h-4 w-4 text-gray-400" />{" "}
+                  <div className="flex items-center text-sm text-gray-500 dark:text-gray-400 mb-2">
+                    <Calendar className="mr-2 h-4 w-4 text-gray-400 dark:text-gray-500" />{" "}
                     {/* Added text color to icon */}
                     {news.date}
                   </div>
-                  <CardTitle className="text-xl font-semibold line-clamp-2 text-gray-900">
+                  <CardTitle className="text-xl font-semibold line-clamp-2 text-gray-900 dark:text-white">
                     {news.title}
                   </CardTitle>{" "}
                   {/* Larger, bolder title */}
@@ -297,7 +309,7 @@ export default function HomePage() {
                 <CardContent className="pt-0">
                   {" "}
                   {/* Adjusted padding */}
-                  <p className="text-gray-600 text-base line-clamp-3 mb-4 leading-relaxed">
+                  <p className="text-gray-600 dark:text-gray-300 text-base line-clamp-3 mb-4 leading-relaxed">
                     {news.excerpt}
                   </p>{" "}
                   {/* Adjusted text size and line height */}
@@ -305,7 +317,7 @@ export default function HomePage() {
                     <Button
                       variant="link"
                       size="sm"
-                      className="p-0 text-blue-600 hover:text-blue-700 font-semibold"
+                      className="p-0 text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-semibold"
                     >
                       {" "}
                       {/* Changed to link variant, bolder */}
@@ -321,7 +333,7 @@ export default function HomePage() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 bg-gradient-to-br from-blue-400 via-blue-600 to-indigo-600 text-white">
+      <section className="py-20 bg-gradient-to-br from-blue-400 via-blue-600 to-indigo-600 dark:from-blue-900 dark:via-blue-950 dark:to-indigo-900 text-white">
         {" "}
         {/* Ensured text is white */}
         <div className="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">
@@ -329,7 +341,7 @@ export default function HomePage() {
             พร้อมเข้าร่วมเครือข่ายเภสัชกรแล้วหรือยัง?
           </h2>{" "}
           {/* Bolder title */}
-          <p className="text-xl text-blue-100 mb-10 leading-relaxed">
+          <p className="text-xl text-blue-100 dark:text-blue-200 mb-10 leading-relaxed">
             เข้าสู่ระบบเพื่อเชื่อมต่อกับเภสัชกรศิษย์เก่าและเข้าถึงฟีเจอร์ทั้งหมด
           </p>{" "}
           {/* Increased spacing, relaxed leading */}
@@ -338,7 +350,7 @@ export default function HomePage() {
               <Button
                 size="lg"
                 variant="secondary"
-                className="w-full sm:w-auto rounded-lg text-lg font-semibold bg-white text-blue-600 hover:bg-blue-50 hover:text-blue-700 transition-colors"
+                className="w-full sm:w-auto rounded-lg text-lg font-semibold bg-white dark:bg-gray-900 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-gray-800 hover:text-blue-700 dark:hover:text-blue-300 transition-colors"
               >
                 {" "}
                 {/* Enhanced secondary button */}
@@ -350,7 +362,7 @@ export default function HomePage() {
               <Button
                 size="lg"
                 variant="secondary"
-                className="w-full sm:w-auto rounded-lg text-lg font-semibold bg-white text-blue-600 hover:bg-blue-50 hover:text-blue-700 transition-colors"
+                className="w-full sm:w-auto rounded-lg text-lg font-semibold bg-white dark:bg-gray-900 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-gray-800 hover:text-blue-700 dark:hover:text-blue-300 transition-colors"
               >
                 {" "}
                 {/* Enhanced secondary button */}
@@ -363,7 +375,7 @@ export default function HomePage() {
       </section>
 
       {/* Footer */}
-      <footer className="bg-gray-900 text-white py-12">
+      <footer className="bg-gray-900 dark:bg-gray-950 text-white py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             {" "}
@@ -382,7 +394,7 @@ export default function HomePage() {
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="text-gray-300 hover:text-white hover:bg-gray-800 rounded-full transition-colors"
+                  className="text-gray-300 hover:text-white hover:bg-gray-800 dark:hover:bg-gray-900 rounded-full transition-colors"
                 >
                   {" "}
                   {/* Changed to icon size, rounded, hover effect */}
@@ -391,7 +403,7 @@ export default function HomePage() {
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="text-gray-300 hover:text-white hover:bg-gray-800 rounded-full transition-colors"
+                  className="text-gray-300 hover:text-white hover:bg-gray-800 dark:hover:bg-gray-900 rounded-full transition-colors"
                 >
                   {" "}
                   {/* Changed to icon size, rounded, hover effect */}
@@ -450,21 +462,21 @@ export default function HomePage() {
                 <li className="flex items-center text-base">
                   {" "}
                   {/* Larger text */}
-                  <Phone className="mr-2 h-4 w-4 text-gray-400" />{" "}
+                  <Phone className="mr-2 h-4 w-4 text-gray-400 dark:text-gray-500" />{" "}
                   {/* Added text color to icon */}
                   02-123-4567
                 </li>
                 <li className="flex items-center text-base">
                   {" "}
                   {/* Larger text */}
-                  <Mail className="mr-2 h-4 w-4 text-gray-400" />{" "}
+                  <Mail className="mr-2 h-4 w-4 text-gray-400 dark:text-gray-500" />{" "}
                   {/* Added text color to icon */}
                   pharmacy@wu.ac.th
                 </li>
                 <li className="flex items-start text-base">
                   {" "}
                   {/* Larger text */}
-                  <MapIcon className="mr-2 h-4 w-4 mt-1 text-gray-400" />{" "}
+                  <MapIcon className="mr-2 h-4 w-4 mt-1 text-gray-400 dark:text-gray-500" />{" "}
                   {/* Added text color to icon */}
                   <span>
                     สำนักเภสัชศาสตร์ มหาวิทยาลัยวลัยลักษณ์
@@ -476,7 +488,7 @@ export default function HomePage() {
             </div>
           </div>
 
-          <div className="border-t border-gray-800 mt-10 pt-8 text-center text-gray-400">
+          <div className="border-t border-gray-800 dark:border-gray-900 mt-10 pt-8 text-center text-gray-400">
             {" "}
             {/* Increased spacing */}
             <p>

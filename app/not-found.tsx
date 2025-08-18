@@ -7,7 +7,7 @@ import { Home, ArrowLeft } from "lucide-react";
 
 export default function NotFound() {
   const handleGoBack = () => {
-    if (typeof window !== 'undefined') {
+    if (typeof window !== "undefined") {
       window.history.back();
     }
   };
@@ -32,7 +32,11 @@ export default function NotFound() {
                 กลับหน้าหลัก
               </Link>
             </Button>
-            <Button variant="outline" onClick={handleGoBack} className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              onClick={handleGoBack}
+              className="flex items-center gap-2"
+            >
               <ArrowLeft className="h-4 w-4" />
               ย้อนกลับ
             </Button>

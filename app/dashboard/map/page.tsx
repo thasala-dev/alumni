@@ -11,7 +11,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { MapPin, BarChart3 } from "lucide-react";
-import { MapOverview } from "@/components/map-overview";
+import { MapOverview } from "@/components/map-system";
 // Removed: import { supabase, isSupabaseConfigured } from "@/lib/supabase"
 
 interface ProvinceData {

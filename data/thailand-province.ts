@@ -1,4 +1,4 @@
-export const provincePositions = {
+export const ProvincePositions = {
   // ภาคเหนือ (Northern Region)
   "th-50": {
     name: "เชียงใหม่",
