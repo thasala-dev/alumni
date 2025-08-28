@@ -35,7 +35,22 @@ import {
   Monitor,
   Home,
 } from "lucide-react";
-import { signOut } from "@/lib/auth";
+import { signOut } from "next-auth/react";
+import { useSession } from "next-auth/react";
+
+// Extend the default Session user type to include 'role'
+import type { DefaultSession } from "next-auth";
+
+declare module "next-auth" {
+  interface Session {
+    user: {
+      role?: string;
+    } & DefaultSession["user"];
+  }
+  interface User {
+    role?: string;
+  }
+}
 
 export default function NavbarMenuItems() {
   const { theme, setTheme } = useTheme();
@@ -45,15 +60,13 @@ export default function NavbarMenuItems() {
     { id: 2, message: "การประชุมใหญ่สมาคมศิษย์เก่าประจำปี 2568" },
     { id: 3, message: "อัปเดตข้อมูลใบประกอบวิชาชีพเภสัชกรรม" },
   ]);
+  const { data: session, status } = useSession();
 
-  const [user, setUser] = useState<any>(null);
   const router = useRouter();
   const pathname = usePathname();
 
   useEffect(() => {
     setMounted(true);
-    // Mock login (replace with real auth session in production)
-    setUser({ name: "Admin", role: "admin" });
   }, []);
 
   const navigation = [
@@ -62,7 +75,7 @@ export default function NavbarMenuItems() {
     { name: "แผนที่การกระจาย", href: "/dashboard/map", icon: Map },
     { name: "ข่าวสารและงาน", href: "/dashboard/news", icon: Newspaper },
 
-    ...(user?.role === "admin"
+    ...(session?.user?.role === "admin"
       ? [
           {
             name: "จัดการสมาชิก",
@@ -74,16 +87,7 @@ export default function NavbarMenuItems() {
   ];
 
   const handleSignOut = async () => {
-    try {
-      const res = await signOut();
-      if (!res?.error) {
-        router.push("/");
-      } else {
-        console.error("Sign out error:", res.error);
-      }
-    } catch (e) {
-      console.error("Sign out failed", e);
-    }
+    await signOut({ callbackUrl: "/auth/login" });
   };
 
   const getThemeIcon = () => {
@@ -112,7 +116,7 @@ export default function NavbarMenuItems() {
     <nav className="sticky top-0 z-50 w-full bg-white/80 dark:bg-gray-900/80 backdrop-blur-lg border-b border-gray-200/50 dark:border-neutral-700/50 shadow-lg supports-[backdrop-filter]:backdrop-blur-lg">
       <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-10 h-18 flex items-center justify-between">
         {/* Left section */}
-        <div className="flex items-center gap-6 w-full md:w-auto">
+        <div className="flex items-center gap-4 w-full md:w-auto">
           <Link href="/dashboard" className="flex items-center gap-3 group">
             {/* <div className="relative">
               <div className="absolute -inset-1 bg-gradient-to-r from-[#81B214] to-[#50B003] rounded-xl transition duration-300"></div>
@@ -324,26 +328,26 @@ export default function NavbarMenuItems() {
             </SheetTrigger>
             <SheetContent
               side="left"
-              className="w-72 bg-white/95 dark:bg-[#252728]/95 backdrop-blur-xl border-r border-gray-200/50 dark:border-neutral-700/50"
+              className="w-72 max-h-screen overflow-y-auto bg-white/95 dark:bg-[#252728]/95 backdrop-blur-xl border-r border-gray-200/50 dark:border-neutral-700/50"
             >
               <SheetTitle className="sr-only">เมนูนำทาง</SheetTitle>
-              <div className="p-6 border-b border-gray-100 dark:border-neutral-700 flex items-center gap-3">
-                <div className="relative">
+              <div className="p-4 border-b border-gray-100 dark:border-neutral-700 flex items-center gap-3">
+                {/* <div className="relative">
                   <div className="absolute -inset-1 bg-gradient-to-r from-[#81B214] to-[#50B003] rounded-xl blur opacity-75"></div>
                   <img
                     src="/placeholder-logo.svg"
                     alt="Alumni Logo"
                     className="relative h-10 w-10 rounded-xl bg-gradient-to-br from-[#81B214] to-[#50B003] p-2"
                   />
-                </div>
-                <span className="font-black text-xl bg-gradient-to-r from-blue-700 to-[#50B003] bg-clip-text text-transparent dark:from-blue-400 dark:to-indigo-400">
+                </div> */}
+                <span className="text-2xl font-black text-[#81B214]">
                   WU Pharmacy
                 </span>
               </div>
               <div className="px-6 mt-6">
                 <AlumniSearchBox />
               </div>
-              <nav className="flex flex-col gap-2 p-6">
+              <nav className="flex flex-col gap-2 p-4">
                 {navigation.map((item) => {
                   const isActive = pathname.startsWith(item.href);
                   return (

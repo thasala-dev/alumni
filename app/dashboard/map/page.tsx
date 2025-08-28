@@ -128,7 +128,7 @@ export default function MapPage() {
         <div className="animate-pulse">
           <div className="h-10 bg-gray-200 dark:bg-gray-700 rounded w-1/4 mb-8"></div>{" "}
           {/* Larger placeholder for title */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
             <div className="lg:col-span-2 h-96 bg-gray-200 dark:bg-gray-700 rounded-xl"></div>{" "}
             {/* Rounded corners for skeleton cards */}
             <div className="h-96 bg-gray-200 dark:bg-gray-700 rounded-xl"></div>{" "}
@@ -158,7 +158,7 @@ export default function MapPage() {
         </p>{" "}
         {/* Larger text */}
       </div>
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         {/* Map Visualization */}
         <div className="lg:col-span-2">
           <Card className="shadow-md rounded-xl dark:bg-gray-900/80 dark:border-gray-700">

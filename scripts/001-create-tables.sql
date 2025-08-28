@@ -1,5 +1,5 @@
 -- Create enum types
-CREATE TYPE user_status AS ENUM ('PENDING_APPROVAL', 'APPROVED', 'REJECTED', 'SUSPENDED');
+CREATE TYPE user_status AS ENUM ('UNREGISTERED','PENDING_APPROVAL', 'APPROVED', 'REJECTED', 'SUSPENDED');
 CREATE TYPE privacy_level AS ENUM ('public', 'alumni-only', 'admin-only');
 CREATE TYPE user_role AS ENUM ('admin', 'alumni');
 
@@ -8,7 +8,7 @@ CREATE TABLE users (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   email VARCHAR(255) UNIQUE NOT NULL,
   role user_role DEFAULT 'alumni',
-  status user_status DEFAULT 'PENDING_APPROVAL',
+  status user_status DEFAULT 'UNREGISTERED',
   national_id VARCHAR(13) UNIQUE,
   birth_date DATE,
   created_at TIMESTAMP DEFAULT NOW(),

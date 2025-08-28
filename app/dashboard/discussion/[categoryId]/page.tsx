@@ -259,7 +259,7 @@ export default function CategoryTopicsPage() {
               href={`/dashboard/discussion/${categoryId}/${topic.id}`}
             >
               <Card className="shadow-md hover:shadow-xl transition-shadow duration-300 rounded-xl cursor-pointer">
-                <CardContent className="p-6">
+                <CardContent className="p-4">
                   <div className="flex items-start justify-between mb-3">
                     <div className="flex-1 pr-4">
                       <h3 className="text-xl font-semibold text-gray-900 mb-1.5 flex items-center">

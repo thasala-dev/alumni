@@ -246,7 +246,7 @@ export default function NewsPage() {
           </Button>
         )}
       </div>
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         {/* News List */}
         <div className="lg:col-span-2 space-y-6">
           {/* Search */}
@@ -274,7 +274,7 @@ export default function NewsPage() {
                 }`}
                 onClick={() => handleNewsClick(item)}
               >
-                <CardContent className="p-6">
+                <CardContent className="p-4">
                   <div className="flex items-start justify-between mb-4">
                     <div className="flex-1 pr-4">
                       {" "}

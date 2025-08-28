@@ -104,7 +104,7 @@ export default function HomePage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-indigo-50 dark:from-gray-900 dark:via-gray-950 dark:to-gray-900 relative overflow-x-hidden">
       {/* Theme Toggle Button */}
-      <div className="fixed top-6 right-6 z-50">
+      <div className="fixed top-4 right-6 z-50">
         <ThemeToggle />
       </div>
 

@@ -194,7 +194,7 @@ export default function AlumniPage() {
             <div className="h-10 bg-gray-200 rounded"></div>
             <div className="h-10 bg-gray-200 rounded"></div>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {[...Array(6)].map((_, i) => (
               <div key={i} className="h-64 bg-gray-200 rounded-xl"></div>
             ))}
@@ -222,7 +222,7 @@ export default function AlumniPage() {
       <Card className="shadow-md rounded-xl bg-white dark:bg-gray-900/80 border-gray-200 dark:border-gray-700">
         {" "}
         {/* Added shadow and rounded corners */}
-        <CardContent className="p-6">
+        <CardContent className="p-4">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 dark:text-gray-500" />{" "}
@@ -314,7 +314,7 @@ export default function AlumniPage() {
         </div>
       </div>
       {/* Alumni Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {filteredAlumni.map((person) => (
           <Card
             key={person.id}
@@ -322,7 +322,7 @@ export default function AlumniPage() {
           >
             {" "}
             {/* Enhanced shadow and hover */}
-            <CardContent className="p-6">
+            <CardContent className="p-4">
               <div className="flex items-start space-x-4 mb-4">
                 {" "}
                 {/* Adjusted spacing */}

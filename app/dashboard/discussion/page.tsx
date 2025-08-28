@@ -91,7 +91,7 @@ export default function DiscussionBoardPage() {
       <div className="space-y-6">
         <div className="animate-pulse">
           <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded w-1/4 mb-6"></div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {[...Array(5)].map((_, i) => (
               <div
                 key={i}
@@ -136,11 +136,11 @@ export default function DiscussionBoardPage() {
       </div>
 
       {/* Categories Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {filteredCategories.map((category) => (
           <Link key={category.id} href={`/dashboard/discussion/${category.id}`}>
             <Card className="h-full hover:shadow-lg dark:hover:shadow-gray-900/20 transition-shadow cursor-pointer dark:bg-gray-900/80 dark:border-gray-700">
-              <CardContent className="p-6 flex flex-col justify-between h-full">
+              <CardContent className="p-4 flex flex-col justify-between h-full">
                 <div className="flex items-center mb-4">
                   <Folder className="h-6 w-6 text-blue-600 dark:text-blue-400 mr-3" />
                   <CardTitle className="text-lg font-semibold text-gray-900 dark:text-gray-100">

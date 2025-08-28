@@ -51,6 +51,7 @@ import {
   AlertCircle,
 } from "lucide-react";
 import { getCurrentUser, type User } from "@/lib/auth";
+import { useSession } from "next-auth/react";
 
 // Extend the User interface for admin view
 interface AdminUser extends User {
@@ -127,6 +128,8 @@ const demoUsers: AdminUser[] = [
 ];
 
 export default function AdminUsersPage() {
+  const { data: session, status } = useSession();
+
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [users, setUsers] = useState<AdminUser[]>([]);
   const [loading, setLoading] = useState(true);
@@ -142,13 +145,11 @@ export default function AdminUsersPage() {
 
   useEffect(() => {
     const initializePage = async () => {
-      const user = await getCurrentUser();
-      if (!user || user.role !== "admin") {
+      if (!session || session.user.role !== "admin") {
         // Redirect if not admin
         router.push("/dashboard"); // Or to a specific access denied page
         return;
       }
-      setCurrentUser(user);
 
       // Simulate fetching users
       await new Promise((resolve) => setTimeout(resolve, 500));
@@ -250,9 +251,9 @@ export default function AdminUsersPage() {
     );
   }
 
-  if (!currentUser || currentUser.role !== "admin") {
+  if (!session || session.user.role !== "admin") {
     return (
-      <Card className="w-full max-w-md mx-auto mt-10 dark:bg-gray-900/80 dark:border-gray-700">
+      <Card className="w-full max-w-md mx-auto mt-10 dark:bg-gray-900/80 dark:border-gray-700 p-4">
         <CardHeader className="text-center">
           <CardTitle className="text-2xl font-bold text-red-600 dark:text-red-400">
             ไม่ได้รับอนุญาต
@@ -384,25 +385,23 @@ export default function AdminUsersPage() {
       </div>
 
       {/* Search and Filter */}
-      <Card className="dark:bg-gray-900/80 dark:border-gray-700">
+      <Card className="dark:bg-gray-900/80 dark:border-gray-700 shadow-xl border-0 bg-white/90">
         <CardContent className="p-6">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="relative">
-              <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400 dark:text-gray-500" />
+              <Search className="absolute left-3 top-3 h-5 w-5 text-[#81B214] dark:text-[#A3C957]" />
               <Input
                 placeholder="ค้นหาอีเมล, เลขบัตรประชาชน, ชื่อ..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100 dark:placeholder-gray-400"
+                className="pl-11 py-3 rounded-2xl bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-base dark:text-gray-100 dark:placeholder-gray-400 focus:ring-2 focus:ring-[#81B214]/30 focus:border-[#81B214] transition"
               />
             </div>
             <Select
               value={filterRole}
-              onValueChange={(value: "all" | "admin" | "alumni") =>
-                setFilterRole(value)
-              }
+              onValueChange={(value: "all" | "admin" | "alumni") => setFilterRole(value)}
             >
-              <SelectTrigger>
+              <SelectTrigger className="rounded-2xl py-3 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-base dark:text-gray-100 focus:ring-2 focus:ring-[#81B214]/30 focus:border-[#81B214] transition">
                 <SelectValue placeholder="กรองตามบทบาท" />
               </SelectTrigger>
               <SelectContent>
@@ -422,7 +421,7 @@ export default function AdminUsersPage() {
                   | "SUSPENDED"
               ) => setFilterStatus(value)}
             >
-              <SelectTrigger>
+              <SelectTrigger className="rounded-2xl py-3 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-base dark:text-gray-100 focus:ring-2 focus:ring-[#81B214]/30 focus:border-[#81B214] transition">
                 <SelectValue placeholder="กรองตามสถานะ" />
               </SelectTrigger>
               <SelectContent>
@@ -437,25 +436,25 @@ export default function AdminUsersPage() {
 
           {/* Bulk Actions */}
           {selectedUsers.length > 0 && (
-            <div className="flex items-center gap-2 p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-700 rounded-lg mt-4">
-              <span className="text-sm text-blue-700 dark:text-blue-300">
+            <div className="flex items-center gap-2 p-3 bg-gradient-to-r from-[#E2F9B8] via-[#F6FFDE] to-[#A3C957]/40 dark:from-[#A3C957]/20 dark:via-[#F6FFDE]/10 dark:to-[#81B214]/10 border border-[#A3C957] dark:border-[#81B214] rounded-2xl mt-6 shadow-sm">
+              <span className="text-sm text-[#81B214] dark:text-[#A3C957] font-semibold">
                 เลือกแล้ว {selectedUsers.length} รายการ
               </span>
               <div className="flex gap-2 ml-auto">
                 <Button
                   size="sm"
-                  variant="outline"
+                  variant="default"
                   onClick={handleBulkApprove}
-                  className="text-green-600 dark:text-green-400 border-green-300 dark:border-green-700 hover:bg-green-50 dark:hover:bg-green-900/20"
+                  className="rounded-xl bg-gradient-to-r from-[#81B214] to-[#50B003] text-white font-bold shadow hover:from-[#A3C957] hover:to-[#81B214]"
                 >
                   <CheckCircle className="w-4 h-4 mr-2" />
                   อนุมัติทั้งหมด
                 </Button>
                 <Button
                   size="sm"
-                  variant="outline"
+                  variant="destructive"
                   onClick={handleBulkReject}
-                  className="text-red-600 dark:text-red-400 border-red-300 dark:border-red-700 hover:bg-red-50 dark:hover:bg-red-900/20"
+                  className="rounded-xl font-bold shadow"
                 >
                   <XCircle className="w-4 h-4 mr-2" />
                   ปฏิเสธทั้งหมด
@@ -464,6 +463,7 @@ export default function AdminUsersPage() {
                   size="sm"
                   variant="outline"
                   onClick={() => setSelectedUsers([])}
+                  className="rounded-xl"
                 >
                   ยกเลิก
                 </Button>
@@ -471,7 +471,7 @@ export default function AdminUsersPage() {
             </div>
           )}
 
-          <div className="mt-4 text-right">
+          <div className="mt-6 text-right">
             <Button
               variant="outline"
               onClick={() => {
@@ -479,7 +479,7 @@ export default function AdminUsersPage() {
                 setFilterRole("all");
                 setFilterStatus("all");
               }}
-              className="dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-600"
+              className="rounded-xl border-[#A3C957] dark:border-[#81B214] text-[#81B214] dark:text-[#A3C957] font-semibold hover:bg-[#E2F9B8]/60 dark:hover:bg-[#A3C957]/20 bg-white/80 dark:bg-gray-800/80 shadow"
             >
               <Filter className="mr-2 h-4 w-4" />
               ล้างตัวกรอง

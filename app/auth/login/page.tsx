@@ -15,11 +15,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import {
-  signInWithEmail,
-  signInWithGoogle,
-  signInWithFacebook,
-} from "@/lib/auth";
+import { signIn } from "next-auth/react";
 import { DemoNotice } from "@/components/demo-notice";
 import { Facebook, Mail, Lock, LogIn } from "lucide-react";
 // Removed: import { isSupabaseConfigured } from "@/lib/supabase"
@@ -29,7 +25,7 @@ const isDemoMode = true;
 
 export default function LoginPage() {
   const [email, setEmail] = useState("admin@example.com");
-  const [password, setPassword] = useState("admin123");
+  const [password, setPassword] = useState("admin1234");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const router = useRouter();
@@ -38,54 +34,30 @@ export default function LoginPage() {
     e.preventDefault();
     setLoading(true);
     setError("");
-
-    const { data, error: authError } = await signInWithEmail(email, password);
-
-    if (authError) {
-      setError(authError.message);
-    } else if (data?.user) {
-      // Demo mode handles localStorage internally in lib/auth.ts
+    const res = await signIn("credentials", {
+      redirect: false,
+      username: email,
+      password,
+    });
+    if (res?.error) {
+      setError(res.error);
+    } else {
       router.push("/dashboard");
     }
-
     setLoading(false);
   };
 
   const handleGoogleLogin = async () => {
     setLoading(true);
     setError("");
-
-    const { data, error: authError } = await signInWithEmail(
-      "alumni@example.com",
-      "alumni123"
-    ); //await signInWithGoogle();
-
-    if (authError) {
-      setError((authError as any)?.message || "เกิดข้อผิดพลาดในการเข้าสู่ระบบ");
-    } else if (data?.user) {
-      // Demo mode handles localStorage internally in lib/auth.ts
-      router.push("/dashboard");
-    }
-
+    await signIn("google", { callbackUrl: "/dashboard" });
     setLoading(false);
   };
 
   const handleFacebookLogin = async () => {
     setLoading(true);
     setError("");
-
-    const { data, error: authError } = await signInWithEmail(
-      "pending@example.com",
-      "pending123"
-    ); // await signInWithFacebook();
-
-    if (authError) {
-      setError((authError as any)?.message || "เกิดข้อผิดพลาดในการเข้าสู่ระบบ");
-    } else if (data?.user) {
-      // Demo mode handles localStorage internally in lib/auth.ts
-      router.push("/dashboard");
-    }
-
+    await signIn("facebook", { callbackUrl: "/dashboard" });
     setLoading(false);
   };
 

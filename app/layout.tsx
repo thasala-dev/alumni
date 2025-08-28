@@ -2,7 +2,7 @@ import type React from "react";
 import type { Metadata } from "next";
 import { IBM_Plex_Sans_Thai } from "next/font/google";
 import "./globals.css";
-import { ThemeProvider } from "@/components/theme-provider";
+import AppProviders from "./app-providers";
 
 const ibmPlexSansThai = IBM_Plex_Sans_Thai({
   subsets: ["thai", "latin"],
@@ -12,7 +12,7 @@ const ibmPlexSansThai = IBM_Plex_Sans_Thai({
 export const metadata: Metadata = {
   title: "ระบบศิษย์เก่าสำนักเภสัชศาสตร์ - มหาวิทยาลัยวลัยลักษณ์",
   description:
-    "ระบบเครือข่ายศิษย์เก่าสำนักเภสัชศาสตร์ มหาวิทยาลัยวลัยลักษณ์ เชื่อมต่อเภสัชกรทั่วประเทศ แลกเปลี่ยนประสบการณ์วิชาชีพ และร่วมพัฒนาวงการเภสัชกรรม",
+    "ระบบเครือข่ายศิษย์เก่าสำนักเภสัชศาสตร์ มหาวิทยาลัยวลัยลักษณ์ เชื่อมต่อเภสัชกรทั่วประเทศ แลกเปลี่ยนประสบการณ์ และร่วมพัฒนาวงการเภสัชกรรม",
   keywords:
     "ศิษย์เก่า, เภสัชศาสตร์, วลัยลักษณ์, เภสัชกร, เครือข่าย, มหาวิทยาลัย, pharmacy, alumni",
   generator: "v0.dev",
@@ -34,14 +34,9 @@ export default function RootLayout({
           " min-h-screen bg-gray-100 dark:bg-neutral-800"
         }
       >
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="light"
-          enableSystem
-          disableTransitionOnChange
-        >
+        <AppProviders>
           <main className="flex-1 min-w-0">{children}</main>
-        </ThemeProvider>
+        </AppProviders>
       </body>
     </html>
   );

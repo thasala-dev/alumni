@@ -65,8 +65,8 @@ export default function AlumniSearchBox() {
           setQuery(e.target.value);
           setShow(true);
         }}
-        onFocus={() => setShow(true)}
-        onBlur={() => setTimeout(() => setShow(false), 150)}
+        // onFocus={() => setShow(true)}
+        // onBlur={() => setTimeout(() => setShow(false), 150)}
         placeholder="ค้นหาศิษย์เก่า..."
         className="rounded-full px-4 py-1.5 bg-gray-100 dark:bg-neutral-800 border border-gray-200 dark:border-neutral-700 text-sm focus:outline-none focus:ring-2 focus:ring-[#81B214] w-full"
         aria-label="ค้นหาศิษย์เก่า"

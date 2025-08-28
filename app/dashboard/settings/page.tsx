@@ -204,7 +204,7 @@ export default function SettingsPage() {
       <div className="space-y-6">
         <div className="animate-pulse">
           <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded w-1/4 mb-6"></div>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
             <div className="h-96 bg-gray-200 dark:bg-gray-700 rounded"></div>
             <div className="h-96 bg-gray-200 dark:bg-gray-700 rounded"></div>
           </div>
@@ -215,7 +215,7 @@ export default function SettingsPage() {
 
   return (
     <div className="space-y-6">
-      <div className="relative overflow-hidden rounded-xl bg-gradient-to-r from-blue-50 to-purple-50 dark:from-gray-900 dark:to-gray-800 p-6 shadow-lg">
+      <div className="relative overflow-hidden rounded-xl bg-gradient-to-r from-blue-50 to-purple-50 dark:from-gray-900 dark:to-gray-800 p-4 shadow-lg">
         <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-purple-500/10 dark:from-blue-500/5 dark:to-purple-500/5"></div>
         <div className="relative">
           <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400 bg-clip-text text-transparent">
@@ -284,7 +284,7 @@ export default function SettingsPage() {
                 อัปเดตข้อมูลส่วนตัวและข้อมูลการศึกษาของคุณ
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-6 p-6">
+            <CardContent className="space-y-6 p-4">
               {/* ...existing profile form... */}
               <div className="flex items-center space-x-4">
                 <div className="relative">
@@ -463,7 +463,7 @@ export default function SettingsPage() {
                 กำหนดว่าใครสามารถเห็นข้อมูลส่วนตัวของคุณได้บ้าง
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-4 p-6">
+            <CardContent className="space-y-4 p-4">
               {/* ...existing privacy form... */}
               <div className="flex items-center justify-between p-4 rounded-lg bg-gray-50 dark:bg-gray-800/50 hover:bg-gray-100 dark:hover:bg-gray-700/50 transition-colors">
                 <Label
@@ -586,7 +586,7 @@ export default function SettingsPage() {
                 จัดการการแจ้งเตือนที่คุณต้องการรับ
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-4 p-6">
+            <CardContent className="space-y-4 p-4">
               {/* ...existing notification form... */}
               <div className="flex items-center justify-between p-4 rounded-lg bg-gray-50 dark:bg-gray-800/50 hover:bg-gray-100 dark:hover:bg-gray-700/50 transition-colors">
                 <Label
@@ -665,8 +665,8 @@ export default function SettingsPage() {
                 เลือกโหมดแสงสว่างหรือโหมดมืดสำหรับการใช้งาน
               </CardDescription>
             </CardHeader>
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between p-6 rounded-xl bg-gradient-to-r from-blue-50 to-purple-50 dark:from-gray-800 dark:to-gray-700 border border-gray-200 dark:border-gray-600">
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between p-4 rounded-xl bg-gradient-to-r from-blue-50 to-purple-50 dark:from-gray-800 dark:to-gray-700 border border-gray-200 dark:border-gray-600">
                 <div className="flex items-center gap-3">
                   <Sun
                     className={`h-6 w-6 transition-colors ${
@@ -708,7 +708,7 @@ export default function SettingsPage() {
       )}
 
       {/* Save Button and Status */}
-      <div className="flex justify-end items-center gap-4 p-6 bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm rounded-xl border border-gray-200 dark:border-gray-700">
+      <div className="flex justify-end items-center gap-4 p-4 bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm rounded-xl border border-gray-200 dark:border-gray-700">
         {saveSuccess && (
           <div className="flex items-center px-4 py-2 rounded-lg bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800">
             <CheckCircle className="mr-2 h-4 w-4 text-green-600 dark:text-green-400" />

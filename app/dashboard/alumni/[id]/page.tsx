@@ -228,7 +228,7 @@ export default function AlumniDetailPage() {
           <div className="h-10 w-10 bg-gray-200 dark:bg-gray-700 rounded-full"></div>
           <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded w-48"></div>
         </div>
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
           <div className="lg:col-span-2 space-y-6">
             <div className="h-64 bg-gray-200 dark:bg-gray-700 rounded-lg"></div>
             <div className="h-48 bg-gray-200 dark:bg-gray-700 rounded-lg"></div>
@@ -261,13 +261,13 @@ export default function AlumniDetailPage() {
 
   return (
     <div className="space-y-6">
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         {/* Main Content */}
         <div className="lg:col-span-2 space-y-6">
           {/* Profile Header Card */}
           <Card className="backdrop-blur-sm bg-white/80 dark:bg-gray-900/80 border-gray-200/50 dark:border-gray-700/50 shadow-xl hover:shadow-2xl transition-all duration-300">
             <CardContent className="p-8">
-              <div className="flex flex-col md:flex-row items-start md:items-center gap-6">
+              <div className="flex flex-col md:flex-row items-start md:items-center gap-4">
                 <div className="relative">
                   <Avatar className="h-32 w-32 ring-4 ring-blue-100 dark:ring-gray-700 shadow-lg">
                     <AvatarImage
@@ -369,7 +369,7 @@ export default function AlumniDetailPage() {
                   เกี่ยวกับฉัน
                 </CardTitle>
               </CardHeader>
-              <CardContent className="p-6">
+              <CardContent className="p-4">
                 <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
                   {alumni.bio}
                 </p>
@@ -386,7 +386,7 @@ export default function AlumniDetailPage() {
                   ความสำเร็จและรางวัล
                 </CardTitle>
               </CardHeader>
-              <CardContent className="p-6">
+              <CardContent className="p-4">
                 <div className="space-y-3">
                   {alumni.achievements.map((achievement, index) => (
                     <div
@@ -413,7 +413,7 @@ export default function AlumniDetailPage() {
                   ความสนใจ
                 </CardTitle>
               </CardHeader>
-              <CardContent className="p-6">
+              <CardContent className="p-4">
                 <div className="flex flex-wrap gap-2">
                   {alumni.interests.map((interest, index) => (
                     <Badge
@@ -440,7 +440,7 @@ export default function AlumniDetailPage() {
                 ข้อมูลติดต่อ
               </CardTitle>
             </CardHeader>
-            <CardContent className="p-6 space-y-4">
+            <CardContent className="p-4 space-y-4">
               <div className="space-y-3">
                 <div className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
                   <Mail className="h-4 w-4 text-gray-500" />
@@ -528,7 +528,7 @@ export default function AlumniDetailPage() {
                   ข้อมูลการทำงาน
                 </CardTitle>
               </CardHeader>
-              <CardContent className="p-6 space-y-4">
+              <CardContent className="p-4 space-y-4">
                 <div>
                   <p className="text-sm text-gray-500 dark:text-gray-400">
                     บริษัท/องค์กร
@@ -571,7 +571,7 @@ export default function AlumniDetailPage() {
                 ข้อมูลการศึกษา
               </CardTitle>
             </CardHeader>
-            <CardContent className="p-6 space-y-4">
+            <CardContent className="p-4 space-y-4">
               <div>
                 <p className="text-sm text-gray-500 dark:text-gray-400">
                   สาขาวิชา

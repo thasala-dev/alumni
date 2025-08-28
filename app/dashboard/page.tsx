@@ -457,7 +457,7 @@ export default function DashboardPage() {
   return (
     <div className="max-w-4xl mx-auto space-y-6">
       {/* Quick Stats */}
-      <div className="grid grid-cols-4 gap-4 mb-6">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
         <Card className="text-center p-4 bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 border-blue-200 dark:border-blue-800">
           <Users className="h-8 w-8 mx-auto text-blue-600 dark:text-blue-400 mb-2" />
           <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">
@@ -465,6 +465,15 @@ export default function DashboardPage() {
           </div>
           <div className="text-sm text-gray-600 dark:text-gray-400">
             ศิษย์เก่า
+          </div>
+        </Card>
+        <Card className="text-center p-4 bg-gradient-to-br from-orange-50 to-orange-100 dark:from-orange-900/20 dark:to-orange-800/20 border-orange-200 dark:border-orange-800">
+          <MapPin className="h-8 w-8 mx-auto text-orange-600 dark:text-orange-400 mb-2" />
+          <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+            45
+          </div>
+          <div className="text-sm text-gray-600 dark:text-gray-400">
+            จังหวัด
           </div>
         </Card>
         <Card className="text-center p-4 bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-800/20 border-green-200 dark:border-green-800">
@@ -485,54 +494,44 @@ export default function DashboardPage() {
             กระทู้ศิษย์เก่า
           </div>
         </Card>
-        <Card className="text-center p-4 bg-gradient-to-br from-orange-50 to-orange-100 dark:from-orange-900/20 dark:to-orange-800/20 border-orange-200 dark:border-orange-800">
-          <MapPin className="h-8 w-8 mx-auto text-orange-600 dark:text-orange-400 mb-2" />
-          <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-            45
-          </div>
-          <div className="text-sm text-gray-600 dark:text-gray-400">
-            จังหวัด
-          </div>
-        </Card>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         {/* Main Feed */}
         <div className="lg:col-span-2 space-y-6">
           {/* Create Post */}
           <Card className="bg-white dark:bg-gray-900/80 border-gray-200 dark:border-gray-700 p-0">
-            <CardContent className="p-6">
+            <CardContent className="p-4">
               <div className="flex items-start space-x-4">
                 <Avatar className="w-12 h-12">
                   <img
                     src="/placeholder-user.jpg"
                     alt="Your avatar"
-                    className="w-full h-full object-cover rounded-full"
+                    className="w-full h-full object-cover rounded-full border border-[#81B214] border-2"
                   />
                 </Avatar>
                 <div className="flex-1">
                   <Textarea
-                    placeholder="แลกเปลี่ยนประสบการณ์วิชาชีพ หรือข้อมูลข่าวสารที่น่าสนใจ..."
+                    placeholder="แลกเปลี่ยนประสบการณ์ หรือข้อมูลข่าวสารที่น่าสนใจ..."
                     value={newPost}
                     onChange={(e) => setNewPost(e.target.value)}
                     className="resize-none border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder:text-gray-500 dark:placeholder:text-gray-400 focus:border-blue-500 dark:focus:border-blue-400"
-                    rows={6}
+                    rows={8}
                   />
                   <div className="flex justify-between items-center mt-4">
                     <div className="flex space-x-2">
                       <Button
                         variant="ghost"
-                        size="sm"
                         className="text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200"
                       >
-                        <Camera className="h-4 w-4 mr-2" />
+                        <Camera className="h-4 w-4 mr-2 text-[#81B214]" />
                         รูปภาพ
                       </Button>
                     </div>
                     <Button
                       onClick={handlePost}
                       disabled={!newPost.trim()}
-                      className="bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white"
+                      className="bg-[#81B214] text-white"
                     >
                       <Send className="h-4 w-4 mr-2" />
                       โพสต์
@@ -549,7 +548,7 @@ export default function DashboardPage() {
               key={post.id}
               className="bg-white dark:bg-gray-900/80 border-gray-200 dark:border-gray-700 p-0"
             >
-              <CardContent className="p-6">
+              <CardContent className="p-4">
                 {/* Post Header */}
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex items-center space-x-3">
@@ -557,7 +556,7 @@ export default function DashboardPage() {
                       <img
                         src={post.author.avatar}
                         alt={post.author.name}
-                        className="w-full h-full object-cover rounded-full"
+                        className="w-full h-full object-cover rounded-full border border-[#81B214] border-2"
                       />
                     </Avatar>
                     <div>
@@ -610,7 +609,6 @@ export default function DashboardPage() {
                   <div className="flex items-center space-x-6">
                     <Button
                       variant="ghost"
-                      size="sm"
                       onClick={() => handleLike(post.id)}
                       className={`${
                         post.isLiked
@@ -619,7 +617,7 @@ export default function DashboardPage() {
                       }`}
                     >
                       <Heart
-                        className={`h-4 w-4 mr-2 ${
+                        className={`h-8 w-8 mr-2 ${
                           post.isLiked ? "fill-current" : ""
                         }`}
                       />
@@ -627,11 +625,10 @@ export default function DashboardPage() {
                     </Button>
                     <Button
                       variant="ghost"
-                      size="sm"
                       onClick={() => toggleComments(post.id)}
                       className="text-gray-600 hover:text-blue-600"
                     >
-                      <MessageCircle className="h-4 w-4 mr-2" />
+                      <MessageCircle className="h-8 w-8 mr-2" />
                       {post.comments.length}
                     </Button>
                   </div>
@@ -651,7 +648,7 @@ export default function DashboardPage() {
                             <img
                               src={comment.avatar}
                               alt={comment.author}
-                              className="w-full h-full object-cover rounded-full"
+                              className="w-full h-full object-cover rounded-full border border-[#81B214] border-2"
                             />
                           </Avatar>
                           <div className="flex-1">
@@ -677,7 +674,7 @@ export default function DashboardPage() {
                         <img
                           src="/placeholder-user.jpg"
                           alt="Your avatar"
-                          className="w-full h-full object-cover rounded-full"
+                          className="w-full h-full object-cover rounded-full border border-[#81B214] border-2"
                         />
                       </Avatar>
                       <div className="flex-1 flex space-x-2">
@@ -690,13 +687,13 @@ export default function DashboardPage() {
                               [post.id]: e.target.value,
                             })
                           }
-                          className="resize-none"
+                          className="resize-none border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder:text-gray-500 dark:placeholder:text-gray-400 focus:border-blue-500 dark:focus:border-blue-400"
                           rows={2}
                         />
                         <Button
-                          size="sm"
                           onClick={() => handleComment(post.id)}
                           disabled={!newComment[post.id]?.trim()}
+                          className="bg-[#81B214] text-white"
                         >
                           <Send className="h-4 w-4" />
                         </Button>
@@ -728,7 +725,7 @@ export default function DashboardPage() {
           {/* End of posts message */}
           {!hasMore && !loading && (
             <Card className="bg-white dark:bg-gray-900/80 border-gray-200 dark:border-gray-700">
-              <CardContent className="p-6">
+              <CardContent className="p-4">
                 <div className="text-center text-gray-500 dark:text-gray-400">
                   <MessageSquare className="h-8 w-8 mx-auto mb-2 opacity-50" />
                   <p>คุณได้อ่านโพสต์ทั้งหมดแล้ว</p>
