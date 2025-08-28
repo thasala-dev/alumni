@@ -31,7 +31,7 @@ export default function RootLayout({
       <body
         className={
           ibmPlexSansThai.className +
-          " min-h-screen bg-gray-100 dark:bg-neutral-800"
+          " min-h-screen bg-gray-50 dark:bg-gray-800"
         }
       >
         <AppProviders>

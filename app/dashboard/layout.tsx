@@ -13,7 +13,10 @@ interface DashboardLayoutProps {
 export default function DashboardLayout({ children }: DashboardLayoutProps) {
   const router = useRouter();
   const { data: session, status } = useSession();
-  const user = session?.user;
+  type UserWithStatus = typeof session extends { user?: infer U }
+    ? U & { status?: string }
+    : { status?: string };
+  const user = session?.user as UserWithStatus;
 
   useEffect(() => {
     if (status === "loading") return;
@@ -21,11 +24,14 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
       router.push("/auth/login");
       return;
     }
-    // ตัวอย่าง: redirect เฉพาะกรณี user มี status พิเศษ (ถ้ามีใน session)
-    // if (user.status === "PENDING_APPROVAL") {
-    //   router.push("/auth/verify-identity");
-    //   return;
-    // }
+
+    if (user.status === "PENDING_APPROVAL") {
+      router.push("/auth/pending-approval");
+      return;
+    } else if (user.status === "UNREGISTERED") {
+      router.push("/auth/verify-identity");
+      return;
+    }
   }, [user, status, router]);
 
   const handleSignOut = async () => {

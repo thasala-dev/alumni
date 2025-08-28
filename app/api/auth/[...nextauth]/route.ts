@@ -22,7 +22,7 @@ export const authOptions: NextAuthOptions = {
       },
       async authorize(credentials) {
         if (!credentials?.username || !credentials?.password) return null;
-        const user = await prisma.users.findFirst({
+        const user = await prisma.User.findFirst({
           where: {
             OR: [
               { username: credentials.username },
@@ -32,7 +32,6 @@ export const authOptions: NextAuthOptions = {
         });
         if (!user) return null;
 
-        console.log("Found user:", user);
         const isValid = await compare(credentials.password, user.password_hash);
         if (!isValid) return null;
         // Return only required fields for NextAuth session/jwt
@@ -57,11 +56,92 @@ export const authOptions: NextAuthOptions = {
     strategy: "jwt" as SessionStrategy,
   },
   callbacks: {
+    async signIn({ user, account, profile }) {
+      // Only run for OAuth (Google, Facebook)
+      if (account?.provider === "google" || account?.provider === "facebook") {
+        if (!user?.email) return false;
+
+        // ค้นหา user ที่ email ตรงกัน
+        const existingUser = await prisma.User.findUnique({
+          where: { email: user.email },
+        });
+
+        if (existingUser) {
+          // เช็คว่ามี account record สำหรับ provider นี้หรือยัง
+          const existingAccount = await prisma.Account.findUnique({
+            where: {
+              provider_providerAccountId: {
+                provider: account.provider,
+                providerAccountId: account.providerAccountId,
+              },
+            },
+          });
+          if (!existingAccount) {
+            // สร้าง account record เชื่อมกับ user เดิม
+            await prisma.Account.create({
+              data: {
+                userId: existingUser.id,
+                type: account.type,
+                provider: account.provider,
+                providerAccountId: account.providerAccountId,
+                refresh_token: account.refresh_token,
+                access_token: account.access_token,
+                expires_at: account.expires_at,
+                token_type: account.token_type,
+                scope: account.scope,
+                id_token: account.id_token,
+                session_state: account.session_state,
+              },
+            });
+          }
+          // อัปเดตข้อมูล user (optional)
+          await prisma.User.update({
+            where: { id: existingUser.id },
+            data: {
+              username: user.name || undefined,
+              name: user.name || undefined,
+              image: user.image || undefined,
+            },
+          });
+        } else {
+          // ถ้าไม่มี user เดิม สร้างใหม่
+          await prisma.User.create({
+            data: {
+              email: user.email,
+              username: user.name || undefined,
+              name: user.name || undefined,
+              image: user.image || undefined,
+              role: "alumni",
+              status: "UNREGISTERED",
+              accounts: {
+                create: {
+                  type: account.type,
+                  provider: account.provider,
+                  providerAccountId: account.providerAccountId,
+                  refresh_token: account.refresh_token,
+                  access_token: account.access_token,
+                  expires_at: account.expires_at,
+                  token_type: account.token_type,
+                  scope: account.scope,
+                  id_token: account.id_token,
+                  session_state: account.session_state,
+                },
+              },
+            },
+          });
+        }
+      }
+      return true;
+    },
     async session({ session, token, user }: any) {
+      const userInDb = await prisma.User.findFirst({
+        where: { id: token.sub },
+      });
       // Attach user id and role to session
       if (token && session.user) {
         session.user.id = token.sub;
-        session.user.role = token.role;
+        session.user.role = userInDb?.role || token.role;
+        session.user.status = userInDb?.status;
       }
       return session;
     },

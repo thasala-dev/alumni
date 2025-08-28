@@ -49,96 +49,28 @@ import {
   UserPlus,
   UserMinus,
   AlertCircle,
+  ShieldQuestion,
 } from "lucide-react";
 import { getCurrentUser, type User } from "@/lib/auth";
 import { useSession } from "next-auth/react";
-
-// Extend the User interface for admin view
-interface AdminUser extends User {
-  national_id?: string;
-  birth_date?: string;
-  created_at: string;
-}
-
-// Demo data for users
-const demoUsers: AdminUser[] = [
-  {
-    id: "admin-user",
-    email: "admin@pharmacy.wu.ac.th",
-    role: "admin",
-    status: "APPROVED",
-    national_id: "1111111111111",
-    birth_date: "1990-01-01",
-    created_at: "2023-01-01T10:00:00Z",
-  },
-  {
-    id: "pharmacist-1",
-    email: "somchai.jadee@gmail.com",
-    role: "alumni",
-    status: "APPROVED",
-    national_id: "2222222222222",
-    birth_date: "1992-05-15",
-    created_at: "2023-02-01T11:00:00Z",
-  },
-  {
-    id: "pending-pharmacist-1",
-    email: "piyaporn.saijay@yahoo.com",
-    role: "alumni",
-    status: "PENDING_APPROVAL",
-    national_id: "3333333333333",
-    birth_date: "1995-08-20",
-    created_at: "2024-08-01T12:00:00Z",
-  },
-  {
-    id: "pending-pharmacist-2",
-    email: "anan.rakrian@hotmail.com",
-    role: "alumni",
-    status: "PENDING_APPROVAL",
-    national_id: "4444444444444",
-    birth_date: "1991-11-10",
-    created_at: "2024-08-05T13:00:00Z",
-  },
-  {
-    id: "pending-pharmacist-3",
-    email: "theerasak.tongdee@gmail.com",
-    role: "alumni",
-    status: "PENDING_APPROVAL",
-    national_id: "5555555555555",
-    birth_date: "1988-03-25",
-    created_at: "2024-08-10T14:00:00Z",
-  },
-  {
-    id: "rejected-pharmacist",
-    email: "fake.account@email.com",
-    role: "alumni",
-    status: "REJECTED",
-    national_id: "9999999999999",
-    birth_date: "2000-01-01",
-    created_at: "2024-07-15T14:00:00Z",
-  },
-  {
-    id: "suspended-pharmacist",
-    email: "suspended.user@email.com",
-    role: "alumni",
-    status: "SUSPENDED",
-    national_id: "8888888888888",
-    birth_date: "1985-12-25",
-    created_at: "2023-12-01T14:00:00Z",
-  },
-];
 
 export default function AdminUsersPage() {
   const { data: session, status } = useSession();
 
   const [currentUser, setCurrentUser] = useState<User | null>(null);
-  const [users, setUsers] = useState<AdminUser[]>([]);
+  const [users, setUsers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [filterRole, setFilterRole] = useState<"all" | "admin" | "alumni">(
     "all"
   );
   const [filterStatus, setFilterStatus] = useState<
-    "all" | "PENDING_APPROVAL" | "APPROVED" | "REJECTED" | "SUSPENDED"
+    | "all"
+    | "UNREGISTERED"
+    | "PENDING_APPROVAL"
+    | "APPROVED"
+    | "REJECTED"
+    | "SUSPENDED"
   >("all");
   const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
   const router = useRouter();
@@ -146,20 +78,27 @@ export default function AdminUsersPage() {
   useEffect(() => {
     const initializePage = async () => {
       if (!session || session.user.role !== "admin") {
-        // Redirect if not admin
-        router.push("/dashboard"); // Or to a specific access denied page
+        router.push("/dashboard");
         return;
       }
-
-      // Simulate fetching users
-      await new Promise((resolve) => setTimeout(resolve, 500));
-      setUsers(demoUsers);
+      setLoading(true);
+      try {
+        const res = await fetch("/api/user");
+        if (res.ok) {
+          const data = await res.json();
+          setUsers(data);
+        } else {
+          setUsers([]);
+        }
+      } catch (e) {
+        setUsers([]);
+      }
       setLoading(false);
     };
     initializePage();
-  }, [router]);
+  }, [router, session]);
 
-  const handleUpdateUser = (userId: string, updates: Partial<AdminUser>) => {
+  const handleUpdateUser = (userId: string, updates: Partial<any>) => {
     setUsers((prevUsers) =>
       prevUsers.map((user) =>
         user.id === userId ? { ...user, ...updates } : user
@@ -271,22 +210,22 @@ export default function AdminUsersPage() {
     );
   }
 
-  const getStatusBadgeVariant = (status: AdminUser["status"]) => {
+  const getStatusBadgeVariant = (status: any["status"]) => {
     switch (status) {
       case "APPROVED":
-        return "default";
+        return "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300";
       case "PENDING_APPROVAL":
-        return "secondary";
+        return "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300";
       case "REJECTED":
-        return "destructive";
+        return "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300";
       case "SUSPENDED":
-        return "outline";
+        return "bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300";
       default:
-        return "secondary";
+        return "";
     }
   };
 
-  const getStatusIcon = (status: AdminUser["status"]) => {
+  const getStatusIcon = (status: any["status"]) => {
     switch (status) {
       case "APPROVED":
         return (
@@ -300,6 +239,10 @@ export default function AdminUsersPage() {
         return <XCircle className="h-4 w-4 text-red-600 dark:text-red-400" />;
       case "SUSPENDED":
         return <Ban className="h-4 w-4 text-gray-600 dark:text-gray-400" />;
+      case "UNREGISTERED":
+        return (
+          <ShieldQuestion className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+        );
       default:
         return null;
     }
@@ -308,7 +251,7 @@ export default function AdminUsersPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
+        <h1 className="text-3xl font-bold text-[#81B214]">
           จัดการบัญชีศิษย์เก่า
         </h1>
         <p className="text-gray-600 dark:text-gray-400">
@@ -391,7 +334,7 @@ export default function AdminUsersPage() {
             <div className="relative">
               <Search className="absolute left-3 top-3 h-5 w-5 text-[#81B214] dark:text-[#A3C957]" />
               <Input
-                placeholder="ค้นหาอีเมล, เลขบัตรประชาชน, ชื่อ..."
+                placeholder="ค้นหาอีเมล, ชื่อ..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="pl-11 py-3 rounded-2xl bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-base dark:text-gray-100 dark:placeholder-gray-400 focus:ring-2 focus:ring-[#81B214]/30 focus:border-[#81B214] transition"
@@ -399,9 +342,11 @@ export default function AdminUsersPage() {
             </div>
             <Select
               value={filterRole}
-              onValueChange={(value: "all" | "admin" | "alumni") => setFilterRole(value)}
+              onValueChange={(value: "all" | "admin" | "alumni") =>
+                setFilterRole(value)
+              }
             >
-              <SelectTrigger className="rounded-2xl py-3 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-base dark:text-gray-100 focus:ring-2 focus:ring-[#81B214]/30 focus:border-[#81B214] transition">
+              <SelectTrigger className="w-full rounded-2xl py-3 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-base dark:text-gray-100 focus:ring-2 focus:ring-[#81B214]/30 focus:border-[#81B214] transition">
                 <SelectValue placeholder="กรองตามบทบาท" />
               </SelectTrigger>
               <SelectContent>
@@ -421,7 +366,7 @@ export default function AdminUsersPage() {
                   | "SUSPENDED"
               ) => setFilterStatus(value)}
             >
-              <SelectTrigger className="rounded-2xl py-3 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-base dark:text-gray-100 focus:ring-2 focus:ring-[#81B214]/30 focus:border-[#81B214] transition">
+              <SelectTrigger className="w-full rounded-2xl py-3 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-base dark:text-gray-100 focus:ring-2 focus:ring-[#81B214]/30 focus:border-[#81B214] transition">
                 <SelectValue placeholder="กรองตามสถานะ" />
               </SelectTrigger>
               <SelectContent>
@@ -508,12 +453,7 @@ export default function AdminUsersPage() {
                 <TableHead className="dark:text-gray-300">อีเมล</TableHead>
                 <TableHead className="dark:text-gray-300">บทบาท</TableHead>
                 <TableHead className="dark:text-gray-300">สถานะ</TableHead>
-                <TableHead className="hidden md:table-cell dark:text-gray-300">
-                  เลขบัตรประชาชน
-                </TableHead>
-                <TableHead className="hidden md:table-cell dark:text-gray-300">
-                  วันเกิด
-                </TableHead>
+
                 <TableHead className="hidden lg:table-cell dark:text-gray-300">
                   วันที่สร้าง
                 </TableHead>
@@ -548,20 +488,17 @@ export default function AdminUsersPage() {
                     <TableCell>
                       <div className="flex items-center gap-2">
                         {getStatusIcon(user.status)}
-                        <Badge variant={getStatusBadgeVariant(user.status)}>
+                        <Badge className={getStatusBadgeVariant(user.status)}>
                           {user.status === "PENDING_APPROVAL" && "รออนุมัติ"}
                           {user.status === "APPROVED" && "อนุมัติแล้ว"}
                           {user.status === "REJECTED" && "ถูกปฏิเสธ"}
                           {user.status === "SUSPENDED" && "ถูกระงับ"}
+                          {user.status === "UNREGISTERED" &&
+                            "ยังไม่ได้ลงทะเบียน"}
                         </Badge>
                       </div>
                     </TableCell>
-                    <TableCell className="hidden md:table-cell dark:text-gray-300">
-                      {user.national_id || "-"}
-                    </TableCell>
-                    <TableCell className="hidden md:table-cell dark:text-gray-300">
-                      {user.birth_date || "-"}
-                    </TableCell>
+
                     <TableCell className="hidden lg:table-cell dark:text-gray-300">
                       {new Date(user.created_at).toLocaleDateString("th-TH")}
                     </TableCell>
