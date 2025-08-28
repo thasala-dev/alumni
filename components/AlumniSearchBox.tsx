@@ -67,9 +67,9 @@ export default function AlumniSearchBox() {
         }}
         onFocus={() => setShow(true)}
         onBlur={() => setTimeout(() => setShow(false), 150)}
-        placeholder="ค้นหาเภสัชกรศิษย์เก่า..."
-        className="rounded-full px-4 py-1.5 bg-gray-100 dark:bg-neutral-800 border border-gray-200 dark:border-neutral-700 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 w-full"
-        aria-label="ค้นหาเภสัชกรศิษย์เก่า"
+        placeholder="ค้นหาศิษย์เก่า..."
+        className="rounded-full px-4 py-1.5 bg-gray-100 dark:bg-neutral-800 border border-gray-200 dark:border-neutral-700 text-sm focus:outline-none focus:ring-2 focus:ring-[#81B214] w-full"
+        aria-label="ค้นหาศิษย์เก่า"
         autoComplete="off"
       />
       {show && (
@@ -79,12 +79,12 @@ export default function AlumniSearchBox() {
               <a
                 key={alumni.id}
                 href={`/dashboard/alumni?id=${alumni.id}`}
-                className="flex items-center gap-3 px-4 py-2 hover:bg-blue-50 dark:hover:bg-neutral-800 transition text-gray-800 dark:text-gray-100"
+                className="flex items-center gap-3 px-4 py-2 hover:bg-[#81B214]/10 dark:hover:bg-neutral-800 transition text-gray-800 dark:text-gray-100"
               >
                 <img
                   src={alumni.avatar}
                   alt={alumni.name}
-                  className="h-8 w-8 rounded-full object-cover border border-blue-300"
+                  className="h-8 w-8 rounded-full object-cover border border-[#81B214]"
                 />
                 <div>
                   <div className="font-medium">{alumni.name}</div>

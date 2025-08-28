@@ -57,8 +57,8 @@ export default function NavbarMenuItems() {
   }, []);
 
   const navigation = [
-    { name: "หน้าหลัก", href: "/dashboard", icon: Home },
-    { name: "เภสัชกรศิษย์เก่า", href: "/dashboard/alumni", icon: Users },
+    // { name: "หน้าหลัก", href: "/dashboard", icon: Home },
+    { name: "ศิษย์เก่า", href: "/dashboard/alumni", icon: Users },
     { name: "แผนที่การกระจาย", href: "/dashboard/map", icon: Map },
     { name: "ข่าวสารและงาน", href: "/dashboard/news", icon: Newspaper },
 
@@ -89,35 +89,22 @@ export default function NavbarMenuItems() {
   const getThemeIcon = () => {
     if (!mounted)
       return (
-        <Monitor className="h-5 w-5 text-gray-600 dark:text-gray-300 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-300" />
+        <Monitor className="h-5 w-5 text-gray-600 dark:text-gray-300 group-hover:text-[#81B214] dark:group-hover:text-[#81B214] transition-colors duration-300" />
       );
 
     switch (theme) {
       case "light":
         return (
-          <Sun className="h-5 w-5 text-gray-600 dark:text-gray-300 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-300" />
+          <Sun className="h-5 w-5 text-gray-600 dark:text-gray-300 group-hover:text-[#81B214] dark:group-hover:text-[#81B214] transition-colors duration-300" />
         );
       case "dark":
         return (
-          <Moon className="h-5 w-5 text-gray-600 dark:text-gray-300 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-300" />
+          <Moon className="h-5 w-5 text-gray-600 dark:text-gray-300 group-hover:text-[#81B214] dark:group-hover:text-[#81B214] transition-colors duration-300" />
         );
       default:
         return (
-          <Monitor className="h-5 w-5 text-gray-600 dark:text-gray-300 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-300" />
+          <Monitor className="h-5 w-5 text-gray-600 dark:text-gray-300 group-hover:text-[#81B214] dark:group-hover:text-[#81B214] transition-colors duration-300" />
         );
-    }
-  };
-
-  const getThemeLabel = () => {
-    if (!mounted) return "ระบบ";
-
-    switch (theme) {
-      case "light":
-        return "สว่าง";
-      case "dark":
-        return "มืด";
-      default:
-        return "ระบบ";
     }
   };
 
@@ -128,14 +115,14 @@ export default function NavbarMenuItems() {
         <div className="flex items-center gap-6 w-full md:w-auto">
           <Link href="/dashboard" className="flex items-center gap-3 group">
             {/* <div className="relative">
-              <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-xl transition duration-300"></div>
+              <div className="absolute -inset-1 bg-gradient-to-r from-[#81B214] to-[#50B003] rounded-xl transition duration-300"></div>
               <img
                 src="/placeholder-logo.svg"
                 alt="Logo"
-                className="relative h-10 w-10 rounded-xl bg-gradient-to-br from-blue-600 to-indigo-600 p-2"
+                className="relative h-10 w-10 rounded-xl bg-gradient-to-br from-[#81B214] to-[#50B003] p-2"
               />
             </div> */}
-            <span className="text-2xl font-black bg-gradient-to-r from-blue-700 via-indigo-600 to-blue-800 bg-clip-text text-transparent dark:from-blue-400 dark:via-indigo-400 dark:to-blue-500">
+            <span className="text-2xl font-black text-[#81B214]">
               WU Pharmacy
             </span>
           </Link>
@@ -147,6 +134,15 @@ export default function NavbarMenuItems() {
 
         {/* Desktop Nav */}
         <div className="hidden md:flex items-center gap-4">
+          <Link
+            href="/dashboard"
+            className={`relative flex items-center justify-center p-3 rounded-2xl transition-all duration-300 font-medium group bg-gray-100 dark:bg-[#252728] text-gray-600 dark:text-gray-300 hover:text-[#81B214] hover:bg-[#81B214]/10`}
+            title="หน้าหลัก"
+          >
+            <Home
+              className={`relative h-5 w-5 transition-transform duration-300 group-hover:scale-110 dark:group-hover:text-[#81B214]`}
+            />
+          </Link>
           {navigation.map((item) => {
             const isActive = pathname.startsWith(item.href);
             return (
@@ -156,16 +152,16 @@ export default function NavbarMenuItems() {
                 className={`relative flex items-center justify-center p-3 rounded-2xl transition-all duration-300 font-medium group
                   ${
                     isActive
-                      ? "text-white bg-gradient-to-r from-blue-600 to-indigo-600"
-                      : "bg-gray-100 dark:bg-[#252728] text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50/80 dark:hover:bg-neutral-800/50"
+                      ? "text-white bg-gradient-to-r from-[#81B214] to-[#50B003]"
+                      : "bg-gray-100 dark:bg-[#252728] text-gray-600 dark:text-gray-300 hover:text-[#81B214] hover:bg-[#81B214]/10"
                   }`}
                 title={item.name}
               >
                 {isActive && (
-                  <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl"></div>
+                  <div className="absolute inset-0 bg-gradient-to-r from-[#81B214] to-[#50B003] rounded-2xl"></div>
                 )}
                 <item.icon
-                  className={`relative h-5 w-5 transition-transform duration-300 group-hover:scale-110 ${
+                  className={`relative h-5 w-5 transition-transform duration-300 group-hover:scale-110 dark:group-hover:text-[#81B214]  ${
                     isActive ? "drop-shadow-sm" : ""
                   }`}
                 />
@@ -176,10 +172,10 @@ export default function NavbarMenuItems() {
           {/* Notifications */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <button className="bg-gray-100 dark:bg-[#252728] relative p-3 rounded-2xl hover:bg-blue-50/80 dark:hover:bg-neutral-800/50 transition-all duration-300 group">
-                <Bell className="h-5 w-5 text-gray-600 dark:text-gray-300 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-300" />
+              <button className="bg-gray-100 dark:bg-[#252728] relative p-3 rounded-2xl hover:text-[#81B214] hover:bg-[#81B214]/10 transition-all duration-300 group">
+                <Bell className="h-5 w-5 text-gray-600 dark:text-gray-300 group-hover:text-[#81B214] dark:group-hover:text-[#81B214] transition-colors duration-300" />
                 {notifications.length > 0 && (
-                  <span className="absolute -top-1 -right-1 bg-gradient-to-r from-red-500 to-pink-500 text-white text-xs rounded-full px-1.5 py-0.5 shadow-lg animate-pulse">
+                  <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full px-1.5 py-0.5">
                     {notifications.length}
                   </span>
                 )}
@@ -213,7 +209,7 @@ export default function NavbarMenuItems() {
               <div className="border-t border-gray-100 dark:border-neutral-700 px-6 py-3 text-center bg-gray-50/50 dark:bg-neutral-800/30">
                 <Link
                   href="/dashboard/news"
-                  className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 text-sm font-medium transition-colors duration-200"
+                  className="text-[#81B214] dark:text-[#81B214] hover:text-blue-700 dark:hover:text-blue-300 text-sm font-medium transition-colors duration-200"
                 >
                   ดูการแจ้งเตือนทั้งหมด →
                 </Link>
@@ -224,7 +220,7 @@ export default function NavbarMenuItems() {
           {/* Theme Toggle */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <button className="bg-gray-100 dark:bg-[#252728] relative p-3 rounded-2xl hover:bg-blue-50/80 dark:hover:bg-neutral-800/50 transition-all duration-300 group">
+              <button className="bg-gray-100 dark:bg-[#252728] relative p-3 rounded-2xl hover:text-[#81B214] hover:bg-[#81B214]/10 transition-all duration-300 group">
                 {getThemeIcon()}
               </button>
             </DropdownMenuTrigger>
@@ -239,7 +235,7 @@ export default function NavbarMenuItems() {
                 <Sun className="h-4 w-4 text-gray-600 dark:text-gray-300" />
                 <span className="text-gray-900 dark:text-gray-100">สว่าง</span>
                 {theme === "light" && mounted && (
-                  <div className="ml-auto w-2 h-2 bg-blue-600 rounded-full"></div>
+                  <div className="ml-auto w-2 h-2 bg-[#81B214] rounded-full"></div>
                 )}
               </DropdownMenuItem>
               <DropdownMenuItem
@@ -249,7 +245,7 @@ export default function NavbarMenuItems() {
                 <Moon className="h-4 w-4 text-gray-600 dark:text-gray-300" />
                 <span className="text-gray-900 dark:text-gray-100">มืด</span>
                 {theme === "dark" && mounted && (
-                  <div className="ml-auto w-2 h-2 bg-blue-600 rounded-full"></div>
+                  <div className="ml-auto w-2 h-2 bg-[#81B214] rounded-full"></div>
                 )}
               </DropdownMenuItem>
               <DropdownMenuItem
@@ -261,7 +257,7 @@ export default function NavbarMenuItems() {
                   ตามระบบ
                 </span>
                 {theme === "system" && mounted && (
-                  <div className="ml-auto w-2 h-2 bg-blue-600 rounded-full"></div>
+                  <div className="ml-auto w-2 h-2 bg-[#81B214] rounded-full"></div>
                 )}
               </DropdownMenuItem>
             </DropdownMenuContent>
@@ -279,10 +275,10 @@ export default function NavbarMenuItems() {
                     className="relative h-10 w-10 rounded-full border-2 border-white dark:border-neutral-700 object-cover"
                   />
                 </div>
-                <span className="hidden lg:inline text-sm font-semibold text-gray-800 dark:text-gray-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-300">
+                <span className="hidden lg:inline text-sm font-semibold text-gray-800 dark:text-gray-100 group-hover:text-[#81B214] dark:group-hover:text-[#81B214] transition-colors duration-300">
                   บัญชีของฉัน
                 </span>
-                <ChevronDown className="w-4 h-4 text-gray-500 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-all duration-300 group-hover:rotate-180" />
+                <ChevronDown className="w-4 h-4 text-gray-500 group-hover:text-[#81B214] dark:group-hover:text-[#81B214] transition-all duration-300 group-hover:rotate-180" />
               </button>
             </DropdownMenuTrigger>
             <DropdownMenuContent
@@ -333,14 +329,14 @@ export default function NavbarMenuItems() {
               <SheetTitle className="sr-only">เมนูนำทาง</SheetTitle>
               <div className="p-6 border-b border-gray-100 dark:border-neutral-700 flex items-center gap-3">
                 <div className="relative">
-                  <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-xl blur opacity-75"></div>
+                  <div className="absolute -inset-1 bg-gradient-to-r from-[#81B214] to-[#50B003] rounded-xl blur opacity-75"></div>
                   <img
                     src="/placeholder-logo.svg"
                     alt="Alumni Logo"
-                    className="relative h-10 w-10 rounded-xl bg-gradient-to-br from-blue-600 to-indigo-600 p-2"
+                    className="relative h-10 w-10 rounded-xl bg-gradient-to-br from-[#81B214] to-[#50B003] p-2"
                   />
                 </div>
-                <span className="font-black text-xl bg-gradient-to-r from-blue-700 to-indigo-600 bg-clip-text text-transparent dark:from-blue-400 dark:to-indigo-400">
+                <span className="font-black text-xl bg-gradient-to-r from-blue-700 to-[#50B003] bg-clip-text text-transparent dark:from-blue-400 dark:to-indigo-400">
                   WU Pharmacy
                 </span>
               </div>
@@ -357,7 +353,7 @@ export default function NavbarMenuItems() {
                       className={`flex items-center gap-4 px-4 py-3 rounded-2xl font-medium transition-all duration-300
                         ${
                           isActive
-                            ? "bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg shadow-blue-500/25"
+                            ? "bg-gradient-to-r from-[#81B214] to-[#50B003] text-white shadow-lg shadow-blue-500/25"
                             : "text-gray-800 dark:text-gray-100 hover:bg-blue-50 dark:hover:bg-neutral-800/50"
                         }`}
                     >
@@ -377,42 +373,42 @@ export default function NavbarMenuItems() {
                       onClick={() => setTheme("light")}
                       className={`flex items-center gap-4 px-4 py-3 rounded-2xl font-medium transition-all duration-300 ${
                         theme === "light" && mounted
-                          ? "bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400"
+                          ? "bg-blue-50 dark:bg-blue-900/20 text-[#81B214] dark:text-[#81B214]"
                           : "text-gray-800 dark:text-gray-100 hover:bg-blue-50 dark:hover:bg-neutral-800/50"
                       }`}
                     >
                       <Sun className="h-5 w-5" />
                       <span>สว่าง</span>
                       {theme === "light" && mounted && (
-                        <div className="ml-auto w-2 h-2 bg-blue-600 rounded-full"></div>
+                        <div className="ml-auto w-2 h-2 bg-[#81B214] rounded-full"></div>
                       )}
                     </button>
                     <button
                       onClick={() => setTheme("dark")}
                       className={`flex items-center gap-4 px-4 py-3 rounded-2xl font-medium transition-all duration-300 ${
                         theme === "dark" && mounted
-                          ? "bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400"
+                          ? "bg-blue-50 dark:bg-blue-900/20 text-[#81B214] dark:text-[#81B214]"
                           : "text-gray-800 dark:text-gray-100 hover:bg-blue-50 dark:hover:bg-neutral-800/50"
                       }`}
                     >
                       <Moon className="h-5 w-5" />
                       <span>มืด</span>
                       {theme === "dark" && mounted && (
-                        <div className="ml-auto w-2 h-2 bg-blue-600 rounded-full"></div>
+                        <div className="ml-auto w-2 h-2 bg-[#81B214] rounded-full"></div>
                       )}
                     </button>
                     <button
                       onClick={() => setTheme("system")}
                       className={`flex items-center gap-4 px-4 py-3 rounded-2xl font-medium transition-all duration-300 ${
                         theme === "system" && mounted
-                          ? "bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400"
+                          ? "bg-blue-50 dark:bg-blue-900/20 text-[#81B214] dark:text-[#81B214]"
                           : "text-gray-800 dark:text-gray-100 hover:bg-blue-50 dark:hover:bg-neutral-800/50"
                       }`}
                     >
                       <Monitor className="h-5 w-5" />
                       <span>ตามระบบ</span>
                       {theme === "system" && mounted && (
-                        <div className="ml-auto w-2 h-2 bg-blue-600 rounded-full"></div>
+                        <div className="ml-auto w-2 h-2 bg-[#81B214] rounded-full"></div>
                       )}
                     </button>
                   </div>

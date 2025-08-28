@@ -47,30 +47,29 @@ export default function HomePage() {
   const features = [
     {
       icon: Users,
-      title: "เครือข่ายเภสัชกร",
+      title: "เครือข่ายศิษย์เก่า",
       description:
-        "เชื่อมต่อกับเภสัชกรศิษย์เก่าทั่วประเทศ แลกเปลี่ยนประสบการณ์วิชาชีพและโอกาสในการทำงาน",
+        "เชื่อมต่อกับศิษย์เก่าทั่วประเทศ แลกเปลี่ยนประสบการณ์และโอกาสในการทำงาน",
       color: "text-blue-600",
       bgColor: "bg-blue-50",
     },
     {
       icon: MapPin,
-      title: "แผนที่การกระจายตัวเภสัชกร",
-      description:
-        "ดูการกระจายตัวของเภสัชกรศิษย์เก่าตามจังหวัดและสถานประกอบการ",
+      title: "แผนที่การกระจายตัว",
+      description: "ดูการกระจายตัวของศิษย์เก่าตามจังหวัดและสถานประกอบการ",
       color: "text-green-600",
       bgColor: "bg-green-50",
     },
     {
       icon: Newspaper,
-      title: "ข่าวสารศิษย์เก่าและงาน",
-      description: "อัปเดตข่าวสารวงการเภสัชกรรม ตำแหน่งงาน และกิจกรรมสำคัญ",
+      title: "ข่าวสารศิษย์เก่า",
+      description: "อัปเดตข่าวสารศิษย์เก่า ตำแหน่งงาน และกิจกรรมสำคัญ",
       color: "text-purple-600",
       bgColor: "bg-purple-50",
     },
     {
       icon: MessageSquare,
-      title: "เว็บบอร์ดวิชาชีพ",
+      title: "เว็บบอร์ดศิษย์เก่า",
       description:
         "แลกเปลี่ยนความคิดเห็น ประสบการณ์การทำงาน และความรู้ทางเภสัชศาสตร์",
       color: "text-orange-600",
@@ -81,17 +80,17 @@ export default function HomePage() {
   const recentNews = [
     {
       id: 1,
-      title: "ประกาศการจัดงานประชุมใหญ่สมาคมเภสัชกรศิษย์เก่า ประจำปี 2568",
+      title: "ประกาศการจัดงานประชุมใหญ่สมาคมศิษย์เก่า ประจำปี 2568",
       date: "15 มกราคม 2568",
       excerpt:
-        "เชิญร่วมงานประชุมใหญ่สมาคมเภสัชกรศิษย์เก่า ประจำปี 2568 ในวันเสาร์ที่ 15 มิถุนายน 2568...",
+        "เชิญร่วมงานประชุมใหญ่สมาคมศิษย์เก่า ประจำปี 2568 ในวันเสาร์ที่ 15 มิถุนายน 2568...",
     },
     {
       id: 2,
       title: "เปิดรับสมัครทุนวิจัยด้านเภสัชศาสตร์สำหรับศิษย์เก่า",
       date: "10 มกราคม 2568",
       excerpt:
-        "สมาคมศิษย์เก่าขอประกาศเปิดรับสมัครทุนวิจัยด้านเภสัชศาสตร์สำหรับเภสัชกรศิษย์เก่า...",
+        "สมาคมศิษย์เก่าขอประกาศเปิดรับสมัครทุนวิจัยด้านเภสัชศาสตร์สำหรับศิษย์เก่า...",
     },
     {
       id: 3,
@@ -103,46 +102,46 @@ export default function HomePage() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 dark:from-gray-900 dark:via-gray-950 dark:to-gray-900 relative overflow-x-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-indigo-50 dark:from-gray-900 dark:via-gray-950 dark:to-gray-900 relative overflow-x-hidden">
       {/* Theme Toggle Button */}
       <div className="fixed top-6 right-6 z-50">
         <ThemeToggle />
       </div>
-      
+
       {/* Hero Section */}
       <section className="relative py-24 px-4 sm:px-6 lg:px-8 overflow-hidden">
         {/* Decorative blurred shape */}
         <div
-          className="absolute -top-32 -left-32 w-[500px] h-[500px] bg-gradient-to-br from-blue-200 via-indigo-200 to-purple-200 dark:from-blue-900 dark:via-indigo-900 dark:to-purple-900 rounded-full blur-3xl opacity-40 animate-pulse z-0"
+          className="absolute -top-32 -left-32 w-[500px] h-[500px] bg-gradient-to-br from-green-200 via-indigo-200 to-purple-200 dark:from-green-900 dark:via-indigo-900 dark:to-purple-900 rounded-full blur-3xl opacity-40 animate-pulse z-0"
           aria-hidden="true"
         />
         <div
-          className="absolute -bottom-32 -right-32 w-[400px] h-[400px] bg-gradient-to-tr from-pink-200 via-blue-100 to-indigo-100 dark:from-pink-900 dark:via-blue-900 dark:to-indigo-900 rounded-full blur-3xl opacity-30 animate-pulse z-0"
+          className="absolute -bottom-32 -right-32 w-[400px] h-[400px] bg-gradient-to-tr from-pink-200 via-green-100 to-indigo-100 dark:from-pink-900 dark:via-green-900 dark:to-indigo-900 rounded-full blur-3xl opacity-30 animate-pulse z-0"
           aria-hidden="true"
         />
         <div className="max-w-7xl mx-auto text-center relative z-10">
           <div className="mb-10">
             <Badge
               variant="secondary"
-              className="mb-4 px-5 py-2 text-base rounded-full shadow-md bg-white/80 dark:bg-gray-900/80 backdrop-blur border border-blue-100 dark:border-gray-800 animate-fade-in"
+              className="mb-4 px-5 py-2 text-base rounded-full shadow-md bg-white/80 dark:bg-gray-900/80 backdrop-blur border border-green-100 dark:border-gray-800 animate-fade-in"
             >
               เชื่อมต่อ • แลกเปลี่ยน • พัฒนาวิชาชีพ
             </Badge>
             <h1 className="text-5xl md:text-7xl font-extrabold text-gray-900 dark:text-white mb-6 leading-tight drop-shadow-lg animate-fade-in-up">
               เครือข่าย
-              <span className="text-blue-600 dark:text-blue-400"> เภสัชกร</span>
+              <span className="text-[#81B214]">ศิษย์เก่า</span>
               <br />
               สำนักเภสัชศาสตร์ วลัยลักษณ์
             </h1>
             <p className="text-2xl text-gray-700 dark:text-gray-300 mb-12 max-w-3xl mx-auto leading-relaxed animate-fade-in-up delay-100">
-              เชื่อมต่อกับเภสัชกรศิษย์เก่าทั่วประเทศ แลกเปลี่ยนประสบการณ์วิชาชีพ
-              และร่วมพัฒนาวงการเภสัชกรรมไทยไปด้วยกัน
+              เชื่อมต่อกับศิษย์เก่าทั่วประเทศ
+              แลกเปลี่ยนประสบการณ์และร่วมพัฒนาวงการเภสัชกรรมไทยไปด้วยกัน
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in-up delay-200">
               <Link href="/auth/login">
                 <Button
                   size="lg"
-                  className="w-full sm:w-auto rounded-xl text-xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-lg transition-all duration-200 scale-100 hover:scale-105"
+                  className="w-full sm:w-auto rounded-xl text-xl font-bold bg-gradient-to-r from-[#81B214] to-[#50B003] shadow-lg transition-all duration-200 scale-100 hover:scale-105"
                 >
                   เข้าสู่ระบบ
                   <ArrowRight className="ml-2 h-5 w-5" />
@@ -151,7 +150,7 @@ export default function HomePage() {
               <Button
                 variant="outline"
                 size="lg"
-                className="w-full sm:w-auto bg-white/80 dark:bg-gray-900/80 rounded-xl text-xl font-bold border-gray-300 dark:border-gray-700 hover:border-blue-500 hover:text-blue-600 dark:hover:text-blue-400 shadow transition-all duration-200 scale-100 hover:scale-105"
+                className="w-full sm:w-auto bg-white/80 dark:bg-gray-900/80 rounded-xl text-xl font-bold border-gray-300 dark:border-gray-700 hover:border-[#81B214] hover:text-[#81B214] shadow transition-all duration-200 scale-100 hover:scale-105"
               >
                 เรียนรู้เพิ่มเติม
               </Button>
@@ -159,7 +158,7 @@ export default function HomePage() {
           </div>
           {/* Divider */}
           <div className="w-full flex justify-center my-12 animate-fade-in-up delay-300">
-            <div className="h-1 w-40 bg-gradient-to-r from-blue-400 via-indigo-400 to-purple-400 dark:from-blue-700 dark:via-indigo-700 dark:to-purple-700 rounded-full opacity-60" />
+            <div className="h-1 w-40 bg-gradient-to-r from-[#81B214] to-[#50B003] rounded-full opacity-60" />
           </div>
           {/* Stats */}
         </div>
@@ -172,15 +171,15 @@ export default function HomePage() {
 
             <div className="grid grid-cols-1 gap-10 mt-10 animate-fade-in-up delay-400">
               <div className="text-center group transition-all">
-                <div className="text-5xl md:text-6xl font-extrabold text-blue-600 dark:text-blue-400 mb-2 drop-shadow group-hover:scale-110 transition-transform duration-200">
+                <div className="text-5xl md:text-6xl font-extrabold text-[#81B214] mb-2 drop-shadow group-hover:scale-110 transition-transform duration-200">
                   {stats.totalAlumni.toLocaleString()}
                 </div>
                 <div className="text-gray-700 dark:text-gray-300 text-lg font-medium">
-                  เภสัชกรศิษย์เก่า
+                  ศิษย์เก่า
                 </div>
               </div>
               <div className="text-center group transition-all">
-                <div className="text-5xl md:text-6xl font-extrabold text-green-600 dark:text-green-400 mb-2 drop-shadow group-hover:scale-110 transition-transform duration-200">
+                <div className="text-5xl md:text-6xl font-extrabold text-blue-600 dark:text-blue-400 mb-2 drop-shadow group-hover:scale-110 transition-transform duration-200">
                   {stats.provinces}
                 </div>
                 <div className="text-gray-700 dark:text-gray-300 text-lg font-medium">
@@ -200,7 +199,7 @@ export default function HomePage() {
                   {stats.totalDiscussions}
                 </div>
                 <div className="text-gray-700 dark:text-gray-300 text-lg font-medium">
-                  กระทู้วิชาชีพ
+                  กระทู้ศิษย์เก่า
                 </div>
               </div>
             </div>
@@ -209,16 +208,15 @@ export default function HomePage() {
       </section>
 
       {/* Features Section */}
-      <section className="py-20 bg-gradient-to-br from-blue-400 via-blue-600 to-indigo-600 dark:from-blue-900 dark:via-blue-950 dark:to-indigo-900">
+      <section className="py-20 bg-gradient-to-br from-[#81B214] to-[#50B003]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-extrabold text-white mb-4">
-              ฟีเจอร์สำหรับเภสัชกร
+              ฟีเจอร์สำหรับศิษย์เก่า
             </h2>
             {/* Bolder title */}
             <p className="text-xl text-gray-300 max-w-2xl mx-auto leading-relaxed">
-              ระบบเครือข่ายเภสัชกรที่ครบครันและใช้งานง่าย
-              เพื่อการพัฒนาวิชาชีพร่วมกัน
+              ระบบเครือข่ายศิษย์เก่าที่ครบครันและใช้งานง่าย เพื่อการเชื่อมต่อกัน
             </p>
           </div>
 
@@ -236,9 +234,7 @@ export default function HomePage() {
                     className={`inline-flex p-4 rounded-full ${feature.bgColor} dark:bg-gray-800 mb-6 shadow-sm`}
                   >
                     {/* Larger padding, added shadow */}
-                    <feature.icon
-                      className={`h-7 w-7 ${feature.color} dark:text-blue-300`}
-                    />
+                    <feature.icon className={`h-7 w-7 ${feature.color}`} />
                     {/* Larger icon */}
                   </div>
                   <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-3">
@@ -317,7 +313,7 @@ export default function HomePage() {
                     <Button
                       variant="link"
                       size="sm"
-                      className="p-0 text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-semibold"
+                      className="p-0 text-[#81B214] hover:text-[#50B003] font-semibold"
                     >
                       {" "}
                       {/* Changed to link variant, bolder */}
@@ -333,16 +329,16 @@ export default function HomePage() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 bg-gradient-to-br from-blue-400 via-blue-600 to-indigo-600 dark:from-blue-900 dark:via-blue-950 dark:to-indigo-900 text-white">
+      <section className="py-20 bg-gradient-to-br from-[#81B214] to-[#50B003] text-white">
         {" "}
         {/* Ensured text is white */}
         <div className="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl md:text-4xl font-extrabold mb-4">
-            พร้อมเข้าร่วมเครือข่ายเภสัชกรแล้วหรือยัง?
+            พร้อมเข้าร่วมเครือข่ายศิษย์เก่า ส.เภสัชศาสตร์แล้วหรือยัง?
           </h2>{" "}
           {/* Bolder title */}
           <p className="text-xl text-blue-100 dark:text-blue-200 mb-10 leading-relaxed">
-            เข้าสู่ระบบเพื่อเชื่อมต่อกับเภสัชกรศิษย์เก่าและเข้าถึงฟีเจอร์ทั้งหมด
+            เข้าสู่ระบบเพื่อเชื่อมต่อกับศิษย์เก่าและเข้าถึงฟีเจอร์ทั้งหมด
           </p>{" "}
           {/* Increased spacing, relaxed leading */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -350,7 +346,7 @@ export default function HomePage() {
               <Button
                 size="lg"
                 variant="secondary"
-                className="w-full sm:w-auto rounded-lg text-lg font-semibold bg-white dark:bg-gray-900 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-gray-800 hover:text-blue-700 dark:hover:text-blue-300 transition-colors"
+                className="w-full sm:w-auto rounded-lg text-lg font-semibold bg-white dark:bg-gray-900 text-[#81B214] hover:bg-green-50 dark:hover:bg-gray-800  transition-colors"
               >
                 {" "}
                 {/* Enhanced secondary button */}
@@ -362,7 +358,7 @@ export default function HomePage() {
               <Button
                 size="lg"
                 variant="secondary"
-                className="w-full sm:w-auto rounded-lg text-lg font-semibold bg-white dark:bg-gray-900 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-gray-800 hover:text-blue-700 dark:hover:text-blue-300 transition-colors"
+                className="w-full sm:w-auto rounded-lg text-lg font-semibold bg-white dark:bg-gray-900 text-[#81B214] hover:bg-green-50 dark:hover:bg-gray-800 transition-colors"
               >
                 {" "}
                 {/* Enhanced secondary button */}
@@ -381,14 +377,12 @@ export default function HomePage() {
             {" "}
             {/* Increased gap */}
             <div className="col-span-1 md:col-span-2">
-              <h3 className="text-2xl font-bold mb-4">
-                เครือข่ายเภสัชกรศิษย์เก่า
-              </h3>
+              <h3 className="text-2xl font-bold mb-4">เครือข่ายศิษย์เก่า</h3>
               <p className="text-gray-300 mb-6 max-w-md leading-relaxed">
                 {" "}
                 {/* Increased spacing, relaxed leading */}
-                เชื่อมต่อเภสัชกรศิษย์เก่าทั่วประเทศ
-                สร้างเครือข่ายวิชาชีพที่แข็งแกร่ง และร่วมพัฒนาวงการเภสัชกรรมไทย
+                เชื่อมต่อศิษย์เก่าทั่วประเทศ สร้างเครือข่ายวิชาชีพที่แข็งแกร่ง
+                และร่วมพัฒนาวงการเภสัชกรรมไทย
               </p>
               <div className="flex space-x-4">
                 <Button
@@ -424,7 +418,7 @@ export default function HomePage() {
                   >
                     {" "}
                     {/* Larger text */}
-                    ข้อมูลเภสัชกรศิษย์เก่า
+                    ข้อมูลศิษย์เก่า
                   </Link>
                 </li>
                 <li>
@@ -492,7 +486,7 @@ export default function HomePage() {
             {" "}
             {/* Increased spacing */}
             <p>
-              &copy; 2025 ระบบเครือข่ายเภสัชกรศิษย์เก่า สำนักเภสัชศาสตร์
+              &copy; 2025 ระบบเครือข่ายศิษย์เก่า สำนักเภสัชศาสตร์
               มหาวิทยาลัยวลัยลักษณ์. สงวนลิขสิทธิ์.
             </p>
           </div>

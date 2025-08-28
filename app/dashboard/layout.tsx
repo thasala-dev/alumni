@@ -54,7 +54,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
         currentUser.email === "pending@example.com" &&
         currentUser.status === "PENDING_APPROVAL"
       ) {
-        router.push("/auth/pending-approval");
+        router.push("/auth/verify-identity");
         return;
       }
 

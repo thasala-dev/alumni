@@ -121,12 +121,13 @@ export function MapOverview() {
     return theme === "dark" ? "#374151" : "#e5e7eb"; // Darker gray for dark mode, light gray for light mode
   };
 
+  // Green color scale for province fill, matching legend
   const getProvinceColor = (count: number): string => {
-    if (count >= 200) return theme === "dark" ? "#3b82f6" : "#1e40af"; // Brighter blue in dark mode
-    if (count >= 100) return theme === "dark" ? "#60a5fa" : "#3b82f6"; // Light blue in dark mode
-    if (count >= 50) return theme === "dark" ? "#93c5fd" : "#60a5fa"; // Lighter blue in dark mode
-    if (count >= 20) return theme === "dark" ? "#bfdbfe" : "#93c5fd"; // Much lighter in dark mode
-    return theme === "dark" ? "#dbeafe" : "#dbeafe"; // Lightest blue for both
+    if (count >= 200) return "#81B214"; // Deep green
+    if (count >= 100) return "#A3C957"; // Medium green
+    if (count >= 50) return "#C7E77F"; // Light green
+    if (count >= 20) return "#E2F9B8"; // Very light green
+    return "#F6FFDE"; // Pale green
   };
 
   const handleGeographyClick = (geo: any) => {
@@ -186,9 +187,9 @@ export function MapOverview() {
             projection="geoMercator"
             projectionConfig={{
               scale: 2900,
-              center: [100.5, 13.3],
+              center: [101.5, 13.3],
             }}
-            // width={800}
+            width={450}
             height={800}
             className="w-full h-full"
           >
@@ -220,14 +221,14 @@ export function MapOverview() {
                           outline: "none",
                         },
                         hover: {
-                          fill: theme === "dark" ? "#60a5fa" : "#1e40af",
+                          fill: "#81B214",
                           stroke: theme === "dark" ? "#1f2937" : "#ffffff",
                           strokeWidth: 1,
                           outline: "none",
                           cursor: "pointer",
                         },
                         pressed: {
-                          fill: theme === "dark" ? "#3b82f6" : "#1e3a8a",
+                          fill: "#81B214",
                           stroke: theme === "dark" ? "#1f2937" : "#ffffff",
                           strokeWidth: 1,
                           outline: "none",
@@ -301,9 +302,9 @@ export function MapOverview() {
 
             {/* Province Icon */}
             <div className="flex items-start gap-3">
-              <div className="flex-shrink-0 w-8 h-8 bg-blue-100 dark:bg-blue-900/50 rounded-lg flex items-center justify-center mt-0.5">
+              <div className="flex-shrink-0 w-8 h-8 bg-green-100 dark:bg-green-900/50 rounded-lg flex items-center justify-center mt-0.5">
                 <svg
-                  className="w-4 h-4 text-blue-600 dark:text-blue-400"
+                  className="w-4 h-4 text-[#81B214]"
                   fill="currentColor"
                   viewBox="0 0 20 20"
                 >
@@ -316,7 +317,7 @@ export function MapOverview() {
               </div>
 
               <div className="flex-1 min-w-0">
-                <div className="font-semibold text-gray-900 dark:text-gray-100 text-sm leading-tight">
+                <div className="text-xl font-semibold text-[#81B214] text-sm leading-tight">
                   {tooltip.data.provinceName || "ไม่ระบุ"}
                 </div>
                 <div className="flex items-center gap-2 mt-1">
@@ -325,11 +326,6 @@ export function MapOverview() {
                       {tooltip.data.alumniCount || 0} คน
                     </span>
                   </div>
-                  {tooltip.data.provinceCode && (
-                    <span className="text-xs text-gray-400 dark:text-gray-500 font-mono">
-                      {tooltip.data.provinceCode}
-                    </span>
-                  )}
                 </div>
               </div>
             </div>
@@ -345,7 +341,7 @@ export function MapOverview() {
             <div className="flex items-center gap-2">
               <div
                 className="w-3 h-3 rounded"
-                style={{ backgroundColor: "#1e40af" }}
+                style={{ backgroundColor: "#81B214" }}
               ></div>
               <span className="text-gray-700 dark:text-gray-300 text-xs">
                 200+ คน
@@ -354,7 +350,7 @@ export function MapOverview() {
             <div className="flex items-center gap-2">
               <div
                 className="w-3 h-3 rounded"
-                style={{ backgroundColor: "#3b82f6" }}
+                style={{ backgroundColor: "#A3C957" }}
               ></div>
               <span className="text-gray-700 dark:text-gray-300 text-xs">
                 100-199 คน
@@ -363,7 +359,7 @@ export function MapOverview() {
             <div className="flex items-center gap-2">
               <div
                 className="w-3 h-3 rounded"
-                style={{ backgroundColor: "#60a5fa" }}
+                style={{ backgroundColor: "#C7E77F" }}
               ></div>
               <span className="text-gray-700 dark:text-gray-300 text-xs">
                 50-99 คน
@@ -372,7 +368,7 @@ export function MapOverview() {
             <div className="flex items-center gap-2">
               <div
                 className="w-3 h-3 rounded"
-                style={{ backgroundColor: "#93c5fd" }}
+                style={{ backgroundColor: "#E2F9B8" }}
               ></div>
               <span className="text-gray-700 dark:text-gray-300 text-xs">
                 20-49 คน
@@ -381,7 +377,7 @@ export function MapOverview() {
             <div className="flex items-center gap-2">
               <div
                 className="w-3 h-3 rounded"
-                style={{ backgroundColor: "#dbeafe" }}
+                style={{ backgroundColor: "#F6FFDE" }}
               ></div>
               <span className="text-gray-700 dark:text-gray-300 text-xs">
                 1-19 คน

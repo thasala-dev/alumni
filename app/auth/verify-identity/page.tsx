@@ -34,12 +34,13 @@ export default function VerifyIdentityPage() {
     setLoading(true);
     setError("");
 
+    console.log("Submitting identity verification:", nationalId);
     // Basic validation
-    if (nationalId.length !== 13) {
-      setError("เลขบัตรประชาชนต้องมี 13 หลัก");
-      setLoading(false);
-      return;
-    }
+    // if (nationalId.length !== 13) {
+    //   setError("เลขบัตรประชาชนต้องมี 13 หลัก");
+    //   setLoading(false);
+    //   return;
+    // }
 
     // Simulate identity verification
     await new Promise((resolve) => setTimeout(resolve, 2000));
@@ -50,7 +51,7 @@ export default function VerifyIdentityPage() {
       birthDate,
     });
 
-    router.push("/auth/pending-approval");
+    router.push("/auth/verify-identity");
     setLoading(false);
   };
 
@@ -87,35 +88,25 @@ export default function VerifyIdentityPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 p-4">
-      <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-purple-500/5 to-pink-500/5 dark:from-blue-500/10 dark:via-purple-500/10 dark:to-pink-500/10"></div>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-50 via-white to-indigo-50 dark:from-gray-900 dark:via-gray-950 dark:to-gray-900 relative overflow-x-hidden p-4 transition-all duration-500">
+      <div
+        className="absolute -top-32 -left-32 w-[500px] h-[500px] bg-gradient-to-br from-green-200 via-indigo-200 to-purple-200 dark:from-green-900 dark:via-indigo-900 dark:to-purple-900 rounded-full blur-3xl opacity-40 animate-pulse z-0"
+        aria-hidden="true"
+      />
 
       <div className="relative w-full max-w-md">
-        {/* Back Button */}
-        <Button
-          onClick={handleBack}
-          variant="ghost"
-          className="mb-6 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
-        >
-          <ArrowLeft className="mr-2 h-4 w-4" />
-          กลับ
-        </Button>
-
         {/* Main Card */}
-        <Card className="backdrop-blur-sm bg-white/80 dark:bg-gray-900/80 border-gray-200/50 dark:border-gray-700/50 shadow-2xl hover:shadow-3xl transition-all duration-300">
-          <CardHeader className="text-center space-y-4 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-gray-800 dark:to-gray-700 rounded-t-lg p-8">
-            <div className="mx-auto w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center shadow-lg">
-              <Shield className="h-8 w-8 text-white" />
+        <Card className="backdrop-blur-xl bg-white/90 dark:bg-gray-900/90 border-0 shadow-2xl rounded-3xl animate-fade-in-up border border-white/20 dark:border-[#81B214]/40">
+          <div className="text-center space-y-4 rounded-t-lg p-4 pb-0 flex items-center gap-4 justify-center">
+            <div className="w-14 h-14 bg-[#81B214]/10 dark:bg-[#A3C957]/10 rounded-full flex items-center justify-center shadow-inner">
+              <Shield className="h-8 w-8 text-[#81B214] dark:text-[#A3C957]" />
             </div>
-            <CardTitle className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400 bg-clip-text text-transparent">
+            <div className="text-2xl font-extrabold text-[#81B214] drop-shadow">
               ยืนยันตัวตน
-            </CardTitle>
-            <CardDescription className="text-gray-600 dark:text-gray-300 text-lg">
-              กรุณากรอกข้อมูลเพื่อยืนยันตัวตนของคุณ
-            </CardDescription>
-          </CardHeader>
+            </div>
+          </div>
 
-          <CardContent className="p-8">
+          <CardContent className="p-4">
             <form onSubmit={handleSubmit} className="space-y-6">
               {/* National ID Field */}
               <div className="space-y-2">
@@ -123,7 +114,7 @@ export default function VerifyIdentityPage() {
                   htmlFor="nationalId"
                   className="flex items-center font-medium text-gray-900 dark:text-white"
                 >
-                  <User className="mr-2 h-4 w-4 text-blue-500" />
+                  <User className="mr-2 h-4 w-4 text-[#81B214] dark:text-[#A3C957]" />
                   เลขบัตรประชาชน
                 </Label>
                 <Input
@@ -134,7 +125,7 @@ export default function VerifyIdentityPage() {
                   placeholder="X-XXXX-XXXXX-XX-X"
                   maxLength={17} // Including dashes
                   required
-                  className="h-12 text-lg focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400 border-gray-300 dark:border-gray-600 bg-white/50 dark:bg-gray-800/50"
+                  className="h-12 text-lg focus-visible:ring-2 focus-visible:ring-[#81B214] dark:focus-visible:ring-[#A3C957] border-gray-300 dark:border-gray-600 bg-white/50 dark:bg-gray-800/50"
                 />
                 <p className="text-xs text-gray-500 dark:text-gray-400">
                   กรอกเลขบัตรประชาชน 13 หลัก
@@ -147,7 +138,7 @@ export default function VerifyIdentityPage() {
                   htmlFor="birthDate"
                   className="flex items-center font-medium text-gray-900 dark:text-white"
                 >
-                  <Calendar className="mr-2 h-4 w-4 text-purple-500" />
+                  <Calendar className="mr-2 h-4 w-4 text-[#A3C957] dark:text-[#C7E77F]" />
                   วันเกิด
                 </Label>
                 <Input
@@ -156,7 +147,7 @@ export default function VerifyIdentityPage() {
                   value={birthDate}
                   onChange={(e) => setBirthDate(e.target.value)}
                   required
-                  className="h-12 text-lg focus-visible:ring-2 focus-visible:ring-purple-500 dark:focus-visible:ring-purple-400 border-gray-300 dark:border-gray-600 bg-white/50 dark:bg-gray-800/50"
+                  className="h-12 text-lg focus-visible:ring-2 focus-visible:ring-[#A3C957] dark:focus-visible:ring-[#C7E77F] border-gray-300 dark:border-gray-600 bg-white/50 dark:bg-gray-800/50"
                 />
               </div>
 
@@ -172,7 +163,7 @@ export default function VerifyIdentityPage() {
               <Button
                 type="submit"
                 disabled={loading}
-                className="w-full h-12 text-lg font-semibold bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+                className="w-full h-12 text-lg font-semibold bg-[#81B214] hover:bg-[#A3C957] text-white shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
               >
                 {loading ? (
                   <>
@@ -189,10 +180,10 @@ export default function VerifyIdentityPage() {
             </form>
 
             {/* Information Notice */}
-            <div className="mt-8 p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
+            <div className="mt-8 p-4 bg-[#E2F9B8] dark:bg-[#A3C957]/20 border border-[#A3C957] dark:border-[#81B214] rounded-lg">
               <div className="flex items-start">
-                <Shield className="mr-3 h-5 w-5 text-blue-500 flex-shrink-0 mt-0.5" />
-                <div className="text-sm text-blue-700 dark:text-blue-300">
+                <Shield className="mr-3 h-5 w-5 text-[#81B214] dark:text-[#A3C957] flex-shrink-0 mt-0.5" />
+                <div className="text-sm text-[#81B214] dark:text-[#A3C957]">
                   <p className="font-medium mb-1">ข้อมูลความปลอดภัย</p>
                   <p className="text-xs leading-relaxed">
                     ข้อมูลของคุณจะถูกเข้ารหัสและส่งไปยังผู้ดูแลระบบเพื่อตรวจสอบและอนุมัติ
@@ -201,30 +192,8 @@ export default function VerifyIdentityPage() {
                 </div>
               </div>
             </div>
-
-            {/* Steps Indicator */}
-            <div className="mt-6 flex items-center justify-center space-x-2 text-xs text-gray-500 dark:text-gray-400">
-              <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-              <span>ยืนยันตัวตน</span>
-              <div className="w-8 h-0.5 bg-gray-300 dark:bg-gray-600"></div>
-              <div className="w-2 h-2 bg-gray-300 dark:bg-gray-600 rounded-full"></div>
-              <span>รออนุมัติ</span>
-              <div className="w-8 h-0.5 bg-gray-300 dark:bg-gray-600"></div>
-              <div className="w-2 h-2 bg-gray-300 dark:bg-gray-600 rounded-full"></div>
-              <span>เสร็จสิ้น</span>
-            </div>
           </CardContent>
         </Card>
-
-        {/* University Info */}
-        <div className="mt-6 text-center">
-          <p className="text-sm text-gray-600 dark:text-gray-400">
-            คณะเภสัชศาสตร์ มหาวิทยาลัยวลัยลักษณ์
-          </p>
-          <p className="text-xs text-gray-500 dark:text-gray-500 mt-1">
-            ระบบเครือข่ายศิษย์เก่า
-          </p>
-        </div>
       </div>
     </div>
   );

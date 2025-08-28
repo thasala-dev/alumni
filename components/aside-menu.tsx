@@ -27,7 +27,7 @@ export default function AsideMenuItems() {
           className="flex items-center gap-3 px-4 py-2 rounded-lg text-gray-800 dark:text-gray-100 hover:bg-blue-50 dark:hover:bg-neutral-800 font-medium transition"
         >
           <Users className="h-5 w-5 text-green-600" />
-          เภสัชกรศิษย์เก่า
+          ศิษย์เก่า
         </a>
         <a
           href="/dashboard/map"

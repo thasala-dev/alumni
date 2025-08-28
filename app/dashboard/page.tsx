@@ -392,7 +392,7 @@ export default function DashboardPage() {
         author: {
           name: "เภสัชกร คุณ",
           avatar: "/placeholder-user.jpg",
-          title: "เภสัชกรศิษย์เก่า WU",
+          title: "ศิษย์เก่า WU",
           graduationYear: 2020,
         },
         content: newPost,
@@ -464,7 +464,7 @@ export default function DashboardPage() {
             2,847
           </div>
           <div className="text-sm text-gray-600 dark:text-gray-400">
-            เภสัชกรศิษย์เก่า
+            ศิษย์เก่า
           </div>
         </Card>
         <Card className="text-center p-4 bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-800/20 border-green-200 dark:border-green-800">
@@ -482,7 +482,7 @@ export default function DashboardPage() {
             298
           </div>
           <div className="text-sm text-gray-600 dark:text-gray-400">
-            กระทู้วิชาชีพ
+            กระทู้ศิษย์เก่า
           </div>
         </Card>
         <Card className="text-center p-4 bg-gradient-to-br from-orange-50 to-orange-100 dark:from-orange-900/20 dark:to-orange-800/20 border-orange-200 dark:border-orange-800">
@@ -797,7 +797,7 @@ export default function DashboardPage() {
                 className="w-full justify-start text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
               >
                 <Users className="h-4 w-4 mr-3" />
-                ค้นหาเภสัชกรศิษย์เก่า
+                ค้นหาศิษย์เก่า
               </Button>
               <Button
                 variant="ghost"

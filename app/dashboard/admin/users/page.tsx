@@ -308,10 +308,10 @@ export default function AdminUsersPage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
-          จัดการบัญชีเภสัชกรศิษย์เก่า
+          จัดการบัญชีศิษย์เก่า
         </h1>
         <p className="text-gray-600 dark:text-gray-400">
-          ยืนยันและจัดการบัญชีเภสัชกรศิษย์เก่าที่ลงทะเบียนใหม่
+          ยืนยันและจัดการบัญชีศิษย์เก่าที่ลงทะเบียนใหม่
         </p>
       </div>
 
@@ -408,7 +408,7 @@ export default function AdminUsersPage() {
               <SelectContent>
                 <SelectItem value="all">ทุกบทบาท</SelectItem>
                 <SelectItem value="admin">ผู้ดูแลระบบ</SelectItem>
-                <SelectItem value="alumni">เภสัชกรศิษย์เก่า</SelectItem>
+                <SelectItem value="alumni">ศิษย์เก่า</SelectItem>
               </SelectContent>
             </Select>
             <Select
