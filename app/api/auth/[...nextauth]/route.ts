@@ -5,6 +5,7 @@ import NextAuth, {
 import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
 import FacebookProvider from "next-auth/providers/facebook";
+import AppleProvider from "next-auth/providers/apple";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import { PrismaClient } from "@prisma/client";
 import { compare } from "bcryptjs";
@@ -50,6 +51,10 @@ export const authOptions: NextAuthOptions = {
     FacebookProvider({
       clientId: process.env.FACEBOOK_CLIENT_ID!,
       clientSecret: process.env.FACEBOOK_CLIENT_SECRET!,
+    }),
+    AppleProvider({
+      clientId: process.env.APPLE_ID!,
+      clientSecret: process.env.APPLE_SECRET!,
     }),
   ],
   session: {
@@ -137,7 +142,7 @@ export const authOptions: NextAuthOptions = {
       return true;
     },
     async session({ session, token, user }: any) {
-      const userInDb = await prisma.User.findFirst({
+      const userInDb = await prisma.user.findFirst({
         where: { id: token.sub },
       });
       // Attach user id and role to session

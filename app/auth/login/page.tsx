@@ -25,8 +25,8 @@ import { ThemeToggle } from "@/components/theme-toggle";
 const isDemoMode = true;
 
 export default function LoginPage() {
-  const [email, setEmail] = useState("admin");
-  const [password, setPassword] = useState("admin1234");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const router = useRouter();
@@ -62,9 +62,16 @@ export default function LoginPage() {
     setLoading(false);
   };
 
+  const handleAppleLogin = async () => {
+    setLoading(true);
+    setError("");
+    await signIn("apple", { callbackUrl: "/dashboard" });
+    setLoading(false);
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-50 via-white to-indigo-50 dark:from-gray-900 dark:via-gray-950 dark:to-gray-900 relative overflow-x-hidden p-4 transition-all duration-500">
-      <div className="fixed top-4 right-6 z-50">
+      <div className="fixed top-4 right-4 z-50">
         <ThemeToggle />
       </div>
       <div
@@ -106,7 +113,7 @@ export default function LoginPage() {
                 variant="outline"
                 className="w-full bg-white/80 dark:bg-gray-800/80 rounded-xl border-[#A3C957] dark:border-[#81B214] hover:border-[#81B214] dark:hover:border-[#A3C957] hover:text-[#81B214] dark:hover:text-[#A3C957] hover:bg-[#E2F9B8]/60 dark:hover:bg-[#A3C957]/20 shadow-md hover:shadow-lg transition-all duration-300 scale-100 hover:scale-105 backdrop-blur-sm"
                 onClick={handleFacebookLogin}
-                disabled={loading}
+                disabled={loading || !!1}
               >
                 <img
                   src="/images/facebook.png"
@@ -114,6 +121,15 @@ export default function LoginPage() {
                   className="h-5 w-5"
                 />
                 <span className="font-medium">เข้าสู่ระบบด้วย Facebook</span>
+              </Button>
+              <Button
+                variant="outline"
+                className="w-full bg-white/80 dark:bg-gray-800/80 rounded-xl border-[#A3C957] dark:border-[#81B214] hover:border-[#81B214] dark:hover:border-[#A3C957] hover:text-[#81B214] dark:hover:text-[#A3C957] hover:bg-[#E2F9B8]/60 dark:hover:bg-[#A3C957]/20 shadow-md hover:shadow-lg transition-all duration-300 scale-100 hover:scale-105 backdrop-blur-sm"
+                onClick={handleAppleLogin}
+                disabled={loading}
+              >
+                <img src="/images/apple.png" alt="Apple Logo" className="h-5" />
+                <span className="font-medium">เข้าสู่ระบบด้วย Apple</span>
               </Button>
             </div>
 
