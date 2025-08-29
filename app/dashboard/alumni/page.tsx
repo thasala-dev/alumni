@@ -138,7 +138,7 @@ export default function AlumniPage() {
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 dark:text-gray-500" />
               {/* Centered icon */}
               <Input
-                placeholder="ค้นหาชื่อ, สาขา, บริษัท..."
+                placeholder="ค้นหาชื่อ นามสกุล สถานที่ทำงาน ตำแหน่งงาน"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="pl-10 rounded-lg focus-visible:ring-blue-500 bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100 placeholder:text-gray-500 dark:placeholder:text-gray-400"

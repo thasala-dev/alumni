@@ -334,7 +334,7 @@ export default function AdminUsersPage() {
             <div className="relative">
               <Search className="absolute left-3 top-3 h-5 w-5 text-[#81B214] dark:text-[#A3C957]" />
               <Input
-                placeholder="ค้นหาอีเมล, ชื่อ..."
+                placeholder="ค้นหาอีเมล ชื่อ นามสกุล สถานที่ทำงาน ตำแหน่งงาน"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="pl-11 py-3 rounded-2xl bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-base dark:text-gray-100 dark:placeholder-gray-400 focus:ring-2 focus:ring-[#81B214]/30 focus:border-[#81B214] transition"

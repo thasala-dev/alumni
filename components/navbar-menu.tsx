@@ -34,6 +34,8 @@ import {
   Moon,
   Monitor,
   Home,
+  Paperclip,
+  ChartSpline,
 } from "lucide-react";
 import { signOut } from "next-auth/react";
 import { useSession } from "next-auth/react";
@@ -81,7 +83,7 @@ export default function NavbarMenuItems() {
     // { name: "หน้าหลัก", href: "/dashboard", icon: Home },
     { name: "ศิษย์เก่า", href: "/dashboard/alumni", icon: Users },
     { name: "แผนที่การกระจาย", href: "/dashboard/map", icon: Map },
-    { name: "ข่าวสารและงาน", href: "/dashboard/news", icon: Newspaper },
+    { name: "ข่าวสารศิษย์เก่า", href: "/dashboard/news", icon: Newspaper },
 
     ...(session?.user?.role === "admin"
       ? [
@@ -90,8 +92,19 @@ export default function NavbarMenuItems() {
             href: "/dashboard/admin/users",
             icon: UserPlus,
           },
+          {
+            name: "รายงาน",
+            href: "/dashboard/report",
+            icon: ChartSpline,
+          },
         ]
-      : []),
+      : [
+          {
+            name: "กระทู้ศิษย์เก่า",
+            href: "/dashboard/discussion",
+            icon: MessageSquare,
+          },
+        ]),
   ];
 
   const handleSignOut = async () => {
@@ -194,7 +207,7 @@ export default function NavbarMenuItems() {
                 {notifications.map((n) => (
                   <DropdownMenuItem
                     key={n.id}
-                    className="px-6 py-4 text-sm hover:bg-blue-50/50 dark:hover:bg-neutral-800/50 transition-colors duration-200"
+                    className="px-6 py-4 text-sm hover:bg-[#81B214]/10/50 dark:hover:bg-neutral-800/50 transition-colors duration-200"
                   >
                     <div className="flex items-start gap-3">
                       <div className="h-2 w-2 mt-2 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full shadow-sm" />
@@ -235,7 +248,7 @@ export default function NavbarMenuItems() {
             >
               <DropdownMenuItem
                 onClick={() => setTheme("light")}
-                className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-blue-50 dark:hover:bg-neutral-800/50 transition-all duration-200"
+                className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-[#81B214]/10 dark:hover:bg-neutral-800/50 transition-all duration-200"
               >
                 <Sun className="h-4 w-4 text-gray-600 dark:text-gray-300" />
                 <span className="text-gray-900 dark:text-gray-100">สว่าง</span>
@@ -245,7 +258,7 @@ export default function NavbarMenuItems() {
               </DropdownMenuItem>
               <DropdownMenuItem
                 onClick={() => setTheme("dark")}
-                className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-blue-50 dark:hover:bg-neutral-800/50 transition-all duration-200"
+                className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-[#81B214]/10 dark:hover:bg-neutral-800/50 transition-all duration-200"
               >
                 <Moon className="h-4 w-4 text-gray-600 dark:text-gray-300" />
                 <span className="text-gray-900 dark:text-gray-100">มืด</span>
@@ -255,7 +268,7 @@ export default function NavbarMenuItems() {
               </DropdownMenuItem>
               <DropdownMenuItem
                 onClick={() => setTheme("system")}
-                className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-blue-50 dark:hover:bg-neutral-800/50 transition-all duration-200"
+                className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-[#81B214]/10 dark:hover:bg-neutral-800/50 transition-all duration-200"
               >
                 <Monitor className="h-4 w-4 text-gray-600 dark:text-gray-300" />
                 <span className="text-gray-900 dark:text-gray-100">
@@ -271,7 +284,7 @@ export default function NavbarMenuItems() {
           {/* User avatar */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <button className="flex items-center gap-3 py-2 rounded-2xl hover:bg-blue-50/80 dark:hover:bg-neutral-800/50 transition-all duration-300 group">
+              <button className="flex items-center gap-3 py-2 rounded-2xl hover:bg-[#81B214]/10/80 dark:hover:bg-neutral-800/50 transition-all duration-300 group">
                 <div className="relative">
                   <div className="absolute -inset-0.5 rounded-full transition duration-300"></div>
                   <img
@@ -293,7 +306,7 @@ export default function NavbarMenuItems() {
               <DropdownMenuItem asChild>
                 <Link
                   href="/dashboard/settings"
-                  className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-blue-50 dark:hover:bg-neutral-800/50 transition-all duration-200"
+                  className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-[#81B214]/10 dark:hover:bg-neutral-800/50 transition-all duration-200"
                 >
                   <div className="p-1.5 rounded-lg bg-gray-100 dark:bg-neutral-800">
                     <Settings className="w-4 h-4 text-gray-600 dark:text-gray-400" />
@@ -335,7 +348,7 @@ export default function NavbarMenuItems() {
               <nav className="flex flex-col gap-2 p-4">
                 <button
                   onClick={() => handleNavClick("/dashboard")}
-                  className={`flex items-center gap-4 px-4 py-3 rounded-2xl font-medium transition-all duration-300 text-gray-800 dark:text-gray-100 hover:bg-blue-50 dark:hover:bg-neutral-800/50`}
+                  className={`flex items-center gap-4 px-4 py-3 rounded-2xl font-medium transition-all duration-300 text-gray-800 dark:text-gray-100 hover:bg-[#81B214]/10 dark:hover:bg-neutral-800/50`}
                 >
                   <Home className="h-5 w-5" />
                   <span>หน้าหลัก</span>
@@ -350,7 +363,7 @@ export default function NavbarMenuItems() {
                     ${
                       isActive
                         ? "bg-gradient-to-r from-[#81B214] to-[#50B003] text-white shadow-lg shadow-blue-500/25"
-                        : "text-gray-800 dark:text-gray-100 hover:bg-blue-50 dark:hover:bg-neutral-800/50"
+                        : "text-gray-800 dark:text-gray-100 hover:bg-[#81B214]/10 dark:hover:bg-neutral-800/50"
                     }`}
                     >
                       <item.icon className="h-5 w-5" />
@@ -369,7 +382,7 @@ export default function NavbarMenuItems() {
                       className={`flex items-center gap-4 px-4 py-3 rounded-2xl font-medium transition-all duration-300 ${
                         theme === "light" && mounted
                           ? "bg-blue-50 dark:bg-blue-900/20 text-[#81B214] dark:text-[#81B214]"
-                          : "text-gray-800 dark:text-gray-100 hover:bg-blue-50 dark:hover:bg-neutral-800/50"
+                          : "text-gray-800 dark:text-gray-100 hover:bg-[#81B214]/10 dark:hover:bg-neutral-800/50"
                       }`}
                     >
                       <Sun className="h-5 w-5" />
@@ -383,7 +396,7 @@ export default function NavbarMenuItems() {
                       className={`flex items-center gap-4 px-4 py-3 rounded-2xl font-medium transition-all duration-300 ${
                         theme === "dark" && mounted
                           ? "bg-blue-50 dark:bg-blue-900/20 text-[#81B214] dark:text-[#81B214]"
-                          : "text-gray-800 dark:text-gray-100 hover:bg-blue-50 dark:hover:bg-neutral-800/50"
+                          : "text-gray-800 dark:text-gray-100 hover:bg-[#81B214]/10 dark:hover:bg-neutral-800/50"
                       }`}
                     >
                       <Moon className="h-5 w-5" />
@@ -397,7 +410,7 @@ export default function NavbarMenuItems() {
                       className={`flex items-center gap-4 px-4 py-3 rounded-2xl font-medium transition-all duration-300 ${
                         theme === "system" && mounted
                           ? "bg-blue-50 dark:bg-blue-900/20 text-[#81B214] dark:text-[#81B214]"
-                          : "text-gray-800 dark:text-gray-100 hover:bg-blue-50 dark:hover:bg-neutral-800/50"
+                          : "text-gray-800 dark:text-gray-100 hover:bg-[#81B214]/10 dark:hover:bg-neutral-800/50"
                       }`}
                     >
                       <Monitor className="h-5 w-5" />

@@ -9,26 +9,25 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Plus, MessageSquare, Folder, Search } from "lucide-react";
+import {
+  Plus,
+  MessageSquare,
+  Folder,
+  Search,
+  Briefcase,
+  Bot,
+  Calendar,
+  Quote,
+} from "lucide-react";
 // Removed: import { supabase, isSupabaseConfigured } from "../../../lib/supabase"
 import { getCurrentUser } from "@/lib/auth";
 
-interface DiscussionCategory {
-  id: string;
-  name: string;
-  description: string;
-  created_at: string;
-  topic_count?: number; // To store the count of topics in this category
-}
-
-// isDemoMode is now always true as we are using mock data
-const isDemoMode = true;
-
 // Demo data for categories
-const demoCategories: DiscussionCategory[] = [
+const demoCategories: any[] = [
   {
     id: "1",
     name: "ทั่วไป",
+    icon: <Folder className="h-5 w-5 text-blue-600" />,
     description: "หัวข้อสนทนาทั่วไปสำหรับศิษย์เก่า",
     created_at: "2024-01-01T00:00:00Z",
     topic_count: 15,
@@ -36,6 +35,7 @@ const demoCategories: DiscussionCategory[] = [
   {
     id: "2",
     name: "หางาน",
+    icon: <Briefcase className="h-5 w-5 text-emerald-600" />,
     description: "แชร์ข้อมูลการหางานและโอกาสทางอาชีพ",
     created_at: "2024-01-05T00:00:00Z",
     topic_count: 8,
@@ -43,6 +43,7 @@ const demoCategories: DiscussionCategory[] = [
   {
     id: "3",
     name: "เทคโนโลยี",
+    icon: <Bot className="h-5 w-5 text-yellow-600" />,
     description: "อัปเดตเทคโนโลยีและแนวโน้มใหม่ๆ",
     created_at: "2024-01-10T00:00:00Z",
     topic_count: 22,
@@ -50,6 +51,7 @@ const demoCategories: DiscussionCategory[] = [
   {
     id: "4",
     name: "กิจกรรม",
+    icon: <Calendar className="h-5 w-5 text-pink-600" />,
     description: "ประชาสัมพันธ์กิจกรรมและงานสังสรรค์",
     created_at: "2024-01-15T00:00:00Z",
     topic_count: 5,
@@ -57,6 +59,7 @@ const demoCategories: DiscussionCategory[] = [
   {
     id: "5",
     name: "คำถาม-คำตอบ",
+    icon: <Quote className="h-5 w-5 text-rose-600" />,
     description: "ถาม-ตอบปัญหาต่างๆ",
     created_at: "2024-01-20T00:00:00Z",
     topic_count: 10,
@@ -64,7 +67,7 @@ const demoCategories: DiscussionCategory[] = [
 ];
 
 export default function DiscussionBoardPage() {
-  const [categories, setCategories] = useState<DiscussionCategory[]>([]);
+  const [categories, setCategories] = useState<any[]>([]);
   const [loading, setLoading] = useState(true); // Start loading to simulate fetch
   const [user, setUser] = useState<any | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
@@ -108,19 +111,11 @@ export default function DiscussionBoardPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
-            เว็บบอร์ดสนทนา
-          </h1>
+          <h1 className="text-3xl font-bold text-[#81B214]">กระทู้ศิษย์เก่า</h1>
           <p className="text-gray-600 dark:text-gray-400">
-            เลือกหมวดหมู่เพื่อดูหรือสร้างกระทู้ (ข้อมูลตัวอย่าง)
+            เลือกหมวดหมู่เพื่อดูหรือสร้างกระทู้
           </p>
         </div>
-        {user?.role === "admin" && (
-          <Button className="dark:bg-blue-600 dark:hover:bg-blue-700">
-            <Plus className="mr-2 h-4 w-4" />
-            เพิ่มหมวดหมู่ใหม่
-          </Button>
-        )}
       </div>
 
       {/* Search */}
@@ -141,8 +136,8 @@ export default function DiscussionBoardPage() {
           <Link key={category.id} href={`/dashboard/discussion/${category.id}`}>
             <Card className="h-full hover:shadow-lg dark:hover:shadow-gray-900/20 transition-shadow cursor-pointer dark:bg-gray-900/80 dark:border-gray-700">
               <CardContent className="p-4 flex flex-col justify-between h-full">
-                <div className="flex items-center mb-4">
-                  <Folder className="h-6 w-6 text-blue-600 dark:text-blue-400 mr-3" />
+                <div className="flex items-center mb-4 gap-2">
+                  {category.icon}
                   <CardTitle className="text-lg font-semibold text-gray-900 dark:text-gray-100">
                     {category.name}
                   </CardTitle>
