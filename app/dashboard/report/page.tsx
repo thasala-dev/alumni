@@ -127,7 +127,7 @@ export default function ReportPage() {
       {loading ? (
         <div className="text-center text-gray-400">Loading...</div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-2 gap-4">
           <div className="col-span-2">
             {/* 1. Bar Chart: จำนวนศิษย์เก่าแต่ละรุ่น */}
             <Card className="bg-white dark:bg-gray-900/80 border-gray-200 dark:border-gray-700 p-0">
@@ -141,7 +141,10 @@ export default function ReportPage() {
                 <div className="w-full">
                   <Bar
                     data={barData}
-                    options={{ plugins: { legend: { display: false } } }}
+                    options={{
+                      indexAxis: "y",
+                      plugins: { legend: { display: false } },
+                    }}
                   />
                 </div>
               </CardContent>
@@ -161,6 +164,7 @@ export default function ReportPage() {
                   <Bar
                     data={stackedBarData}
                     options={{
+                      indexAxis: "y",
                       plugins: { legend: { display: true } },
                       responsive: true,
                       scales: {
@@ -173,76 +177,80 @@ export default function ReportPage() {
               </CardContent>
             </Card>
           </div>
-          {/* 3. Pie Chart: สัดส่วนสถานะศิษย์เก่าทั้งหมด */}
-          <Card className="bg-white dark:bg-gray-900/80 border-gray-200 dark:border-gray-700 p-0">
-            <CardHeader>
-              <CardTitle>
-                <Percent className="inline-block mr-2" />{" "}
-                สัดส่วนสถานะศิษย์เก่าทั้งหมด
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="p-4">
-              <div className="grid grid-cols-3 gap-4">
-                <div className="col-span-2">
-                  <Pie
-                    data={pieData}
-                    options={{ plugins: { legend: { display: false } } }}
-                  />
-                </div>
-                <div>
-                  {statusList.map((status, idx) => (
-                    <div
-                      key={status}
-                      className="flex items-center justify-between gap-2 mb-1"
-                    >
-                      <div>
-                        <span
-                          className="inline-block w-2 h-2 rounded-full"
-                          style={{
-                            background:
-                              pieData.datasets[0].backgroundColor[idx],
-                          }}
-                        ></span>
-                        <span className="text-xs ml-1">
-                          {statusMap[status]}
+
+          <div className="col-span-2">
+            {/* 3. Pie Chart: สัดส่วนสถานะศิษย์เก่าทั้งหมด */}
+            <Card className="bg-white dark:bg-gray-900/80 border-gray-200 dark:border-gray-700 p-0">
+              <CardHeader>
+                <CardTitle>
+                  <Percent className="inline-block mr-2" />{" "}
+                  สัดส่วนสถานะศิษย์เก่าทั้งหมด
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="p-4">
+                <div className="grid grid-cols-3 gap-4">
+                  <div className="col-span-2">
+                    <Pie
+                      data={pieData}
+                      options={{ plugins: { legend: { display: false } } }}
+                    />
+                  </div>
+                  <div>
+                    {statusList.map((status, idx) => (
+                      <div
+                        key={status}
+                        className="flex items-center justify-between gap-2 mb-1"
+                      >
+                        <div>
+                          <span
+                            className="inline-block w-2 h-2 rounded-full"
+                            style={{
+                              background:
+                                pieData.datasets[0].backgroundColor[idx],
+                            }}
+                          ></span>
+                          <span className="text-xs ml-1">
+                            {statusMap[status]}
+                          </span>
+                        </div>
+
+                        <span className="text-gray-500 text-end">
+                          {totalStatus[status]}
                         </span>
                       </div>
-
-                      <span className="text-gray-500 text-end">
-                        {totalStatus[status]}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* 4. Progress Bar: อัตราการใช้งานระบบ */}
-          <Card className="bg-white dark:bg-gray-900/80 border-gray-200 dark:border-gray-700 p-0">
-            <CardHeader>
-              <CardTitle>
-                <Percent className="inline-block mr-2" /> อัตราการใช้งานระบบ
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="p-4">
-              <div className="flex flex-col md:flex-row items-center gap-6">
-                <div className="w-full">
-                  <div className="w-full bg-gray-200 rounded-full h-6">
-                    <div
-                      className="bg-green-500 h-6 rounded-full text-white flex items-center justify-center text-lg font-bold transition-all"
-                      style={{ width: `${usagePercent}%` }}
-                    >
-                      {usagePercent}%
-                    </div>
-                  </div>
-                  <div className="text-gray-500 mt-2 text-sm">
-                    {usage.active} / {usage.total} ศิษย์เก่าที่ใช้งานระบบ
+                    ))}
                   </div>
                 </div>
-              </div>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
+          </div>
+          <div className="col-span-2">
+            {/* 4. Progress Bar: อัตราการใช้งานระบบ */}
+            <Card className="bg-white dark:bg-gray-900/80 border-gray-200 dark:border-gray-700 p-0">
+              <CardHeader>
+                <CardTitle>
+                  <Percent className="inline-block mr-2" /> อัตราการใช้งานระบบ
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="p-4">
+                <div className="flex flex-col md:flex-row items-center gap-6">
+                  <div className="w-full">
+                    <div className="w-full bg-gray-200 rounded-full h-6">
+                      <div
+                        className="bg-green-500 h-6 rounded-full text-white flex items-center justify-center text-lg font-bold transition-all"
+                        style={{ width: `${usagePercent}%` }}
+                      >
+                        {usagePercent}%
+                      </div>
+                    </div>
+                    <div className="text-gray-500 mt-2 text-sm">
+                      {usage.active} / {usage.total} ศิษย์เก่าที่ใช้งานระบบ
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
         </div>
       )}
     </div>
