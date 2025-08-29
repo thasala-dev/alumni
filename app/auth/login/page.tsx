@@ -122,7 +122,7 @@ export default function LoginPage() {
                 />
                 <span className="font-medium">เข้าสู่ระบบด้วย Facebook</span>
               </Button>
-              <Button
+              {/* <Button
                 variant="outline"
                 className="w-full bg-white/80 dark:bg-gray-800/80 rounded-xl border-[#A3C957] dark:border-[#81B214] hover:border-[#81B214] dark:hover:border-[#A3C957] hover:text-[#81B214] dark:hover:text-[#A3C957] hover:bg-[#E2F9B8]/60 dark:hover:bg-[#A3C957]/20 shadow-md hover:shadow-lg transition-all duration-300 scale-100 hover:scale-105 backdrop-blur-sm"
                 onClick={handleAppleLogin}
@@ -130,7 +130,7 @@ export default function LoginPage() {
               >
                 <img src="/images/apple.png" alt="Apple Logo" className="h-5" />
                 <span className="font-medium">เข้าสู่ระบบด้วย Apple</span>
-              </Button>
+              </Button> */}
             </div>
 
             {error && (
