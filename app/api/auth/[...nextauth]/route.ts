@@ -137,7 +137,7 @@ export const authOptions: NextAuthOptions = {
       return true;
     },
     async session({ session, token, user }: any) {
-      const userInDb = await prisma.user.findFirst({
+      const userInDb = await prisma.User.findFirst({
         where: { id: token.sub },
       });
       // Attach user id and role to session

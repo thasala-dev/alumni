@@ -18,6 +18,7 @@ import {
   Facebook,
   Phone,
   MapIcon,
+  Sparkles,
 } from "lucide-react";
 
 // Dynamically import MapOverview to prevent SSR issues
@@ -121,17 +122,27 @@ export default function HomePage() {
         />
         <div className="max-w-7xl mx-auto text-center relative z-10">
           <div className="mb-10">
-            <Badge
-              variant="secondary"
-              className="mb-4 px-5 py-2 text-base rounded-full shadow-md bg-white/80 dark:bg-gray-900/80 backdrop-blur border border-green-100 dark:border-gray-800 animate-fade-in"
-            >
-              เชื่อมต่อ • แลกเปลี่ยน • พัฒนาวิชาชีพ
-            </Badge>
-            <h1 className="text-5xl md:text-7xl font-extrabold text-gray-900 dark:text-white mb-6 leading-tight drop-shadow-lg animate-fade-in-up">
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-500/10 to-indigo-500/10 rounded-full border border-blue-200 dark:border-blue-800 mb-6">
+              <span className="text-sm font-medium text-blue-600 dark:text-blue-400">
+                เชื่อมต่อ
+              </span>
+              <Sparkles className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+              <span className="text-sm font-medium text-blue-600 dark:text-blue-400">
+                แลกเปลี่ยน
+              </span>
+              <Sparkles className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+              <span className="text-sm font-medium text-blue-600 dark:text-blue-400">
+                พัฒนาวิชาชีพ
+              </span>
+            </div>
+
+            <h1 className="text-4xl md:text-6xl font-extrabold text-gray-900 dark:text-white mb-6 leading-tight drop-shadow-lg animate-fade-in-up">
               เครือข่าย
               <span className="text-[#81B214]">ศิษย์เก่า</span>
               <br />
-              สำนักเภสัชศาสตร์ วลัยลักษณ์
+              สำนักวิชาเภสัชศาสตร์
+              <br />
+              มหาวิทยาลัยวลัยลักษณ์
             </h1>
             <p className="text-2xl text-gray-700 dark:text-gray-300 mb-12 max-w-3xl mx-auto leading-relaxed animate-fade-in-up delay-100">
               เชื่อมต่อกับศิษย์เก่าทั่วประเทศ

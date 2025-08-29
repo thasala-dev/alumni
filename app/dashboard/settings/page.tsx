@@ -30,48 +30,11 @@ import {
   Mail,
   CheckCircle,
   XCircle,
-  Moon,
-  Sun,
 } from "lucide-react";
-import { getCurrentUser } from "@/lib/auth";
 import { useTheme } from "next-themes";
 
-// Define types for profile and settings
-interface UserProfile {
-  id: string;
-  email: string;
-  first_name: string;
-  last_name: string;
-  nickname: string;
-  profile_image_url?: string;
-  bio?: string;
-  graduation_year?: number;
-  major?: string;
-  phone?: string;
-  line_id?: string;
-  facebook_url?: string;
-  linkedin_url?: string;
-  current_company?: string;
-  current_position?: string;
-  current_province?: string;
-}
-
-interface PrivacySettings {
-  profile_privacy: "public" | "alumni-only" | "admin-only";
-  personal_privacy: "public" | "alumni-only" | "admin-only";
-  work_privacy: "public" | "alumni-only" | "admin-only";
-  contact_privacy: "public" | "alumni-only" | "admin-only";
-}
-
-interface NotificationSettings {
-  email_notifications: boolean;
-  discussion_replies: boolean;
-  news_updates: boolean;
-  birthday_reminders: boolean;
-}
-
 // Demo data
-const demoUserProfile: UserProfile = {
+const demoUserProfile: any = {
   id: "alumni-user",
   email: "alumni@example.com",
   first_name: "สมชาย",
@@ -90,14 +53,14 @@ const demoUserProfile: UserProfile = {
   current_province: "กรุงเทพมหานคร",
 };
 
-const demoPrivacySettings: PrivacySettings = {
+const demoPrivacySettings: any = {
   profile_privacy: "alumni-only",
   personal_privacy: "alumni-only",
   work_privacy: "public",
   contact_privacy: "alumni-only",
 };
 
-const demoNotificationSettings: NotificationSettings = {
+const demoNotificationSettings: any = {
   email_notifications: true,
   discussion_replies: true,
   news_updates: true,
@@ -108,9 +71,9 @@ export default function SettingsPage() {
   // Tab state must be before any conditional return
   const [tab, setTab] = useState<string>("profile");
   const [user, setUser] = useState<{ id: string; email: string } | null>(null);
-  const [profile, setProfile] = useState<UserProfile>(demoUserProfile);
-  const [privacy, setPrivacy] = useState<PrivacySettings>(demoPrivacySettings);
-  const [notifications, setNotifications] = useState<NotificationSettings>(
+  const [profile, setProfile] = useState<any>(demoUserProfile);
+  const [privacy, setPrivacy] = useState<any>(demoPrivacySettings);
+  const [notifications, setNotifications] = useState<any>(
     demoNotificationSettings
   );
   const [loading, setLoading] = useState<boolean>(true);
@@ -132,22 +95,22 @@ export default function SettingsPage() {
 
   useEffect(() => {
     const initializePage = async () => {
-      const currentUser = await getCurrentUser();
-      if (!currentUser) {
-        // Redirect to login if no user
-        // router.push("/auth/login");
-        return;
-      }
-      setUser({ id: currentUser.id, email: currentUser.email });
-      // Simulate fetching user-specific data
-      await new Promise((resolve) => setTimeout(resolve, 500));
-      setProfile({
-        ...demoUserProfile,
-        id: currentUser.id,
-        email: currentUser.email,
-      });
-      setPrivacy(demoPrivacySettings);
-      setNotifications(demoNotificationSettings);
+      // const currentUser = await getCurrentUser();
+      // if (!currentUser) {
+      //   // Redirect to login if no user
+      //   // router.push("/auth/login");
+      //   return;
+      // }
+      // setUser({ id: currentUser.id, email: currentUser.email });
+      // // Simulate fetching user-specific data
+      // await new Promise((resolve) => setTimeout(resolve, 500));
+      // setProfile({
+      //   ...demoUserProfile,
+      //   id: currentUser.id,
+      //   email: currentUser.email,
+      // });
+      // setPrivacy(demoPrivacySettings);
+      // setNotifications(demoNotificationSettings);
       setLoading(false);
     };
     initializePage();
@@ -157,21 +120,15 @@ export default function SettingsPage() {
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { id, value } = e.target;
-    setProfile((prev) => ({ ...prev, [id]: value }));
+    setProfile((prev: any) => ({ ...prev, [id]: value }));
   };
 
-  const handlePrivacyChange = (
-    key: keyof PrivacySettings,
-    value: PrivacySettings[keyof PrivacySettings]
-  ) => {
-    setPrivacy((prev) => ({ ...prev, [key]: value }));
+  const handlePrivacyChange = (key: any, value: any) => {
+    setPrivacy((prev: any) => ({ ...prev, [key]: value }));
   };
 
-  const handleNotificationChange = (
-    key: keyof NotificationSettings,
-    checked: boolean
-  ) => {
-    setNotifications((prev) => ({ ...prev, [key]: checked }));
+  const handleNotificationChange = (key: any, checked: boolean) => {
+    setNotifications((prev: any) => ({ ...prev, [key]: checked }));
   };
 
   const handleSaveChanges = async () => {
@@ -214,25 +171,20 @@ export default function SettingsPage() {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="relative overflow-hidden rounded-xl bg-gradient-to-r from-blue-50 to-purple-50 dark:from-gray-900 dark:to-gray-800 p-4 shadow-lg">
-        <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-purple-500/10 dark:from-blue-500/5 dark:to-purple-500/5"></div>
-        <div className="relative">
-          <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400 bg-clip-text text-transparent">
-            ตั้งค่า
-          </h1>
-          <p className="text-gray-600 dark:text-gray-300 mt-2">
-            จัดการข้อมูลโปรไฟล์, ความเป็นส่วนตัว และการแจ้งเตือนของคุณ
-          </p>
-        </div>
+    <div className="space-y-8">
+      <div>
+        <h1 className="text-3xl font-bold text-[#81B214]">ตั้งค่า</h1>
+        <p className="text-lg text-gray-600 dark:text-gray-400">
+          จัดการข้อมูลโปรไฟล์, ความเป็นส่วนตัว และการแจ้งเตือนของคุณ
+        </p>
       </div>
       {/* Tabs */}
       <div className="flex flex-wrap gap-2 border-b border-gray-200 dark:border-gray-700 mb-4 bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm rounded-lg p-2">
         <button
           className={`px-6 py-3 font-medium rounded-lg transition-all duration-200 focus:outline-none transform hover:scale-105 ${
             tab === "profile"
-              ? "bg-gradient-to-r from-blue-500 to-purple-500 text-white shadow-lg shadow-blue-500/25 dark:shadow-blue-500/20"
-              : "text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-gray-800"
+              ? "bg-[#81B214] text-white shadow-lg shadow-[#81B214]/25"
+              : "text-gray-600 dark:text-gray-300 hover:text-[#81B214] hover:bg-[#81B214]/10"
           }`}
           onClick={() => setTab("profile")}
         >
@@ -241,8 +193,8 @@ export default function SettingsPage() {
         <button
           className={`px-6 py-3 font-medium rounded-lg transition-all duration-200 focus:outline-none transform hover:scale-105 ${
             tab === "privacy"
-              ? "bg-gradient-to-r from-blue-500 to-purple-500 text-white shadow-lg shadow-blue-500/25 dark:shadow-blue-500/20"
-              : "text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-gray-800"
+              ? "bg-[#81B214] text-white shadow-lg shadow-[#81B214]/25"
+              : "text-gray-600 dark:text-gray-300 hover:text-[#81B214] hover:bg-[#81B214]/10"
           }`}
           onClick={() => setTab("privacy")}
         >
@@ -251,22 +203,12 @@ export default function SettingsPage() {
         <button
           className={`px-6 py-3 font-medium rounded-lg transition-all duration-200 focus:outline-none transform hover:scale-105 ${
             tab === "notification"
-              ? "bg-gradient-to-r from-blue-500 to-purple-500 text-white shadow-lg shadow-blue-500/25 dark:shadow-blue-500/20"
-              : "text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-gray-800"
+              ? "bg-[#81B214] text-white shadow-lg shadow-[#81B214]/25"
+              : "text-gray-600 dark:text-gray-300 hover:text-[#81B214] hover:bg-[#81B214]/10"
           }`}
           onClick={() => setTab("notification")}
         >
           การแจ้งเตือน
-        </button>
-        <button
-          className={`px-6 py-3 font-medium rounded-lg transition-all duration-200 focus:outline-none transform hover:scale-105 ${
-            tab === "appearance"
-              ? "bg-gradient-to-r from-blue-500 to-purple-500 text-white shadow-lg shadow-blue-500/25 dark:shadow-blue-500/20"
-              : "text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-gray-800"
-          }`}
-          onClick={() => setTab("appearance")}
-        >
-          โหมดแสดงผล
         </button>
       </div>
 
@@ -477,7 +419,7 @@ export default function SettingsPage() {
                   onValueChange={(value) =>
                     handlePrivacyChange(
                       "profile_privacy",
-                      value as PrivacySettings["profile_privacy"]
+                      value as any["profile_privacy"]
                     )
                   }
                 >
@@ -503,7 +445,7 @@ export default function SettingsPage() {
                   onValueChange={(value) =>
                     handlePrivacyChange(
                       "personal_privacy",
-                      value as PrivacySettings["personal_privacy"]
+                      value as any["personal_privacy"]
                     )
                   }
                 >
@@ -529,7 +471,7 @@ export default function SettingsPage() {
                   onValueChange={(value) =>
                     handlePrivacyChange(
                       "work_privacy",
-                      value as PrivacySettings["work_privacy"]
+                      value as any["work_privacy"]
                     )
                   }
                 >
@@ -555,7 +497,7 @@ export default function SettingsPage() {
                   onValueChange={(value) =>
                     handlePrivacyChange(
                       "contact_privacy",
-                      value as PrivacySettings["contact_privacy"]
+                      value as any["contact_privacy"]
                     )
                   }
                 >
@@ -647,60 +589,6 @@ export default function SettingsPage() {
                     handleNotificationChange("birthday_reminders", checked)
                   }
                 />
-              </div>
-            </CardContent>
-          </Card>
-        </>
-      )}
-      {tab === "appearance" && (
-        <>
-          {/* Appearance Settings */}
-          <Card className="backdrop-blur-sm bg-white/80 dark:bg-gray-900/80 border-gray-200/50 dark:border-gray-700/50 shadow-xl hover:shadow-2xl transition-all duration-300">
-            <CardHeader className="bg-gradient-to-r from-purple-50 to-indigo-50 dark:from-gray-800 dark:to-gray-700 rounded-t-lg">
-              <CardTitle className="flex items-center text-gray-900 dark:text-white">
-                <Moon className="mr-2 h-5 w-5 text-purple-500" />
-                โหมดแสดงผล
-              </CardTitle>
-              <CardDescription className="text-gray-600 dark:text-gray-300">
-                เลือกโหมดแสงสว่างหรือโหมดมืดสำหรับการใช้งาน
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between p-4 rounded-xl bg-gradient-to-r from-blue-50 to-purple-50 dark:from-gray-800 dark:to-gray-700 border border-gray-200 dark:border-gray-600">
-                <div className="flex items-center gap-3">
-                  <Sun
-                    className={`h-6 w-6 transition-colors ${
-                      !darkMode
-                        ? "text-yellow-500"
-                        : "text-gray-400 dark:text-gray-500"
-                    }`}
-                  />
-                  <span className="font-medium text-gray-900 dark:text-white">
-                    โหมดสว่าง
-                  </span>
-                </div>
-                <Switch
-                  id="dark_mode"
-                  checked={darkMode === "dark"}
-                  onCheckedChange={handleThemeChange}
-                  className="data-[state=checked]:bg-blue-600"
-                />
-                <div className="flex items-center gap-3">
-                  <Moon
-                    className={`h-6 w-6 transition-colors ${
-                      darkMode ? "text-blue-500" : "text-gray-400"
-                    }`}
-                  />
-                  <span className="font-medium text-gray-900 dark:text-white">
-                    โหมดมืด
-                  </span>
-                </div>
-              </div>
-              <div className="mt-4 p-4 rounded-lg bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800">
-                <p className="text-sm text-blue-700 dark:text-blue-300 flex items-center">
-                  <Moon className="h-4 w-4 mr-2" />
-                  การเปลี่ยนธีมจะมีผลกับทั้งระบบทันที
-                </p>
               </div>
             </CardContent>
           </Card>

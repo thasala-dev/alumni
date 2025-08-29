@@ -14,26 +14,20 @@ export function ThemeToggle() {
   }, []);
 
   if (!mounted) {
-    return (
-      <Button variant="outline" size="icon" className="h-9 w-9">
-        <Sun className="h-4 w-4" />
-      </Button>
-    );
+    return "";
   }
 
   return (
-    <Button
-      variant="outline"
-      size="icon"
-      className="h-9 w-9 bg-white/10 backdrop-blur-sm border-white/20 hover:bg-white/20 dark:bg-gray-800/10 dark:border-gray-700/20 dark:hover:bg-gray-700/20"
+    <div
+      className="h-12 w-12 bg-white/10 backdrop-blur-sm border-white/20 hover:bg-white/20 dark:bg-gray-800/10 dark:border-gray-700/20 dark:hover:bg-gray-700/20 flex items-center justify-center rounded-full cursor-pointer"
       onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
     >
       {theme === "dark" ? (
-        <Sun className="h-4 w-4 text-yellow-500" />
+        <Sun className="h-8 w-8 text-yellow-500" />
       ) : (
-        <Moon className="h-4 w-4 text-[#81B214]" />
+        <Moon className="h-8 w-8 text-[#81B214]" />
       )}
       <span className="sr-only">Toggle theme</span>
-    </Button>
+    </div>
   );
 }

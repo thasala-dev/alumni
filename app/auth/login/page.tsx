@@ -17,14 +17,15 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { signIn } from "next-auth/react";
 import { DemoNotice } from "@/components/demo-notice";
-import { Facebook, Mail, Lock, LogIn } from "lucide-react";
+import { Facebook, Mail, Lock, LogIn, User } from "lucide-react";
+import { ThemeToggle } from "@/components/theme-toggle";
 // Removed: import { isSupabaseConfigured } from "@/lib/supabase"
 
 // isDemoMode is now always true as we are using mock data
 const isDemoMode = true;
 
 export default function LoginPage() {
-  const [email, setEmail] = useState("admin@example.com");
+  const [email, setEmail] = useState("admin");
   const [password, setPassword] = useState("admin1234");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -63,6 +64,9 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-50 via-white to-indigo-50 dark:from-gray-900 dark:via-gray-950 dark:to-gray-900 relative overflow-x-hidden p-4 transition-all duration-500">
+      <div className="fixed top-4 right-6 z-50">
+        <ThemeToggle />
+      </div>
       <div
         className="absolute -top-32 -left-32 w-[500px] h-[500px] bg-gradient-to-br from-green-200 via-indigo-200 to-purple-200 dark:from-green-900 dark:via-indigo-900 dark:to-purple-900 rounded-full blur-3xl opacity-40 animate-pulse z-0"
         aria-hidden="true"
@@ -143,15 +147,15 @@ export default function LoginPage() {
                     htmlFor="email"
                     className="font-medium text-[#81B214] dark:text-[#A3C957] flex items-center gap-2"
                   >
-                    <Mail className="w-4 h-4 text-[#81B214] dark:text-[#A3C957]" />
-                    อีเมล
+                    <User className="w-4 h-4 text-[#81B214] dark:text-[#A3C957]" />
+                    Username / Email
                   </Label>
                   <Input
                     id="email"
-                    type="email"
+                    type="text"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    placeholder="admin@example.com"
+                    placeholder="Username / Email"
                     required
                     className="rounded-xl border-gray-300 dark:border-[#A3C957] focus:border-[#81B214] dark:focus:border-[#A3C957] focus:ring-[#A3C957]/30 dark:focus:ring-[#81B214]/30 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm transition-all duration-200 hover:shadow-md dark:text-white dark:placeholder-gray-400"
                   />
@@ -162,14 +166,14 @@ export default function LoginPage() {
                     className="font-medium text-[#81B214] dark:text-[#A3C957] flex items-center gap-2"
                   >
                     <Lock className="w-4 h-4 text-[#81B214] dark:text-[#A3C957]" />
-                    รหัสผ่าน
+                    Password
                   </Label>
                   <Input
                     id="password"
                     type="password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    placeholder="password"
+                    placeholder="Password"
                     required
                     className="rounded-xl border-gray-300 dark:border-[#A3C957] focus:border-[#81B214] dark:focus:border-[#A3C957] focus:ring-[#A3C957]/30 dark:focus:ring-[#81B214]/30 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm transition-all duration-200 hover:shadow-md dark:text-white dark:placeholder-gray-400"
                   />
