@@ -13,20 +13,3 @@ export async function GET() {
   });
   return NextResponse.json(users);
 }
-
-// POST /api/user - create user
-export async function POST(req: Request) {
-  const data = await req.json();
-  const user = await prisma.user.create({
-    data: {
-      email: data.email,
-      username: data.username,
-      name: data.name,
-      avatar: data.avatar,
-      image: data.image,
-      role: data.role || "alumni",
-      status: data.status || "UNREGISTERED",
-    },
-  });
-  return NextResponse.json(user);
-}

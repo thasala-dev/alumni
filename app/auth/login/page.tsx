@@ -70,17 +70,18 @@ export default function LoginPage() {
 
       <div className="w-full max-w-md relative z-10 space-y-4">
         <Card className="p-0 shadow-2xl border-0 bg-white/90 dark:bg-gray-900/90 backdrop-blur-xl rounded-3xl animate-fade-in-up hover:shadow-3xl transition-all duration-300 border border-white/20 dark:border-[#81B214]/40">
-          <CardHeader className="text-center relative overflow-hidden">
-            <div className="relative">
-              <CardTitle className="text-3xl font-extrabold text-[#81B214] drop-shadow mb-1">
+          <div className="text-center relative overflow-hidden">
+            <div className="relative flex flex-col items-center gap-2 pt-6 pb-2">
+              <img src="/images/logo.png" alt="Logo" className="h-20" />
+              {/* <CardTitle className="text-3xl font-extrabold text-[#81B214] drop-shadow mb-1">
                 ระบบศิษย์เก่า
-              </CardTitle>
+              </CardTitle> */}
               <CardDescription className="text-base text-[#81B214] dark:text-[#A3C957] font-medium">
-                สำนักเภสัชศาสตร์ มหาวิทยาลัยวลัยลักษณ์
+                ระบบศิษย์เก่า สำนักเภสัชศาสตร์ มหาวิทยาลัยวลัยลักษณ์
               </CardDescription>
             </div>
-          </CardHeader>
-          <CardContent className="space-y-4 pt-2 pb-4 relative">
+          </div>
+          <div className="space-y-4 p-4 relative">
             {/* Social Login for Alumni */}
             <div className="space-y-4 animate-fade-in-up delay-200">
               <Button
@@ -89,10 +90,12 @@ export default function LoginPage() {
                 onClick={handleGoogleLogin}
                 disabled={loading}
               >
-                <Mail className="mr-3 h-5 w-5 text-[#81B214] dark:text-[#A3C957]" />
-                <span className="font-medium">
-                  เข้าสู่ระบบด้วย Google (Active)
-                </span>
+                <img
+                  src="/images/google.png"
+                  alt="Google Logo"
+                  className="h-5 w-5"
+                />
+                <span className="font-medium">เข้าสู่ระบบด้วย Google</span>
               </Button>
 
               <Button
@@ -101,10 +104,12 @@ export default function LoginPage() {
                 onClick={handleFacebookLogin}
                 disabled={loading}
               >
-                <Facebook className="mr-3 h-5 w-5 text-[#81B214] dark:text-[#A3C957]" />
-                <span className="font-medium">
-                  เข้าสู่ระบบด้วย Facebook (Pending)
-                </span>
+                <img
+                  src="/images/facebook.png"
+                  alt="Facebook Logo"
+                  className="h-5 w-5"
+                />
+                <span className="font-medium">เข้าสู่ระบบด้วย Facebook</span>
               </Button>
             </div>
 
@@ -133,11 +138,6 @@ export default function LoginPage() {
                 onSubmit={handleEmailLogin}
                 className="space-y-4 animate-fade-in-up delay-100"
               >
-                <div className="text-center">
-                  <p className="text-sm text-gray-600 dark:text-gray-400 font-medium mb-1">
-                    สำหรับผู้ดูแลระบบ
-                  </p>
-                </div>
                 <div className="space-y-2">
                   <Label
                     htmlFor="email"
@@ -193,7 +193,7 @@ export default function LoginPage() {
                 </Button>
               </form>
             </div>
-          </CardContent>
+          </div>
         </Card>
         {/* {isDemoMode && <DemoNotice />} */}
       </div>
