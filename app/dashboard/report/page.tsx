@@ -191,15 +191,24 @@ export default function ReportPage() {
                 </div>
                 <div>
                   {statusList.map((status, idx) => (
-                    <div key={status} className="flex items-center gap-2 mb-1">
-                      <span
-                        className="inline-block w-2 h-2 rounded-full"
-                        style={{
-                          background: pieData.datasets[0].backgroundColor[idx],
-                        }}
-                      ></span>
-                      <span className="text-xs">{statusMap[status]}</span>
-                      <span className="ml-2 text-gray-500">
+                    <div
+                      key={status}
+                      className="flex items-center justify-between gap-2 mb-1"
+                    >
+                      <div>
+                        <span
+                          className="inline-block w-2 h-2 rounded-full"
+                          style={{
+                            background:
+                              pieData.datasets[0].backgroundColor[idx],
+                          }}
+                        ></span>
+                        <span className="text-xs ml-1">
+                          {statusMap[status]}
+                        </span>
+                      </div>
+
+                      <span className="text-gray-500 text-end">
                         {totalStatus[status]}
                       </span>
                     </div>
