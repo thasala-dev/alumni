@@ -21,8 +21,8 @@ import {
   Edit,
   Trash2,
 } from "lucide-react";
-// Removed: import { supabase, isSupabaseConfigured } from "@/lib/supabase"
-import { getCurrentUser } from "@/lib/auth";
+
+import { useSession } from "next-auth/react";
 
 interface NewsItem {
   id: string;
@@ -47,9 +47,6 @@ interface Comment {
   };
   created_at: string;
 }
-
-// isDemoMode is now always true as we are using mock data
-const isDemoMode = true;
 
 // Demo data
 const demoNews: NewsItem[] = [
@@ -136,19 +133,21 @@ const demoCommentsNews2: Comment[] = [
 ];
 
 export default function NewsPage() {
+  const { data: session, status } = useSession();
+  const user = session?.user as any;
+
   const [news, setNews] = useState<NewsItem[]>([]);
   const [selectedNews, setSelectedNews] = useState<NewsItem | null>(null);
   const [comments, setComments] = useState<Comment[]>([]);
   const [newComment, setNewComment] = useState("");
   const [loading, setLoading] = useState(true); // Start loading to simulate fetch
-  const [user, setUser] = useState<any | null>(null);
+
   const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     const initializePage = async () => {
       await new Promise((resolve) => setTimeout(resolve, 500)); // Simulate network delay
-      const currentUser = await getCurrentUser();
-      setUser(currentUser);
+
       setNews(demoNews);
       setLoading(false);
     };
@@ -228,27 +227,23 @@ export default function NewsPage() {
       {/* Increased overall spacing */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-extrabold text-gray-900 dark:text-gray-100">
-            ข่าวสาร
-          </h1>{" "}
+          <h1 className="text-3xl font-bold text-[#81B214]">ข่าวสาร</h1>{" "}
           {/* Bolder title */}
           <p className="text-lg text-gray-600 dark:text-gray-400">
-            ข่าวประชาสัมพันธ์และกิจกรรมต่างๆ (ข้อมูลตัวอย่าง)
+            ข่าวประชาสัมพันธ์และกิจกรรมต่างๆ
           </p>{" "}
           {/* Larger text */}
         </div>
         {user?.role === "admin" && (
-          <Button className="rounded-lg bg-blue-600 hover:bg-blue-700 dark:bg-blue-600 dark:hover:bg-blue-700 transition-colors">
-            {" "}
-            {/* Rounded button */}
+          <Button className="rounded-lg bg-[#81B214] hover:bg-[#50B003] transition-colors">
             <Plus className="mr-2 h-4 w-4" />
             เพิ่มข่าวใหม่
           </Button>
         )}
       </div>
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 gap-4">
         {/* News List */}
-        <div className="lg:col-span-2 space-y-6">
+        <div className="space-y-6">
           {/* Search */}
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 dark:text-gray-500" />{" "}
@@ -282,7 +277,7 @@ export default function NewsPage() {
                       <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2\">
                         {item.title}
                       </h3>{" "}
-                      {/* Larger, bolder title */}\
+                      {/* Larger, bolder title */}
                       <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-gray-500 dark:text-gray-400">
                         {" "}
                         {/* Added flex-wrap and gap */}

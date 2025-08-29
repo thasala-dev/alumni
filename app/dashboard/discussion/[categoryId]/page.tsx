@@ -12,7 +12,18 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Plus, MessageSquare, Calendar, User, Search, Pin } from "lucide-react";
+import {
+  Plus,
+  MessageSquare,
+  Calendar,
+  User,
+  Search,
+  Pin,
+  Folder,
+  Briefcase,
+  Bot,
+  Quote,
+} from "lucide-react";
 import { getCurrentUser } from "@/lib/auth";
 
 interface DiscussionTopic {
@@ -108,36 +119,46 @@ const demoTopics: DiscussionTopic[] = [
 ];
 
 // Demo data for categories (to get category name)
-const demoCategories: DiscussionCategory[] = [
+const demoCategories: any[] = [
   {
     id: "1",
     name: "ทั่วไป",
+    icon: <Folder className="h-5 w-5 text-blue-600" />,
     description: "หัวข้อสนทนาทั่วไปสำหรับศิษย์เก่า",
     created_at: "2024-01-01T00:00:00Z",
+    topic_count: 15,
   },
   {
     id: "2",
     name: "หางาน",
+    icon: <Briefcase className="h-5 w-5 text-emerald-600" />,
     description: "แชร์ข้อมูลการหางานและโอกาสทางอาชีพ",
     created_at: "2024-01-05T00:00:00Z",
+    topic_count: 8,
   },
   {
     id: "3",
     name: "เทคโนโลยี",
+    icon: <Bot className="h-5 w-5 text-yellow-600" />,
     description: "อัปเดตเทคโนโลยีและแนวโน้มใหม่ๆ",
     created_at: "2024-01-10T00:00:00Z",
+    topic_count: 22,
   },
   {
     id: "4",
     name: "กิจกรรม",
+    icon: <Calendar className="h-5 w-5 text-pink-600" />,
     description: "ประชาสัมพันธ์กิจกรรมและงานสังสรรค์",
     created_at: "2024-01-15T00:00:00Z",
+    topic_count: 5,
   },
   {
     id: "5",
     name: "คำถาม-คำตอบ",
+    icon: <Quote className="h-5 w-5 text-rose-600" />,
     description: "ถาม-ตอบปัญหาต่างๆ",
     created_at: "2024-01-20T00:00:00Z",
+    topic_count: 10,
   },
 ];
 
@@ -223,9 +244,7 @@ export default function CategoryTopicsPage() {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-3xl font-extrabold text-gray-900">
-          {category.name}
-        </h1>
+        <h1 className="text-3xl font-bold text-[#81B214]">{category.name}</h1>
         <p className="text-lg text-gray-600">{category.description}</p>
       </div>
 
@@ -239,19 +258,15 @@ export default function CategoryTopicsPage() {
             className="pl-10 rounded-lg focus-visible:ring-blue-500"
           />
         </div>
-        {user && ( // Only show "Create New Topic" if user is logged in
-          <Link href={`/dashboard/discussion/${categoryId}/new`}>
-            {" "}
-            {/* Link to new topic page */}
-            <Button className="w-full sm:w-auto rounded-lg bg-blue-600 hover:bg-blue-700 transition-colors">
-              <Plus className="mr-2 h-4 w-4" />
-              สร้างกระทู้ใหม่
-            </Button>
-          </Link>
-        )}
+        <Link href={`/dashboard/discussion/${categoryId}/new`}>
+          <Button className="w-full sm:w-auto rounded-lg bg-[#81B214] hover:bg-[#50B003] transition-colors">
+            <Plus className="mr-2 h-4 w-4" />
+            สร้างกระทู้ใหม่
+          </Button>
+        </Link>
       </div>
 
-      <div className="space-y-4">
+      <div className="flex flex-col gap-4">
         {filteredTopics.length > 0 ? (
           filteredTopics.map((topic) => (
             <Link
