@@ -59,9 +59,7 @@ export const authOptions: NextAuthOptions = {
     async signIn({ user, account, profile }) {
       // Only run for OAuth (Google, Facebook)
       if (account?.provider === "google" || account?.provider === "facebook") {
-        console.log("[signIn] OAuth login attempt", { user, account });
         if (!user?.email) {
-          console.log("[signIn] No user.email");
           return false;
         }
 
@@ -69,7 +67,6 @@ export const authOptions: NextAuthOptions = {
         const existingUser = await prisma.user.findUnique({
           where: { email: user.email },
         });
-        console.log("[signIn] existingUser", existingUser);
 
         if (existingUser) {
           // เช็คว่ามี account record สำหรับ provider นี้หรือยัง
@@ -81,7 +78,6 @@ export const authOptions: NextAuthOptions = {
               },
             },
           });
-          console.log("[signIn] existingAccount", existingAccount);
           if (!existingAccount) {
             // สร้าง account record เชื่อมกับ user เดิม
             await prisma.account.create({
@@ -99,9 +95,6 @@ export const authOptions: NextAuthOptions = {
                 session_state: account.session_state,
               },
             });
-            console.log(
-              "[signIn] Created new Account record for existing user"
-            );
           }
           // อัปเดตข้อมูล user (optional)
           await prisma.user.update({
@@ -138,7 +131,6 @@ export const authOptions: NextAuthOptions = {
               },
             },
           });
-          console.log("[signIn] Created new user and account");
         }
       }
       // ให้ PrismaAdapter จัดการ linking user/account อัตโนมัติ

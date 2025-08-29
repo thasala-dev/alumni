@@ -43,7 +43,7 @@ const mockAlumni = [
 export default function AlumniSearchBox() {
   const [query, setQuery] = useState("");
   const [show, setShow] = useState(false);
-  const inputRef = useRef<HTMLInputElement>(null);
+  // const inputRef = useRef<HTMLInputElement>(null);
 
   const results =
     query.trim() === ""
@@ -58,7 +58,7 @@ export default function AlumniSearchBox() {
   return (
     <div className="relative w-full">
       <input
-        ref={inputRef}
+        // ref={inputRef}
         type="text"
         value={query}
         onChange={(e) => {
@@ -69,8 +69,8 @@ export default function AlumniSearchBox() {
         // onBlur={() => setTimeout(() => setShow(false), 150)}
         placeholder="ค้นหาศิษย์เก่า..."
         className="rounded-full px-4 py-1.5 bg-gray-100 dark:bg-neutral-800 border border-gray-200 dark:border-neutral-700 text-sm focus:outline-none focus:ring-2 focus:ring-[#81B214] w-full"
-        aria-label="ค้นหาศิษย์เก่า"
-        autoComplete="off"
+        // aria-label="ค้นหาศิษย์เก่า"
+        // autoComplete="off"
       />
       {show && (
         <div className="absolute left-0 mt-2 w-full bg-white dark:bg-neutral-800 border border-gray-200 dark:border-neutral-800 rounded-xl shadow-lg z-50 max-h-72 overflow-y-auto">

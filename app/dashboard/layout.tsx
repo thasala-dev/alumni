@@ -34,10 +34,6 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
     }
   }, [user, status, router]);
 
-  const handleSignOut = async () => {
-    await signOut({ callbackUrl: "/auth/login" });
-  };
-
   if (status === "loading") {
     return (
       <div className="min-h-screen flex items-center justify-center">

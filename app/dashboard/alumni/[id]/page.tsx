@@ -26,38 +26,10 @@ import {
   Edit,
   Flag,
 } from "lucide-react";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-
-interface AlumniProfile {
-  id: string;
-  email: string;
-  first_name: string;
-  last_name: string;
-  nickname: string;
-  graduation_year: number;
-  major: string;
-  bio?: string;
-  current_company?: string;
-  current_position?: string;
-  current_province?: string;
-  phone?: string;
-  line_id?: string;
-  facebook_url?: string;
-  linkedin_url?: string;
-  profile_image_url?: string;
-  joined_date?: string;
-  is_verified?: boolean;
-  achievements?: string[];
-  interests?: string[];
-}
+import { AdmitYear } from "@/lib/utils";
 
 // Demo data for alumni profiles
-const demoAlumniProfiles: { [key: string]: AlumniProfile } = {
+const demoAlumniProfiles: { [key: string]: any } = {
   "1": {
     id: "1",
     email: "somchai@example.com",
@@ -155,27 +127,27 @@ const demoAlumniProfiles: { [key: string]: AlumniProfile } = {
 export default function AlumniDetailPage() {
   const params = useParams();
   const router = useRouter();
-  const [alumni, setAlumni] = useState<AlumniProfile | null>(null);
+  const [alumni, setAlumni] = useState<any | null>(null);
   const [loading, setLoading] = useState(true);
   const [isLiked, setIsLiked] = useState(false);
 
   useEffect(() => {
     const loadAlumniProfile = async () => {
       setLoading(true);
-
-      // Simulate API call delay
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
       const alumniId = params.id as string;
-      const profile = demoAlumniProfiles[alumniId];
-
-      if (profile) {
-        setAlumni(profile);
+      try {
+        const res = await fetch(`/api/alumniProfile?id=${alumniId}`);
+        if (res.ok) {
+          const data = await res.json();
+          setAlumni(data);
+        } else {
+          setAlumni(null);
+        }
+      } catch (e) {
+        setAlumni(null);
       }
-
       setLoading(false);
     };
-
     loadAlumniProfile();
   }, [params.id]);
 
@@ -269,12 +241,12 @@ export default function AlumniDetailPage() {
             <CardContent className="p-8">
               <div className="flex flex-col md:flex-row items-start md:items-center gap-4">
                 <div className="relative">
-                  <Avatar className="h-32 w-32 ring-4 ring-blue-100 dark:ring-gray-700 shadow-lg">
+                  <Avatar className="h-32 w-32 ring-0 ring-[#81B214] dark:ring-gray-700 shadow-lg">
                     <AvatarImage
-                      src={alumni.profile_image_url || "/placeholder-user.jpg"}
+                      src={alumni.profile_image_url}
                       alt={`${alumni.first_name} ${alumni.last_name}`}
                     />
-                    <AvatarFallback className="bg-gradient-to-r from-blue-100 to-purple-100 dark:from-blue-900 dark:to-purple-900 text-blue-600 dark:text-blue-400 text-4xl font-semibold">
+                    <AvatarFallback className="bg-gradient-to-r from-[#81B214]/10 to-[#50B003]/10 dark:from-[#81B214] dark:to-[#50B003] text-[#81B214] dark:text-white text-4xl font-semibold">
                       {alumni.first_name.charAt(0)}
                       {alumni.last_name.charAt(0)}
                     </AvatarFallback>
@@ -292,17 +264,18 @@ export default function AlumniDetailPage() {
                       {alumni.first_name} {alumni.last_name}
                     </h2>
                     <p className="text-lg text-gray-600 dark:text-gray-400">
-                      "{alumni.nickname}"
+                      "{alumni.nickname || alumni.first_name}"
                     </p>
                   </div>
 
                   <div className="flex flex-wrap gap-3">
                     <Badge
                       variant="secondary"
-                      className="bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 px-3 py-1"
+                      className="bg-[#81B214]/10 dark:bg-[#81B214] text-[#81B214] dark:text-white px-3 py-1"
                     >
                       <GraduationCap className="mr-1 h-3 w-3" />
-                      {alumni.major} รุ่น {alumni.graduation_year}
+                      {alumni.programname} รุ่นที่{" "}
+                      {AdmitYear(alumni.admit_year)}
                     </Badge>
                     {alumni.current_company && (
                       <Badge
@@ -388,17 +361,19 @@ export default function AlumniDetailPage() {
               </CardHeader>
               <CardContent className="p-4">
                 <div className="space-y-3">
-                  {alumni.achievements.map((achievement, index) => (
-                    <div
-                      key={index}
-                      className="flex items-center p-3 rounded-lg bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800"
-                    >
-                      <div className="w-2 h-2 bg-yellow-500 rounded-full mr-3"></div>
-                      <span className="text-gray-700 dark:text-gray-300">
-                        {achievement}
-                      </span>
-                    </div>
-                  ))}
+                  {alumni.achievements.map(
+                    (achievement: any, index: number) => (
+                      <div
+                        key={index}
+                        className="flex items-center p-3 rounded-lg bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800"
+                      >
+                        <div className="w-2 h-2 bg-yellow-500 rounded-full mr-3"></div>
+                        <span className="text-gray-700 dark:text-gray-300">
+                          {achievement}
+                        </span>
+                      </div>
+                    )
+                  )}
                 </div>
               </CardContent>
             </Card>
@@ -415,7 +390,7 @@ export default function AlumniDetailPage() {
               </CardHeader>
               <CardContent className="p-4">
                 <div className="flex flex-wrap gap-2">
-                  {alumni.interests.map((interest, index) => (
+                  {alumni.interests.map((interest: any, index: number) => (
                     <Badge
                       key={index}
                       variant="secondary"
@@ -577,18 +552,18 @@ export default function AlumniDetailPage() {
                   สาขาวิชา
                 </p>
                 <p className="text-gray-900 dark:text-white font-medium">
-                  {alumni.major}
+                  {alumni.programname}
                 </p>
               </div>
 
-              <div>
+              {/* <div>
                 <p className="text-sm text-gray-500 dark:text-gray-400">
                   ปีที่จบการศึกษา
                 </p>
                 <p className="text-gray-900 dark:text-white font-medium">
                   {alumni.graduation_year}
                 </p>
-              </div>
+              </div> */}
 
               <div>
                 <p className="text-sm text-gray-500 dark:text-gray-400">คณะ</p>

@@ -118,17 +118,10 @@ export default function NavbarMenuItems() {
         {/* Left section */}
         <div className="flex items-center gap-4 w-full md:w-auto">
           <Link href="/dashboard" className="flex items-center gap-3 group">
-            {/* <div className="relative">
-              <div className="absolute -inset-1 bg-gradient-to-r from-[#81B214] to-[#50B003] rounded-xl transition duration-300"></div>
-              <img
-                src="/placeholder-logo.svg"
-                alt="Logo"
-                className="relative h-10 w-10 rounded-xl bg-gradient-to-br from-[#81B214] to-[#50B003] p-2"
-              />
-            </div> */}
-            <span className="text-2xl font-black text-[#81B214]">
+            <img src="/images/logo.png" alt="Logo" className="h-12" />
+            {/* <span className="text-2xl font-black text-[#81B214]">
               WU Pharmacy
-            </span>
+            </span> */}
           </Link>
 
           <div className="hidden lg:block w-72">
@@ -329,20 +322,14 @@ export default function NavbarMenuItems() {
             <SheetContent
               side="left"
               className="w-72 max-h-screen overflow-y-auto bg-white/95 dark:bg-[#252728]/95 backdrop-blur-xl border-r border-gray-200/50 dark:border-neutral-700/50"
+              style={{ scrollBehavior: "smooth" }}
             >
               <SheetTitle className="sr-only">เมนูนำทาง</SheetTitle>
-              <div className="p-4 border-b border-gray-100 dark:border-neutral-700 flex items-center gap-3">
-                {/* <div className="relative">
-                  <div className="absolute -inset-1 bg-gradient-to-r from-[#81B214] to-[#50B003] rounded-xl blur opacity-75"></div>
-                  <img
-                    src="/placeholder-logo.svg"
-                    alt="Alumni Logo"
-                    className="relative h-10 w-10 rounded-xl bg-gradient-to-br from-[#81B214] to-[#50B003] p-2"
-                  />
-                </div> */}
-                <span className="text-2xl font-black text-[#81B214]">
-                  WU Pharmacy
-                </span>
+              <div className="p-4 flex items-center justify-center gap-3">
+                <img src="/images/logo.png" alt="Logo" className="h-16" />
+                {/* <span className="text-2xl font-black text-[#81B214]">
+                WU Pharmacy
+              </span> */}
               </div>
               <div className="px-6 mt-6">
                 <AlumniSearchBox />
@@ -355,11 +342,11 @@ export default function NavbarMenuItems() {
                       key={item.href}
                       href={item.href}
                       className={`flex items-center gap-4 px-4 py-3 rounded-2xl font-medium transition-all duration-300
-                        ${
-                          isActive
-                            ? "bg-gradient-to-r from-[#81B214] to-[#50B003] text-white shadow-lg shadow-blue-500/25"
-                            : "text-gray-800 dark:text-gray-100 hover:bg-blue-50 dark:hover:bg-neutral-800/50"
-                        }`}
+                  ${
+                    isActive
+                      ? "bg-gradient-to-r from-[#81B214] to-[#50B003] text-white shadow-lg shadow-blue-500/25"
+                      : "text-gray-800 dark:text-gray-100 hover:bg-blue-50 dark:hover:bg-neutral-800/50"
+                  }`}
                     >
                       <item.icon className="h-5 w-5" />
                       <span>{item.name}</span>
