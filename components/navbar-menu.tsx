@@ -311,13 +311,12 @@ export default function NavbarMenuItems() {
         <div className="md:hidden">
           <Sheet>
             <SheetTrigger asChild>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="rounded-2xl hover:bg-blue-50/80 dark:hover:bg-neutral-800/50 transition-all duration-300"
+              <div
+                // variant="ghost"
+                className="h-14 w-14 rounded-2xl hover:bg-[#81B214]/10 dark:hover:bg-neutral-800/50 transition-all duration-300 flex items-center justify-center"
               >
-                <Menu className="h-6 w-6 text-gray-600 dark:text-gray-300" />
-              </Button>
+                <Menu className="h-10 w-10 text-[#81B214]" />
+              </div>
             </SheetTrigger>
             <SheetContent
               side="left"
@@ -327,14 +326,16 @@ export default function NavbarMenuItems() {
               <SheetTitle className="sr-only">เมนูนำทาง</SheetTitle>
               <div className="p-4 flex items-center justify-center gap-3">
                 <img src="/images/logo.png" alt="Logo" className="h-16" />
-                {/* <span className="text-2xl font-black text-[#81B214]">
-                WU Pharmacy
-              </span> */}
               </div>
-              <div className="px-6 mt-6">
-                <AlumniSearchBox />
-              </div>
+
               <nav className="flex flex-col gap-2 p-4">
+                <Link
+                  href="/dashboard"
+                  className={`flex items-center gap-4 px-4 py-3 rounded-2xl font-medium transition-all duration-300 text-gray-800 dark:text-gray-100 hover:bg-blue-50 dark:hover:bg-neutral-800/50`}
+                >
+                  <Home className="h-5 w-5" />
+                  <span>หน้าหลัก</span>
+                </Link>
                 {navigation.map((item) => {
                   const isActive = pathname.startsWith(item.href);
                   return (
