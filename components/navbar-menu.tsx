@@ -55,6 +55,14 @@ declare module "next-auth" {
 export default function NavbarMenuItems() {
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
+
+  // Mobile Sheet open state
+  const [open, setOpen] = useState(false);
+  const handleNavClick = (href: string) => {
+    setOpen(false);
+    router.push(href);
+  };
+
   const [notifications] = useState([
     { id: 1, message: "ประกาศรับสมัครงานเภสัชกรใหม่" },
     { id: 2, message: "การประชุมใหญ่สมาคมศิษย์เก่าประจำปี 2568" },
@@ -309,12 +317,9 @@ export default function NavbarMenuItems() {
 
         {/* Mobile Menu */}
         <div className="md:hidden">
-          <Sheet>
+          <Sheet open={open} onOpenChange={setOpen}>
             <SheetTrigger asChild>
-              <div
-                // variant="ghost"
-                className="h-14 w-14 rounded-2xl hover:bg-[#81B214]/10 dark:hover:bg-neutral-800/50 transition-all duration-300 flex items-center justify-center"
-              >
+              <div className="h-14 w-14 rounded-2xl hover:bg-[#81B214]/10 dark:hover:bg-neutral-800/50 transition-all duration-300 flex items-center justify-center">
                 <Menu className="h-10 w-10 text-[#81B214]" />
               </div>
             </SheetTrigger>
@@ -327,34 +332,32 @@ export default function NavbarMenuItems() {
               <div className="p-4 flex items-center justify-center gap-3">
                 <img src="/images/logo.png" alt="Logo" className="h-16" />
               </div>
-
               <nav className="flex flex-col gap-2 p-4">
-                <Link
-                  href="/dashboard"
+                <button
+                  onClick={() => handleNavClick("/dashboard")}
                   className={`flex items-center gap-4 px-4 py-3 rounded-2xl font-medium transition-all duration-300 text-gray-800 dark:text-gray-100 hover:bg-blue-50 dark:hover:bg-neutral-800/50`}
                 >
                   <Home className="h-5 w-5" />
                   <span>หน้าหลัก</span>
-                </Link>
+                </button>
                 {navigation.map((item) => {
                   const isActive = pathname.startsWith(item.href);
                   return (
-                    <Link
+                    <button
                       key={item.href}
-                      href={item.href}
+                      onClick={() => handleNavClick(item.href)}
                       className={`flex items-center gap-4 px-4 py-3 rounded-2xl font-medium transition-all duration-300
-                  ${
-                    isActive
-                      ? "bg-gradient-to-r from-[#81B214] to-[#50B003] text-white shadow-lg shadow-blue-500/25"
-                      : "text-gray-800 dark:text-gray-100 hover:bg-blue-50 dark:hover:bg-neutral-800/50"
-                  }`}
+                    ${
+                      isActive
+                        ? "bg-gradient-to-r from-[#81B214] to-[#50B003] text-white shadow-lg shadow-blue-500/25"
+                        : "text-gray-800 dark:text-gray-100 hover:bg-blue-50 dark:hover:bg-neutral-800/50"
+                    }`}
                     >
                       <item.icon className="h-5 w-5" />
                       <span>{item.name}</span>
-                    </Link>
+                    </button>
                   );
                 })}
-
                 {/* Theme Toggle in Mobile */}
                 <div className="mt-4 pt-4 border-t border-gray-200 dark:border-neutral-700">
                   <div className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-3 px-4">
