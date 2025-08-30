@@ -1,3 +1,5 @@
+"use client";
+
 import {
   Card,
   CardContent,
@@ -6,8 +8,16 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Clock, Mail } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
+import { Home, ArrowLeft } from "lucide-react";
 
 export default function PendingApprovalPage() {
+  const handleGoBack = () => {
+    if (typeof window !== "undefined") {
+      window.history.back();
+    }
+  };
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-50 via-white to-indigo-50 dark:from-gray-900 dark:via-gray-950 dark:to-gray-900 relative overflow-x-hidden p-4 transition-all duration-500">
       <div
@@ -36,6 +46,25 @@ export default function PendingApprovalPage() {
               <br />
               ผู้ดูแลระบบจะตรวจสอบและอนุมัติบัญชีของคุณภายใน 1-2 วันทำการ
             </p>
+          </div>
+          <div className="flex flex-col sm:flex-row gap-3 justify-center">
+            <Button
+              asChild
+              className="flex items-center gap-2 bg-[#81B214] hover:bg-[#A3C957] text-white font-bold shadow-md border-0"
+            >
+              <Link href="/">
+                <Home className="h-4 w-4" />
+                กลับหน้าหลัก
+              </Link>
+            </Button>
+            <Button
+              variant="outline"
+              onClick={handleGoBack}
+              className="flex items-center gap-2 border-[#A3C957] dark:border-[#81B214] text-[#81B214] dark:text-[#A3C957] font-bold hover:bg-[#E2F9B8]/60 dark:hover:bg-[#A3C957]/20"
+            >
+              <ArrowLeft className="h-4 w-4" />
+              ย้อนกลับ
+            </Button>
           </div>
         </CardContent>
       </Card>

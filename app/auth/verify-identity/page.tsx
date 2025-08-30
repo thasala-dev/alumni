@@ -2,6 +2,10 @@
 
 import type React from "react";
 import { useState } from "react";
+import ReactDatePicker from "react-datepicker";
+import { DatePicker } from "@/components/date-picker";
+import "react-datepicker/dist/react-datepicker.css";
+import { format } from "date-fns";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -20,11 +24,31 @@ import {
   CheckCircle,
   AlertCircle,
   ArrowLeft,
+  Home,
 } from "lucide-react";
+import Link from "next/link";
+
+function formatDateToInput(dateStr: string) {
+  if (!dateStr) return "";
+  const [day, month, year] = dateStr.split("-");
+  return `${year}-${month}-${day}`;
+}
+
+function formatDateToDisplay(dateStr: string) {
+  if (!dateStr) return "";
+  const [year, month, day] = dateStr.split("-");
+  return `${day}-${month}-${year}`;
+}
 
 export default function VerifyIdentityPage() {
+  const handleGoBack = () => {
+    if (typeof window !== "undefined") {
+      window.history.back();
+    }
+  };
+
   const [nationalId, setNationalId] = useState("");
-  const [birthDate, setBirthDate] = useState("");
+  const [birthDate, setBirthDate] = useState<Date | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const router = useRouter();
@@ -34,24 +58,42 @@ export default function VerifyIdentityPage() {
     setLoading(true);
     setError("");
 
-    console.log("Submitting identity verification:", nationalId);
-    // Basic validation
-    // if (nationalId.length !== 13) {
-    //   setError("เลขบัตรประชาชนต้องมี 13 หลัก");
-    //   setLoading(false);
-    //   return;
-    // }
+    if (!nationalId || !birthDate) {
+      setError("กรุณากรอกข้อมูลให้ครบถ้วน");
+      setLoading(false);
+      return;
+    }
 
-    // Simulate identity verification
-    await new Promise((resolve) => setTimeout(resolve, 2000));
+    const nationalIdWithoutDashes = nationalId.replace(/\D/g, "");
 
-    // For demo, we simulate success and redirect
-    console.log("Simulating identity verification for:", {
-      nationalId,
-      birthDate,
-    });
+    if (nationalIdWithoutDashes.length !== 13) {
+      setError("หมายเลขบัตรประชาชนต้องมี 13 หลัก");
+      setLoading(false);
+      return;
+    }
 
-    router.push("/auth/verify-identity");
+    try {
+      // ส่ง birthDate เป็น yyyy-MM-dd (ISO format)
+      const birthDateString = birthDate ? format(birthDate, "yyyy-MM-dd") : "";
+      const res = await fetch("/api/verifyIdentity", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          nationalId: nationalIdWithoutDashes,
+          birthDate: birthDateString,
+        }),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        console.log("Fetched alumni profiles:", data);
+      }
+    } catch (e) {
+      console.error("Error fetching alumni profiles:", e);
+    }
+
+    // router.push("/auth/verify-identity");
     setLoading(false);
   };
 
@@ -125,7 +167,7 @@ export default function VerifyIdentityPage() {
                   placeholder="X-XXXX-XXXXX-XX-X"
                   maxLength={17} // Including dashes
                   required
-                  className="h-12 text-lg focus-visible:ring-2 focus-visible:ring-[#81B214] dark:focus-visible:ring-[#A3C957] border-gray-300 dark:border-gray-600 bg-white/50 dark:bg-gray-800/50"
+                  className="h-12 text-center focus-visible:ring-2 focus-visible:ring-[#81B214] dark:focus-visible:ring-[#A3C957] border-gray-300 dark:border-gray-600 bg-white/50 dark:bg-gray-800/50"
                 />
                 <p className="text-xs text-gray-500 dark:text-gray-400">
                   กรอกเลขบัตรประชาชน 13 หลัก
@@ -141,13 +183,12 @@ export default function VerifyIdentityPage() {
                   <Calendar className="mr-2 h-4 w-4 text-[#A3C957] dark:text-[#C7E77F]" />
                   วันเกิด
                 </Label>
-                <Input
-                  id="birthDate"
-                  type="date"
-                  value={birthDate}
-                  onChange={(e) => setBirthDate(e.target.value)}
-                  required
-                  className="h-12 text-lg focus-visible:ring-2 focus-visible:ring-[#A3C957] dark:focus-visible:ring-[#C7E77F] border-gray-300 dark:border-gray-600 bg-white/50 dark:bg-gray-800/50"
+                <DatePicker
+                  date={birthDate}
+                  onDateChange={(value) => {
+                    setBirthDate(value ? value.toISOString() : "");
+                  }}
+                  className="h-12 text-center focus-visible:ring-2 focus-visible:ring-[#81B214] dark:focus-visible:ring-[#A3C957] border-gray-300 dark:border-gray-600 bg-white/50 dark:bg-gray-800/50"
                 />
               </div>
 
@@ -191,6 +232,25 @@ export default function VerifyIdentityPage() {
                   </p>
                 </div>
               </div>
+            </div>
+            <div className="flex flex-col sm:flex-row gap-3 justify-center mt-4">
+              <Button
+                asChild
+                className="flex items-center gap-2 bg-[#81B214] hover:bg-[#A3C957] text-white font-bold shadow-md border-0"
+              >
+                <Link href="/">
+                  <Home className="h-4 w-4" />
+                  กลับหน้าหลัก
+                </Link>
+              </Button>
+              <Button
+                variant="outline"
+                onClick={handleGoBack}
+                className="flex items-center gap-2 border-[#A3C957] dark:border-[#81B214] text-[#81B214] dark:text-[#A3C957] font-bold hover:bg-[#E2F9B8]/60 dark:hover:bg-[#A3C957]/20"
+              >
+                <ArrowLeft className="h-4 w-4" />
+                ย้อนกลับ
+              </Button>
             </div>
           </CardContent>
         </Card>
