@@ -288,7 +288,7 @@ export default function NavbarMenuItems() {
                 <div className="relative">
                   <div className="absolute -inset-0.5 rounded-full transition duration-300"></div>
                   <img
-                    src="/placeholder-user.jpg"
+                    src={session?.user?.image || "/placeholder-user.jpg"}
                     alt="User"
                     className="relative h-10 w-10 rounded-full border-2 border-white dark:border-neutral-700 object-cover"
                   />

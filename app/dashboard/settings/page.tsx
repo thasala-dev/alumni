@@ -32,26 +32,7 @@ import {
   XCircle,
 } from "lucide-react";
 import { useTheme } from "next-themes";
-
-// Demo data
-const demoUserProfile: any = {
-  id: "alumni-user",
-  email: "alumni@example.com",
-  first_name: "สมชาย",
-  last_name: "ใจดี",
-  nickname: "ชาย",
-  profile_image_url: "/diverse-group-profile.png",
-  bio: "ศิษย์เก่ารุ่น 2018 วิศวกรรมคอมพิวเตอร์ ปัจจุบันเป็น Software Engineer ที่บริษัท เทคโนโลยี จำกัด",
-  graduation_year: 2018,
-  major: "วิศวกรรมคอมพิวเตอร์",
-  phone: "081-234-5678",
-  line_id: "somchai_line",
-  facebook_url: "https://facebook.com/somchai",
-  linkedin_url: "https://linkedin.com/in/somchai",
-  current_company: "บริษัท เทคโนโลยี จำกัด",
-  current_position: "Software Engineer",
-  current_province: "กรุงเทพมหานคร",
-};
+import { useSession } from "next-auth/react";
 
 const demoPrivacySettings: any = {
   profile_privacy: "alumni-only",
@@ -68,10 +49,28 @@ const demoNotificationSettings: any = {
 };
 
 export default function SettingsPage() {
+  const { data: session, status } = useSession();
   // Tab state must be before any conditional return
   const [tab, setTab] = useState<string>("profile");
   const [user, setUser] = useState<{ id: string; email: string } | null>(null);
-  const [profile, setProfile] = useState<any>(demoUserProfile);
+  const [profile, setProfile] = useState<any>({
+    id: "",
+    email: "",
+    first_name: "",
+    last_name: "",
+    nickname: "",
+    profile_image_url: "",
+    bio: "",
+    graduation_year: "",
+    major: "",
+    phone: "",
+    line_id: "",
+    facebook_url: "",
+    linkedin_url: "",
+    current_company: "",
+    current_position: "",
+    current_province: "",
+  });
   const [privacy, setPrivacy] = useState<any>(demoPrivacySettings);
   const [notifications, setNotifications] = useState<any>(
     demoNotificationSettings
@@ -88,33 +87,31 @@ export default function SettingsPage() {
     return setDarkMode(theme || "light");
   }, [theme]);
 
+  useEffect(() => {
+    if (status !== "loading") {
+      fetchProfile();
+    }
+  }, [status]);
+
+  const fetchProfile = async () => {
+    setLoading(true);
+    try {
+      const res = await fetch(
+        "/api/alumniProfile?user_id=" + (session?.user as any)?.id
+      );
+      const data = await res.json();
+      console.log("Fetched alumni profiles:", data, status);
+      setProfile(data);
+    } catch (error) {
+      console.error("Error fetching alumni profiles:", error);
+    }
+    setLoading(false);
+  };
+
   const handleThemeChange = () => {
     setDarkMode((prev) => (prev === "dark" ? "light" : "dark"));
     setTheme(darkMode === "dark" ? "light" : "dark");
   };
-
-  useEffect(() => {
-    const initializePage = async () => {
-      // const currentUser = await getCurrentUser();
-      // if (!currentUser) {
-      //   // Redirect to login if no user
-      //   // router.push("/auth/login");
-      //   return;
-      // }
-      // setUser({ id: currentUser.id, email: currentUser.email });
-      // // Simulate fetching user-specific data
-      // await new Promise((resolve) => setTimeout(resolve, 500));
-      // setProfile({
-      //   ...demoUserProfile,
-      //   id: currentUser.id,
-      //   email: currentUser.email,
-      // });
-      // setPrivacy(demoPrivacySettings);
-      // setNotifications(demoNotificationSettings);
-      setLoading(false);
-    };
-    initializePage();
-  }, []);
 
   const handleProfileChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -232,7 +229,7 @@ export default function SettingsPage() {
                 <div className="relative">
                   <Avatar className="h-24 w-24 ring-4 ring-blue-100 dark:ring-gray-700">
                     <AvatarImage
-                      src={profile.profile_image_url || "/placeholder.svg"}
+                      src={profile.profile_image_url || "/placeholder-user.jpg"}
                       alt={`${profile.first_name} ${profile.last_name}`}
                     />
                     <AvatarFallback className="bg-gradient-to-r from-blue-100 to-purple-100 dark:from-blue-900 dark:to-purple-900 text-blue-600 dark:text-blue-400 text-3xl font-semibold">
@@ -240,7 +237,7 @@ export default function SettingsPage() {
                       {profile.last_name.charAt(0)}
                     </AvatarFallback>
                   </Avatar>
-                  <Button
+                  {/* <Button
                     variant="outline"
                     size="icon"
                     className="absolute bottom-0 right-0 rounded-full bg-white dark:bg-gray-900/80 shadow-lg border-2 border-white dark:border-gray-700 hover:scale-110 transition-transform"
@@ -252,11 +249,12 @@ export default function SettingsPage() {
                   >
                     <Camera className="h-4 w-4 text-blue-500" />
                     <span className="sr-only">อัปโหลดรูปภาพ</span>
-                  </Button>
+                  </Button> */}
                 </div>
                 <div>
                   <p className="text-lg font-semibold text-gray-900 dark:text-white">
-                    {profile.email}
+                    {profile.title_name}
+                    {profile.first_name} {profile.last_name}
                   </p>
                   <p className="text-sm text-gray-500 dark:text-gray-400">
                     อีเมลของคุณ
@@ -266,10 +264,10 @@ export default function SettingsPage() {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="first_name">ชื่อจริง</Label>
+                  <Label htmlFor="first_name">ชื่อ</Label>
                   <Input
                     id="first_name"
-                    value={profile.first_name}
+                    value={profile.first_name ?? ""}
                     onChange={handleProfileChange}
                   />
                 </div>
@@ -277,7 +275,7 @@ export default function SettingsPage() {
                   <Label htmlFor="last_name">นามสกุล</Label>
                   <Input
                     id="last_name"
-                    value={profile.last_name}
+                    value={profile.last_name ?? ""}
                     onChange={handleProfileChange}
                   />
                 </div>
@@ -285,32 +283,43 @@ export default function SettingsPage() {
                   <Label htmlFor="nickname">ชื่อเล่น</Label>
                   <Input
                     id="nickname"
-                    value={profile.nickname}
+                    value={profile.nickname ?? ""}
                     onChange={handleProfileChange}
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="graduation_year">ปีที่จบการศึกษา</Label>
+                  <Label htmlFor="admit_year">ปีที่เข้าศึกษา</Label>
                   <Input
-                    id="graduation_year"
+                    id="admit_year"
                     type="number"
-                    value={profile.graduation_year || ""}
+                    value={profile.admit_year ?? ""}
                     onChange={handleProfileChange}
+                    disabled
                   />
                 </div>
-                <div className="space-y-2 md:col-span-2">
-                  <Label htmlFor="major">สาขาวิชา</Label>
+                <div className="space-y-2">
+                  <Label htmlFor="facultyname">สำนักวิชา</Label>
                   <Input
-                    id="major"
-                    value={profile.major || ""}
+                    id="facultyname"
+                    value={profile.facultyname ?? ""}
                     onChange={handleProfileChange}
+                    disabled
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="programname">หลักสูตร</Label>
+                  <Input
+                    id="programname"
+                    value={profile.programname ?? ""}
+                    onChange={handleProfileChange}
+                    disabled
                   />
                 </div>
                 <div className="space-y-2 md:col-span-2">
                   <Label htmlFor="bio">เกี่ยวกับฉัน</Label>
                   <Textarea
                     id="bio"
-                    value={profile.bio || ""}
+                    value={profile.bio ?? ""}
                     onChange={handleProfileChange}
                     rows={4}
                   />
@@ -327,7 +336,7 @@ export default function SettingsPage() {
                   <Label htmlFor="current_company">ชื่อบริษัท</Label>
                   <Input
                     id="current_company"
-                    value={profile.current_company || ""}
+                    value={profile.current_company ?? ""}
                     onChange={handleProfileChange}
                   />
                 </div>
@@ -335,7 +344,7 @@ export default function SettingsPage() {
                   <Label htmlFor="current_position">ตำแหน่ง</Label>
                   <Input
                     id="current_position"
-                    value={profile.current_position || ""}
+                    value={profile.current_position ?? ""}
                     onChange={handleProfileChange}
                   />
                 </div>
@@ -343,7 +352,7 @@ export default function SettingsPage() {
                   <Label htmlFor="current_province">จังหวัดที่ทำงาน</Label>
                   <Input
                     id="current_province"
-                    value={profile.current_province || ""}
+                    value={profile.current_province ?? ""}
                     onChange={handleProfileChange}
                   />
                 </div>
@@ -359,7 +368,7 @@ export default function SettingsPage() {
                   <Label htmlFor="phone">เบอร์โทรศัพท์</Label>
                   <Input
                     id="phone"
-                    value={profile.phone || ""}
+                    value={profile.phone ?? ""}
                     onChange={handleProfileChange}
                   />
                 </div>
@@ -367,7 +376,7 @@ export default function SettingsPage() {
                   <Label htmlFor="line_id">Line ID</Label>
                   <Input
                     id="line_id"
-                    value={profile.line_id || ""}
+                    value={profile.line_id ?? ""}
                     onChange={handleProfileChange}
                   />
                 </div>
@@ -375,7 +384,7 @@ export default function SettingsPage() {
                   <Label htmlFor="facebook_url">Facebook URL</Label>
                   <Input
                     id="facebook_url"
-                    value={profile.facebook_url || ""}
+                    value={profile.facebook_url ?? ""}
                     onChange={handleProfileChange}
                   />
                 </div>
@@ -383,7 +392,7 @@ export default function SettingsPage() {
                   <Label htmlFor="linkedin_url">LinkedIn URL</Label>
                   <Input
                     id="linkedin_url"
-                    value={profile.linkedin_url || ""}
+                    value={profile.linkedin_url ?? ""}
                     onChange={handleProfileChange}
                   />
                 </div>

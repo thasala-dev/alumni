@@ -7,8 +7,17 @@ const prisma = new PrismaClient();
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
   const id = searchParams.get("id");
+  const user_id = searchParams.get("user_id");
   if (id) {
     const profile = await prisma.alumni_profiles.findUnique({ where: { id } });
+    if (!profile)
+      return NextResponse.json({ error: "Not found" }, { status: 404 });
+    return NextResponse.json(profile);
+  }
+  if (user_id) {
+    const profile = await prisma.alumni_profiles.findFirst({
+      where: { user_id: user_id },
+    });
     if (!profile)
       return NextResponse.json({ error: "Not found" }, { status: 404 });
     return NextResponse.json(profile);

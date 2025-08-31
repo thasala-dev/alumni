@@ -1,6 +1,52 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
+import { discussionCategory } from "@/lib/utils";
+// Simple Dialog component for image URL input
+function ImageUrlDialog({
+  open,
+  onClose,
+  value,
+  onChange,
+}: {
+  open: boolean;
+  onClose: () => void;
+  value: string;
+  onChange: (v: string) => void;
+}) {
+  if (!open) return null;
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+      <div className="bg-white dark:bg-gray-900 rounded-xl shadow-xl p-6 w-full max-w-sm relative animate-fade-in-up">
+        <div className="mb-2 font-semibold text-gray-900 dark:text-white">
+          แนบรูปภาพ (URL)
+        </div>
+        <input
+          type="url"
+          placeholder="วางลิงก์รูปภาพ (URL)"
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          className="border rounded px-3 py-2 text-sm w-full focus:outline-none focus:ring-2 focus:ring-[#81B214] dark:bg-gray-800 dark:text-white"
+        />
+        {value && (
+          <img
+            src={value}
+            alt="Preview"
+            className="w-full max-h-64 object-contain rounded border border-gray-200 dark:border-gray-700 mt-3"
+          />
+        )}
+        <div className="flex justify-end gap-2 mt-4">
+          <button
+            onClick={onClose}
+            className="px-4 py-2 rounded bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600"
+          >
+            ปิด
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -21,30 +67,13 @@ import {
   Clock,
   Loader2,
   Verified,
+  X,
+  Trash,
+  User,
 } from "lucide-react";
-
-interface Post {
-  id: number;
-  author: {
-    name: string;
-    admin?: boolean; // Optional admin flag
-    avatar: string;
-    title?: string;
-    graduationYear?: number;
-  };
-  content: string;
-  image?: string;
-  timestamp: string;
-  likes: number;
-  comments: Array<{
-    id: number;
-    author: string;
-    avatar: string;
-    content: string;
-    timestamp: string;
-  }>;
-  isLiked: boolean;
-}
+import { useSession } from "next-auth/react";
+import { AdmitYear, timeAgo } from "@/lib/utils";
+import { ca } from "date-fns/locale";
 
 interface News {
   id: number;
@@ -54,248 +83,6 @@ interface News {
   timestamp: string;
   category: string;
 }
-
-const mockPosts: Post[] = [
-  {
-    id: 1,
-    author: {
-      name: "เภสัชกร สมชาย ใจดี",
-      admin: true,
-      avatar: "/placeholder-user.jpg",
-      title: "เภสัชกรโรงพยาบาล",
-      graduationYear: 2018,
-    },
-    content:
-      "วันนี้ได้เข้าร่วมการอบรมเรื่อง 'การจัดการยาต้านมะเร็งใหม่' ได้ความรู้ใหม่ๆ มากมาย! สำหรับน้องๆ เภสัชกรที่สนใจสาขานี้ แนะนำให้ติดตามข่าวสารจากสมาคมเภสัชกรรมโรงพยาบาลไทยนะครับ 💊✨",
-    timestamp: "2 ชั่วโมงที่แล้ว",
-    likes: 24,
-    comments: [
-      {
-        id: 1,
-        author: "เภสัชกร สมหญิง เก่งมาก",
-        avatar: "/placeholder-user.jpg",
-        content: "ขอบคุณสำหรับข้อมูลค่ะ! อยากเข้าร่วมการอบรมเหมือนกันเลย",
-        timestamp: "1 ชั่วโมงที่แล้ว",
-      },
-      {
-        id: 2,
-        author: "เภสัชกร อนันต์ รักเรียน",
-        avatar: "/placeholder-user.jpg",
-        content: "สาขานี้น่าสนใจมากครับ! มีข้อมูลเพิ่มเติมไหมครับ",
-        timestamp: "30 นาทีที่แล้ว",
-      },
-    ],
-    isLiked: false,
-  },
-  {
-    id: 2,
-    author: {
-      name: "เภสัชกร ปิยะพร สายใจ",
-      avatar: "/placeholder-user.jpg",
-      title: "เภสัชกรชุมชน",
-      graduationYear: 2016,
-    },
-    content:
-      "เมื่อวานได้ไปให้ความรู้เรื่องการใช้ยาอย่างถูกต้องกับชาวบ้านในชุมชน รู้สึกมีความสุขมากที่ได้ใช้ความรู้ช่วยเหลือผู้คน การเป็นเภสัชกรชุมชนช่วยให้เราใกล้ชิดกับประชาชนและสามารถดูแลสุขภาพของทุกคนได้อย่างใกล้ชิด 🏥💚",
-    image: "/placeholder.jpg",
-    timestamp: "5 ชั่วโมงที่แล้ว",
-    likes: 45,
-    comments: [
-      {
-        id: 1,
-        author: "เภสัชกร ธีรศักดิ์ ทองดี",
-        avatar: "/placeholder-user.jpg",
-        content:
-          "ภาคภูมิใจในผลงานครับ! เป็นแรงบันดาลใจให้เพื่อนๆ เภสัชกรหลายคน",
-        timestamp: "4 ชั่วโมงที่แล้ว",
-      },
-    ],
-    isLiked: true,
-  },
-  {
-    id: 3,
-    author: {
-      name: "เภสัชกร นิตยา สุขใส",
-      avatar: "/placeholder-user.jpg",
-      title: "เภสัชกรผลิตภัณฑ์สมุนไพร",
-      graduationYear: 2019,
-    },
-    content:
-      "วันนี้ได้เข้าร่วมงาน Herbal Expo 2025 แล้ว! เจอนวัตกรรมสมุนไพรไทยใหม่ๆ มากมาย การพัฒนาผลิตภัณฑ์สมุนไพรที่มีมาตรฐานจะช่วยยกระดับอุตสาหกรรมสมุนไพรไทยสู่สากล 🌿🇹🇭",
-    timestamp: "8 ชั่วโมงที่แล้ว",
-    likes: 32,
-    comments: [],
-    isLiked: false,
-  },
-  {
-    id: 4,
-    author: {
-      name: "เภสัชกร วิทยา เก่งกล้า",
-      avatar: "/placeholder-user.jpg",
-      title: "เภสัชกรอุตสาหกรรม",
-      graduationYear: 2017,
-    },
-    content:
-      "เพิ่งจบการตรวจสอบ GMP ของโรงงานยา ภูมิใจที่ได้เป็นส่วนหนึ่งในการรับรองคุณภาพยาไทยให้ได้มาตรฐานสากล Quality Control คือหัวใจสำคัญของอุตสาหกรรมยา 🔬⚗️",
-    timestamp: "12 ชั่วโมงที่แล้ว",
-    likes: 28,
-    comments: [
-      {
-        id: 1,
-        author: "เภสัชกร อำพร วิจิตร",
-        avatar: "/placeholder-user.jpg",
-        content: "ขอบคุณสำหรับการทำงานที่ทุ่มเทครับ! GMP มีความสำคัญมากจริงๆ",
-        timestamp: "11 ชั่วโมงที่แล้ว",
-      },
-    ],
-    isLiked: true,
-  },
-  {
-    id: 5,
-    author: {
-      name: "เภสัชกร สุรีย์ ศรีไทย",
-      avatar: "/placeholder-user.jpg",
-      title: "เภสัชกรการค้า",
-      graduationYear: 2020,
-    },
-    content:
-      "เปิดร้านยาใหม่แล้วครับ! ตั้งใจจะให้บริการแบบ Patient Care อย่างเต็มรูปแบบ พร้อมให้คำปรึกษาเรื่องยาและสุขภาพอย่างใกล้ชิด ยินดีต้อนรับเพื่อนๆ เภสัชกร WU มาเยี่ยมชมครับ 🏪💊",
-    image: "/placeholder.jpg",
-    timestamp: "1 วันที่แล้ว",
-    likes: 67,
-    comments: [
-      {
-        id: 1,
-        author: "เภสัชกร มาลี จันทร์เจ้า",
-        avatar: "/placeholder-user.jpg",
-        content: "ยินดีด้วยครับ! ขอให้ธุรกิจเจริญก้าวหน้านะครับ",
-        timestamp: "23 ชั่วโมงที่แล้ว",
-      },
-      {
-        id: 2,
-        author: "เภสัชกร ดาริน ใสใหม่",
-        avatar: "/placeholder-user.jpg",
-        content: "เก่งมากเลยค่ะ! อยากไปเยี่ยมชมร้านจัง",
-        timestamp: "20 ชั่วโมงที่แล้ว",
-      },
-    ],
-    isLiked: false,
-  },
-  {
-    id: 6,
-    author: {
-      name: "เภสัชกร ประยุทธ มั่นคง",
-      avatar: "/placeholder-user.jpg",
-      title: "เภสัชกรทหาร",
-      graduationYear: 2015,
-    },
-    content:
-      "วันนี้ได้เข้าร่วมภารกิจช่วยเหลือชาวบ้านในพื้นที่ห่างไกล การได้นำความรู้เภสัชกรรมไปช่วยเหลือผู้คนที่ขาดแคลนการดูแลทางการแพทย์ ทำให้รู้สึกภูมิใจในอาชีพเภสัชกรมาก 🚁⛑️",
-    timestamp: "2 วันที่แล้ว",
-    likes: 89,
-    comments: [
-      {
-        id: 1,
-        author: "เภสัชกร สมพร กล้าหาญ",
-        avatar: "/placeholder-user.jpg",
-        content: "เคารพในความทุ่มเทครับ! คุณคือแรงบันดาลใจของเรา",
-        timestamp: "2 วันที่แล้ว",
-      },
-    ],
-    isLiked: true,
-  },
-  {
-    id: 7,
-    author: {
-      name: "แอดมิน",
-      admin: true,
-      avatar: "/placeholder-user.jpg",
-    },
-    content:
-      "การดูแลเด็กป่วยต้องใช้ความละเอียดอ่อนเป็นพิเศษ วันนี้ได้ช่วยคุณหมอปรับขนาดยาให้น้องๆ อย่างปลอดภัย เด็กคือคนไข้พิเศษที่ต้องการความเอาใจใส่มากกว่า 👶💉",
-    timestamp: "3 วันที่แล้ว",
-    likes: 42,
-    comments: [],
-    isLiked: false,
-  },
-  {
-    id: 8,
-    author: {
-      name: "เภสัชกร อรุณ เช้าใส",
-      avatar: "/placeholder-user.jpg",
-      title: "เภสัชกรวิจัยและพัฒนา",
-      graduationYear: 2014,
-    },
-    content:
-      "เมื่อเช้าได้นำเสนอผลงานวิจัยใหม่เรื่อง 'การพัฒนายาต้านไวรัสจากสมุนไพรไทย' ในงานประชุมวิชาการระดับชาติ ภูมิใจที่ได้ใช้ความรู้พัฒนายาไทยเพื่อคนไทย 🧪📊",
-    image: "/placeholder.jpg",
-    timestamp: "4 วันที่แล้ว",
-    likes: 76,
-    comments: [
-      {
-        id: 1,
-        author: "เภสัชกร วิชญา นักคิด",
-        avatar: "/placeholder-user.jpg",
-        content: "ผลงานน่าสนใจมากครับ! ขอชมเชยและขอแสดงความยินดีด้วย",
-        timestamp: "4 วันที่แล้ว",
-      },
-      {
-        id: 2,
-        author: "เภสัชกร ชัยพร เก่งมาก",
-        avatar: "/placeholder-user.jpg",
-        content: "อยากทราบรายละเอียดเพิ่มเติมครับ งานวิจัยน่าติดตามมาก",
-        timestamp: "3 วันที่แล้ว",
-      },
-    ],
-    isLiked: true,
-  },
-  {
-    id: 9,
-    author: {
-      name: "เภสัชกร สิริ แสงทอง",
-      avatar: "/placeholder-user.jpg",
-      title: "เภสัชกรเครื่องสำอาง",
-      graduationYear: 2022,
-    },
-    content:
-      "วันนี้ได้เข้าร่วมสัมมนา 'แนวโน้มอุตสาหกรรมเครื่องสำอางไทย' เทรนด์ Clean Beauty และ Sustainable Cosmetics กำลังมาแรงมาก! เป็นโอกาสดีสำหรับเภสัชกรที่สนใจสาขานี้ 💄✨",
-    timestamp: "5 วันที่แล้ว",
-    likes: 38,
-    comments: [
-      {
-        id: 1,
-        author: "เภสัชกร นภา ใสใจ",
-        avatar: "/placeholder-user.jpg",
-        content: "สนใจมากค่ะ! มีข้อมูลการอบรมเพิ่มเติมไหมคะ",
-        timestamp: "5 วันที่แล้ว",
-      },
-    ],
-    isLiked: false,
-  },
-  {
-    id: 10,
-    author: {
-      name: "เภสัชกร พิชิต ใจกล้า",
-      avatar: "/placeholder-user.jpg",
-      title: "เภสัชกรนิติเภสัช",
-      graduationYear: 2013,
-    },
-    content:
-      "เพิ่งจบการตรวจสอบร้านยาผิดกฎหมาย การดูแลให้ประชาชนได้รับยาที่ปลอดภัยและมีคุณภาพคือหน้าที่สำคัญของเรา กฎหมายยาและเภสัชกรรมคือเกราะป้องกันสุขภาพของคนไทย ⚖️🛡️",
-    timestamp: "6 วันที่แล้ว",
-    likes: 55,
-    comments: [
-      {
-        id: 1,
-        author: "เภสัชกร สุชาติ ยุติธรรม",
-        avatar: "/placeholder-user.jpg",
-        content: "ขอบคุณสำหรับการปกป้องผู้บริโภคครับ งานสำคัญมาก",
-        timestamp: "6 วันที่แล้ว",
-      },
-    ],
-    isLiked: true,
-  },
-];
 
 const mockNews: News[] = [
   {
@@ -325,125 +112,175 @@ const mockNews: News[] = [
 ];
 
 export default function DashboardPage() {
-  const [posts, setPosts] = useState<Post[]>(mockPosts.slice(0, 5)); // เริ่มต้นด้วย 5 posts
-  const [allPosts] = useState<Post[]>(mockPosts); // เก็บ posts ทั้งหมด
+  const { data: session, status } = useSession();
+  const [posts, setPosts] = useState<any[]>([]);
+
   const [newPost, setNewPost] = useState("");
+
   const [showComments, setShowComments] = useState<{ [key: number]: boolean }>(
     {}
   );
+  const [newPostImage, setNewPostImage] = useState("");
+  const [showImageDialog, setShowImageDialog] = useState(false);
   const [newComment, setNewComment] = useState<{ [key: number]: string }>({});
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
 
-  // Load more posts function
-  const loadMorePosts = () => {
-    if (loading || !hasMore) return;
+  const [pagination, setPagination] = useState({
+    current: 1,
+    total: 1,
+    count: 0,
+    limit: 10,
+  });
 
+  const loadMorePosts = async ({ page, limit, user_id }: any) => {
     setLoading(true);
+    try {
+      const searchParams = new URLSearchParams({
+        page: page.toString(),
+        limit: limit.toString(),
+        user_id: user_id,
+      });
 
-    // Simulate API delay
-    setTimeout(() => {
-      const currentLength = posts.length;
-      const nextPosts = allPosts.slice(currentLength, currentLength + 5);
-
-      if (nextPosts.length === 0) {
-        setHasMore(false);
-      } else {
-        setPosts((prev) => [...prev, ...nextPosts]);
-      }
-
-      setLoading(false);
-    }, 1000);
-  };
-
-  // Intersection Observer for infinite scroll
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const target = entries[0];
-        if (target.isIntersecting && hasMore && !loading) {
-          loadMorePosts();
-        }
-      },
-      {
-        threshold: 0.1,
-        rootMargin: "100px",
-      }
-    );
-
-    const sentinel = document.getElementById("scroll-sentinel");
-    if (sentinel) {
-      observer.observe(sentinel);
-    }
-
-    return () => {
-      if (sentinel) {
-        observer.unobserve(sentinel);
-      }
-    };
-  }, [posts, loading, hasMore]);
-
-  const handlePost = () => {
-    if (newPost.trim()) {
-      const post: Post = {
-        id: Date.now(),
-        author: {
-          name: "เภสัชกร คุณ",
-          avatar: "/placeholder-user.jpg",
-          title: "ศิษย์เก่า WU",
-          graduationYear: 2020,
+      const res = await fetch(`/api/discussionTopics?${searchParams}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
         },
+      });
+      if (!res.ok) throw new Error("Failed to create post");
+
+      const { data, total } = await res.json();
+      setPosts((prev) => {
+        const existingIds = new Set(prev.map((p) => p.id));
+        const newData = data.filter((item: any) => !existingIds.has(item.id));
+        return [...prev, ...newData];
+      });
+
+      setHasMore(data.length > 0);
+    } catch (error) {
+      console.error("Error creating post:", error);
+    }
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    if (status !== "loading") {
+      loadMorePosts({
+        page: pagination.current,
+        limit: pagination.limit,
+        user_id: session?.user?.id,
+      });
+    }
+  }, [pagination.current, status]);
+
+  const handlePost = async () => {
+    if (newPost.trim()) {
+      const data: any = {
+        category_id: "0",
+        user_id: session?.user?.id,
         content: newPost,
-        timestamp: "เมื่อสักครู่",
-        likes: 0,
-        comments: [],
-        isLiked: false,
+        image: newPostImage || undefined,
       };
-      // เพิ่มโพสต์ใหม่ที่ด้านบนสุด
-      setPosts([post, ...posts]);
-      setNewPost("");
+
+      try {
+        const res = await fetch("/api/discussionTopics", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        });
+        if (!res.ok) throw new Error("Failed to create post");
+
+        setPosts([]);
+        setPagination({
+          current: 1,
+          total: 1,
+          count: 1,
+          limit: 10,
+        });
+
+        setNewPost("");
+        setNewPostImage("");
+      } catch (error) {
+        console.error("Error creating post:", error);
+      }
     }
   };
 
-  const handleLike = (postId: number) => {
-    setPosts(
-      posts.map((post) =>
-        post.id === postId
-          ? {
-              ...post,
-              isLiked: !post.isLiked,
-              likes: post.isLiked ? post.likes - 1 : post.likes + 1,
-            }
-          : post
-      )
-    );
-  };
+  const handleLike = async (postId: number) => {
+    const post = posts.find((p) => p.id === postId);
+    const data: any = {
+      topic_id: postId,
+      user_id: session?.user?.id,
+      isLiked: !post.isLiked,
+    };
 
-  const handleComment = (postId: number) => {
-    const comment = newComment[postId];
-    if (comment?.trim()) {
+    try {
+      const res = await fetch("/api/discussionLikes", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+      if (!res.ok) throw new Error("Failed to create post");
+      const resData = await res.json();
+
       setPosts(
         posts.map((post) =>
           post.id === postId
             ? {
                 ...post,
-                comments: [
-                  ...post.comments,
-                  {
-                    id: Date.now(),
-                    author: "เภสัชกร คุณ",
-                    avatar: "/placeholder-user.jpg",
-                    content: comment,
-                    timestamp: "เมื่อสักครู่",
-                  },
-                ],
+                isLiked: !post.isLiked,
+                discussion_likes: resData.data,
               }
             : post
         )
       );
-      setNewComment({ ...newComment, [postId]: "" });
+    } catch (error) {
+      console.error("Error liking post:", error);
+    }
+  };
+
+  const handleComment = async (postId: number) => {
+    const comment = newComment[postId];
+    if (comment?.trim()) {
+      console.log("New comment:", comment, postId);
+      const data: any = {
+        topic_id: postId,
+        user_id: session?.user?.id,
+        content: comment,
+      };
+      try {
+        const res = await fetch("/api/discussionReplies", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        });
+        if (!res.ok) throw new Error("Failed to create post");
+        const resData = await res.json();
+
+        setPosts(
+          posts.map((post) =>
+            post.id === postId
+              ? {
+                  ...post,
+                  discussion_replies: [
+                    ...(post.discussion_replies || []),
+                    resData.topic,
+                  ],
+                }
+              : post
+          )
+        );
+        setNewComment({ ...newComment, [postId]: "" });
+      } catch (error) {
+        console.error("Error creating post:", error);
+      }
     }
   };
 
@@ -505,7 +342,7 @@ export default function DashboardPage() {
               <div className="flex items-start space-x-4">
                 <Avatar className="w-12 h-12">
                   <img
-                    src="/placeholder-user.jpg"
+                    src={session?.user?.image || "/placeholder-user.jpg"}
                     alt="Your avatar"
                     className="w-full h-full object-cover rounded-full border border-[#81B214] border-2"
                   />
@@ -518,11 +355,29 @@ export default function DashboardPage() {
                     className="resize-none border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder:text-gray-500 dark:placeholder:text-gray-400 focus:border-blue-500 dark:focus:border-blue-400"
                     rows={8}
                   />
+                  {newPostImage && (
+                    <div className="mt-3 relative">
+                      <button
+                        type="button"
+                        className="absolute top-2 right-2 h-7 w-7 rounded-full bg-red-500 text-white flex items-center justify-center hover:bg-red-600 cursor-pointer shadow z-10"
+                        onClick={() => setNewPostImage("")}
+                        aria-label="ลบรูปภาพ"
+                      >
+                        <X className="h-4 w-4" />
+                      </button>
+                      <img
+                        src={newPostImage}
+                        alt="Preview"
+                        className="w-full max-h-64 object-contain rounded border border-gray-200 dark:border-gray-700"
+                      />
+                    </div>
+                  )}
                   <div className="flex justify-between items-center mt-4">
                     <div className="flex space-x-2">
                       <Button
-                        variant="ghost"
+                        variant="outline"
                         className="text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200"
+                        onClick={() => setShowImageDialog(true)}
                       >
                         <Camera className="h-4 w-4 mr-2 text-[#81B214]" />
                         รูปภาพ
@@ -537,6 +392,12 @@ export default function DashboardPage() {
                       โพสต์
                     </Button>
                   </div>
+                  <ImageUrlDialog
+                    open={showImageDialog}
+                    onClose={() => setShowImageDialog(false)}
+                    value={newPostImage}
+                    onChange={setNewPostImage}
+                  />
                 </div>
               </div>
             </CardContent>
@@ -551,43 +412,90 @@ export default function DashboardPage() {
               <CardContent className="p-4">
                 {/* Post Header */}
                 <div className="flex items-start justify-between mb-4">
-                  <div className="flex items-center space-x-3">
-                    <Avatar className="w-12 h-12">
-                      <img
-                        src={post.author.avatar}
-                        alt={post.author.name}
-                        className="w-full h-full object-cover rounded-full border border-[#81B214] border-2"
-                      />
-                    </Avatar>
-                    <div>
-                      <div className="font-semibold text-gray-900 dark:text-gray-100 flex flex-row items-top gap-2">
-                        <div className="items-center">{post.author.name}</div>
-                        {post.author.admin === true && (
-                          <Verified className="h-5 w-5 text-blue-500" />
-                        )}
-                      </div>
-                      <div className="flex items-center text-sm text-gray-500 dark:text-gray-400 space-x-2">
-                        {(post.author.title || post.author.graduationYear) && (
-                          <>
-                            <span>{post.author.title}</span>
-                            <span>•</span>
-                            <span>รุ่น {post.author.graduationYear}</span>
-                            <span>•</span>
-                          </>
-                        )}
+                  {post.category_id === "0" ? (
+                    <div className="flex items-center space-x-3">
+                      <Avatar className="w-12 h-12">
+                        <img
+                          src={post.user?.image || "/placeholder-user.jpg"}
+                          alt={post.user?.name}
+                          className="w-full h-full object-cover rounded-full border border-[#81B214] border-2"
+                        />
+                      </Avatar>
+                      <div>
+                        <div className="font-semibold text-gray-900 dark:text-gray-100 flex flex-row items-top gap-2">
+                          <div className="items-center">{post.user?.name}</div>
+                          {post.user?.role === "admin" && (
+                            <Verified className="h-5 w-5 text-blue-500" />
+                          )}
+                        </div>
+                        <div className="flex items-center text-sm text-gray-500 dark:text-gray-400 gap-2">
+                          {post.user?.alumni_profiles.length > 0 && (
+                            <>
+                              {post.user?.alumni_profiles[0]?.name && (
+                                <>
+                                  <span>
+                                    {post.user?.alumni_profiles[0]?.name}
+                                  </span>
+                                  <span>•</span>
+                                </>
+                              )}
 
-                        <Clock className="h-3 w-3" />
-                        <span>{post.timestamp}</span>
+                              <span>
+                                รุ่นที่{" "}
+                                {AdmitYear(
+                                  post.user?.alumni_profiles[0]?.admit_year
+                                )}
+                              </span>
+                              <span>•</span>
+                            </>
+                          )}
+
+                          <Clock className="h-3 w-3" />
+                          <span>{timeAgo(post.created_at)}</span>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"
-                  >
-                    <MoreHorizontal className="h-4 w-4" />
-                  </Button>
+                  ) : (
+                    <div>
+                      <div className="flex space-x-3">
+                        <div className="text-xl font-semibold text-gray-900 dark:text-gray-100">
+                          {post.title}
+                        </div>
+                      </div>
+                      {discussionCategory
+                        .filter((category) => category.id === post.category_id)
+                        .map((category) => (
+                          <div
+                            key={category.id}
+                            className="flex items-center space-x-2"
+                          >
+                            <category.icon
+                              className={`h-4 w-4 ${category.color}`}
+                            />
+                            <span className={category.color}>
+                              {category.name}
+                            </span>
+                            <span className="text-gray-400">•</span>
+                            <span>
+                              <User className="h-4 w-4 text-gray-500" />
+                            </span>
+                            <span className="text-gray-500">
+                              {post.user?.name}
+                            </span>
+                          </div>
+                        ))}
+                    </div>
+                  )}
+
+                  {post.user?.id === session?.user?.id && (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="text-red-500 dark:text-red-400 hover:text-red-700 dark:hover:text-red-200 hover:bg-red-100 dark:hover:bg-red-900"
+                    >
+                      <Trash className="h-4 w-4" />
+                    </Button>
+                  )}
                 </div>
 
                 {/* Post Content */}
@@ -607,61 +515,77 @@ export default function DashboardPage() {
                 {/* Post Actions */}
                 <div className="flex items-center justify-between pt-4 border-t border-gray-100 dark:border-gray-700">
                   <div className="flex items-center space-x-6">
-                    <Button
-                      variant="ghost"
+                    <div
                       onClick={() => handleLike(post.id)}
-                      className={`${
+                      className={`flex items-center space-x-2 cursor-pointer ${
                         post.isLiked
                           ? "text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
                           : "text-gray-600 hover:text-red-600 dark:text-gray-400 dark:hover:text-red-400"
                       }`}
                     >
                       <Heart
-                        className={`h-8 w-8 mr-2 ${
+                        className={`h-6 w-6 mr-2 ${
                           post.isLiked ? "fill-current" : ""
                         }`}
                       />
-                      {post.likes}
-                    </Button>
-                    <Button
-                      variant="ghost"
+                      {post.discussion_likes.length}
+                    </div>
+                    <div
                       onClick={() => toggleComments(post.id)}
-                      className="text-gray-600 hover:text-blue-600"
+                      className="flex items-center space-x-2 cursor-pointer text-gray-600 dark:text-gray-400 hover:text-blue-600"
                     >
-                      <MessageCircle className="h-8 w-8 mr-2" />
-                      {post.comments.length}
-                    </Button>
+                      <MessageCircle className="h-6 w-6 mr-2 " />
+                      {post.discussion_replies?.length}
+                    </div>
                   </div>
                 </div>
 
                 {/* Comments Section */}
                 {showComments[post.id] && (
-                  <div className="mt-4 pt-4">
+                  <div className="pt-4">
                     {/* Existing Comments */}
                     <div className="space-y-3 mb-4">
-                      {post.comments.map((comment) => (
+                      {post.discussion_replies.map((comment: any) => (
                         <div
                           key={comment.id}
                           className="flex items-start space-x-3"
                         >
                           <Avatar className="w-8 h-8">
                             <img
-                              src={comment.avatar}
-                              alt={comment.author}
+                              src={
+                                comment.user?.image || "/placeholder-user.jpg"
+                              }
+                              alt={comment.user?.name}
                               className="w-full h-full object-cover rounded-full border border-[#81B214] border-2"
                             />
                           </Avatar>
                           <div className="flex-1">
-                            <div className="rounded-lg p-3">
-                              <p className="font-semibold text-sm text-gray-900 dark:text-gray-100">
-                                {comment.author}
-                              </p>
+                            <div className="rounded-lg pl-3">
+                              <div className="flex items-start justify-between mb-2">
+                                <div className="font-semibold text-sm text-gray-900 dark:text-gray-100 flex flex-row items-top gap-2 mb-2">
+                                  <div className="items-center">
+                                    {comment.user?.name}
+                                  </div>
+                                  {comment.user?.role === "admin" && (
+                                    <Verified className="h-5 w-5 text-blue-500" />
+                                  )}
+                                </div>
+                                {comment.user?.id === session?.user?.id && (
+                                  <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    className="text-red-500 dark:text-red-400 hover:text-red-700 dark:hover:text-red-200 hover:bg-red-100 dark:hover:bg-red-900"
+                                  >
+                                    <Trash className="h-4 w-4" />
+                                  </Button>
+                                )}
+                              </div>
                               <p className="text-gray-800 dark:text-gray-100">
                                 {comment.content}
                               </p>
                             </div>
                             <p className="text-xs text-gray-500 dark:text-gray-300 mt-1 ml-3">
-                              {comment.timestamp}
+                              {timeAgo(comment.created_at)}
                             </p>
                           </div>
                         </div>
@@ -672,7 +596,7 @@ export default function DashboardPage() {
                     <div className="flex items-start space-x-3">
                       <Avatar className="w-8 h-8">
                         <img
-                          src="/placeholder-user.jpg"
+                          src={session?.user?.image || "/placeholder-user.jpg"}
                           alt="Your avatar"
                           className="w-full h-full object-cover rounded-full border border-[#81B214] border-2"
                         />
@@ -719,8 +643,22 @@ export default function DashboardPage() {
             </Card>
           )}
 
-          {/* Intersection observer sentinel */}
-          <div id="scroll-sentinel" className="h-4"></div>
+          {/* Load more button */}
+          {hasMore && !loading && (
+            <div className="flex justify-center my-4">
+              <div
+                onClick={() =>
+                  setPagination((prev) => ({
+                    ...prev,
+                    current: prev.current + 1,
+                  }))
+                }
+                className="text-[#81B214] bg-[#81B214]/10 w-full p-8 text-lg font-semibold cursor-pointer rounded-md text-center hover:bg-[#81B214]/20 transition"
+              >
+                โหลดโพสต์เพิ่มเติม
+              </div>
+            </div>
+          )}
 
           {/* End of posts message */}
           {!hasMore && !loading && (
