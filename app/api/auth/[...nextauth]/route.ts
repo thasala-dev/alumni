@@ -64,9 +64,9 @@ export const authOptions: NextAuthOptions = {
     async signIn({ user, account, profile }) {
       // Only run for OAuth (Google, Facebook)
       if (account?.provider === "google" || account?.provider === "facebook") {
-        if (!user?.email) {
-          return false;
-        }
+        // if (!user?.email) {
+        //   return false;
+        // }
 
         // ค้นหา user ที่ email ตรงกัน
         const existingUser = await prisma.user.findUnique({
@@ -112,10 +112,34 @@ export const authOptions: NextAuthOptions = {
           });
         } else {
           // ถ้าไม่มี user เดิม สร้างใหม่
+          // Generate unique username
+          let usernameToSet = user.name || undefined;
+          if (usernameToSet) {
+            let base = usernameToSet;
+            let suffix = 0;
+            let candidate = base;
+            // If username exists, try base+number, fallback to email prefix
+            while (
+              await prisma.user.findUnique({ where: { username: candidate } })
+            ) {
+              suffix++;
+              candidate = base + suffix;
+              if (suffix > 5 && user.email) {
+                // fallback to email prefix + random 4 digits
+                const prefix = user.email.split("@")[0];
+                candidate = prefix + Math.floor(1000 + Math.random() * 9000);
+              }
+            }
+            usernameToSet = candidate;
+          } else if (user.email) {
+            // fallback: use email prefix + random 4 digits
+            const prefix = user.email.split("@")[0];
+            usernameToSet = prefix + Math.floor(1000 + Math.random() * 9000);
+          }
           await prisma.user.create({
             data: {
               email: user.email,
-              username: user.name || undefined,
+              username: usernameToSet,
               name: user.name || undefined,
               image: user.image || undefined,
               role: "alumni",
