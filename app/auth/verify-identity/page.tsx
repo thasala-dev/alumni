@@ -1,7 +1,7 @@
 "use client";
 
 import type React from "react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ReactDatePicker from "react-datepicker";
 import { DatePicker } from "@/components/date-picker";
 import "react-datepicker/dist/react-datepicker.css";
@@ -27,31 +27,71 @@ import {
   Home,
 } from "lucide-react";
 import Link from "next/link";
+import { AdmitYear } from "@/lib/utils";
+import { useSession, signOut } from "next-auth/react";
+import { ro } from "date-fns/locale";
 
-function formatDateToInput(dateStr: string) {
-  if (!dateStr) return "";
-  const [day, month, year] = dateStr.split("-");
-  return `${year}-${month}-${day}`;
-}
-
-function formatDateToDisplay(dateStr: string) {
-  if (!dateStr) return "";
-  const [year, month, day] = dateStr.split("-");
-  return `${day}-${month}-${year}`;
-}
+// Extend the session user type to include 'id'
+type SessionUser = {
+  id?: string | null;
+  role?: string | null;
+  name?: string | null;
+  email?: string | null;
+  image?: string | null;
+};
 
 export default function VerifyIdentityPage() {
-  const handleGoBack = () => {
-    if (typeof window !== "undefined") {
-      window.history.back();
-    }
+  const { data: session, status } = useSession();
+  const user = session?.user as SessionUser;
+
+  const handleGoBack = async () => {
+    await signOut();
   };
+
+  useEffect(() => {
+    if (status === "unauthenticated") {
+      router.push("/auth/login");
+    }
+  }, [status]);
+
+  // Dialog state
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [dialogType, setDialogType] = useState<"found" | "notfound" | null>(
+    null
+  );
+  const [alumniDetail, setAlumniDetail] = useState<any>(null);
 
   const [nationalId, setNationalId] = useState("");
   const [birthDate, setBirthDate] = useState<Date | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const router = useRouter();
+
+  const handleConfirm = async () => {
+    setDialogOpen(false);
+
+    console.log("Confirming identity...", session, alumniDetail);
+    const res = await fetch("/api/verifyIdentity", {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        id: alumniDetail.id,
+        user_id: (session?.user as SessionUser)?.id || null,
+        profile_image_url: session?.user?.image || null,
+      }),
+    });
+
+    if (res.ok) {
+      const data = await res.json();
+      if (data && data.status === "PENDING_APPROVAL") {
+        router.push("/auth/pending-approval");
+      } else if (data && data.status !== "UNREGISTERED") {
+        router.push("/dashboard");
+      }
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -87,7 +127,13 @@ export default function VerifyIdentityPage() {
       });
       if (res.ok) {
         const data = await res.json();
-        console.log("Fetched alumni profiles:", data);
+        if (data.alumni) {
+          setAlumniDetail(data.alumni);
+          setDialogType("found");
+        } else {
+          setDialogType("notfound");
+        }
+        setDialogOpen(true);
       }
     } catch (e) {
       console.error("Error fetching alumni profiles:", e);
@@ -135,6 +181,83 @@ export default function VerifyIdentityPage() {
         className="absolute -top-32 -left-32 w-[500px] h-[500px] bg-gradient-to-br from-green-200 via-indigo-200 to-purple-200 dark:from-green-900 dark:via-indigo-900 dark:to-purple-900 rounded-full blur-3xl opacity-40 animate-pulse z-0"
         aria-hidden="true"
       />
+
+      {/* Dialog Modal */}
+      {dialogOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+          <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl p-6 w-full max-w-md relative animate-fade-in-up">
+            {dialogType === "found" ? (
+              <>
+                <div className="flex items-center gap-3 mb-4">
+                  <CheckCircle className="text-green-500 h-6 w-6" />
+                  <span className="text-lg font-bold text-green-700 dark:text-green-300">
+                    พบข้อมูลศิษย์เก่า
+                  </span>
+                </div>
+                <div className="mb-4 space-y-2">
+                  <div>
+                    <span className="font-semibold">ชื่อ-นามสกุล:</span>{" "}
+                    {alumniDetail?.first_name || "-"}{" "}
+                    {alumniDetail?.last_name || "-"}
+                  </div>
+                  <div>
+                    <span className="font-semibold">รหัสนักศึกษา:</span>{" "}
+                    {alumniDetail?.studentcode || "-"}
+                  </div>
+                  <div>
+                    <span className="font-semibold">คณะ:</span>{" "}
+                    {alumniDetail?.facultyname || "-"}
+                  </div>
+                  <div>
+                    <span className="font-semibold">สาขา:</span>{" "}
+                    {alumniDetail?.programname || "-"}
+                  </div>
+                  <div>
+                    <span className="font-semibold">รุ่นที่:</span>{" "}
+                    {AdmitYear(alumniDetail?.admit_year) || "-"}
+                  </div>
+                  {/* Add more fields as needed */}
+                </div>
+                <div className="flex gap-2 justify-end">
+                  <Button
+                    onClick={handleConfirm}
+                    className="bg-[#81B214] hover:bg-[#A3C957] text-white font-bold"
+                  >
+                    ยืนยันข้อมูลนี้
+                  </Button>
+                  <Button
+                    variant="outline"
+                    onClick={() => setDialogOpen(false)}
+                    className="border-[#A3C957] dark:border-[#81B214] text-[#81B214] dark:text-[#A3C957]"
+                  >
+                    ปิด
+                  </Button>
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="flex items-center gap-3 mb-4">
+                  <AlertCircle className="text-red-500 h-6 w-6" />
+                  <span className="text-lg font-bold text-red-700 dark:text-red-300">
+                    ไม่พบข้อมูลศิษย์เก่า
+                  </span>
+                </div>
+                <div className="mb-4 text-gray-700 dark:text-gray-200">
+                  กรุณาตรวจสอบข้อมูลอีกครั้ง หรือ ติดต่อเจ้าหน้าที่
+                </div>
+                <div className="flex gap-2 justify-end">
+                  <Button
+                    onClick={() => setDialogOpen(false)}
+                    className="bg-[#81B214] hover:bg-[#A3C957] text-white font-bold"
+                  >
+                    ปิด
+                  </Button>
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+      )}
 
       <div className="relative w-full max-w-md">
         {/* Main Card */}
@@ -184,10 +307,8 @@ export default function VerifyIdentityPage() {
                   วันเกิด
                 </Label>
                 <DatePicker
-                  date={birthDate}
-                  onDateChange={(value) => {
-                    setBirthDate(value ? value.toISOString() : "");
-                  }}
+                  date={birthDate ? format(birthDate, "yyyy-MM-dd") : undefined}
+                  onDateChange={(date) => setBirthDate(date ?? null)}
                   className="h-12 text-center focus-visible:ring-2 focus-visible:ring-[#81B214] dark:focus-visible:ring-[#A3C957] border-gray-300 dark:border-gray-600 bg-white/50 dark:bg-gray-800/50"
                 />
               </div>

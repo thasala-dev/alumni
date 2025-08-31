@@ -294,7 +294,7 @@ export default function NavbarMenuItems() {
                   />
                 </div>
                 <span className="hidden lg:inline text-sm font-semibold text-gray-800 dark:text-gray-100 group-hover:text-[#81B214] dark:group-hover:text-[#81B214] transition-colors duration-300">
-                  บัญชีของฉัน
+                  {session?.user?.name || "บัญชีของฉัน"}
                 </span>
                 <ChevronDown className="w-4 h-4 text-gray-500 group-hover:text-[#81B214] dark:group-hover:text-[#81B214] transition-all duration-300 group-hover:rotate-180" />
               </button>

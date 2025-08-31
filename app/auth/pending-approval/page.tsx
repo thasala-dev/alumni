@@ -11,12 +11,23 @@ import { Clock, Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { Home, ArrowLeft } from "lucide-react";
+import { useSession, signOut } from "next-auth/react";
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 
 export default function PendingApprovalPage() {
-  const handleGoBack = () => {
-    if (typeof window !== "undefined") {
-      window.history.back();
+  const { data: session, status } = useSession();
+  const user = session?.user as any;
+  const router = useRouter();
+
+  useEffect(() => {
+    if (status === "unauthenticated") {
+      router.push("/auth/login");
     }
+  }, [status]);
+
+  const handleGoBack = async () => {
+    await signOut();
   };
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-50 via-white to-indigo-50 dark:from-gray-900 dark:via-gray-950 dark:to-gray-900 relative overflow-x-hidden p-4 transition-all duration-500">
