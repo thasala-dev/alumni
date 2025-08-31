@@ -51,21 +51,39 @@ export default function LoginPage() {
   const handleGoogleLogin = async () => {
     setLoading(true);
     setError("");
-    await signIn("google", { callbackUrl: "/dashboard" });
+    const res = await signIn("google", {
+      callbackUrl: "/dashboard",
+      redirect: false,
+    });
+    if (res?.error) {
+      setError(res.error);
+    }
     setLoading(false);
   };
 
   const handleFacebookLogin = async () => {
     setLoading(true);
     setError("");
-    await signIn("facebook", { callbackUrl: "/dashboard" });
+    const res = await signIn("facebook", {
+      callbackUrl: "/dashboard",
+      redirect: false,
+    });
+    if (res?.error) {
+      setError(res.error);
+    }
     setLoading(false);
   };
 
   const handleAppleLogin = async () => {
     setLoading(true);
     setError("");
-    await signIn("apple", { callbackUrl: "/dashboard" });
+    const res = await signIn("apple", {
+      callbackUrl: "/dashboard",
+      redirect: false,
+    });
+    if (res?.error) {
+      setError(res.error);
+    }
     setLoading(false);
   };
 
