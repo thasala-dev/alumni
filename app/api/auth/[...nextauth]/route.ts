@@ -31,10 +31,20 @@ export const authOptions: NextAuthOptions = {
             ],
           },
         });
-        if (!user) return null;
+        if (!user) {
+          throw new Error("รหัสผ่านไม่ถูกต้อง");
+        }
+        if (!user.password_hash) {
+          // บัญชีนี้สมัครด้วย OAuth
+          throw new Error(
+            "บัญชีนี้สมัครด้วย Google/Facebook กรุณาเข้าสู่ระบบด้วยปุ่ม Social Login"
+          );
+        }
 
         const isValid = await compare(credentials.password, user.password_hash);
-        if (!isValid) return null;
+        if (!isValid) {
+          throw new Error("รหัสผ่านไม่ถูกต้อง");
+        }
         // Return only required fields for NextAuth session/jwt
         return {
           id: user.id,
@@ -59,6 +69,18 @@ export const authOptions: NextAuthOptions = {
   ],
   session: {
     strategy: "jwt" as SessionStrategy,
+  },
+  cookies: {
+    sessionToken: {
+      name: `__Secure-next-auth.session-token`,
+      options: {
+        httpOnly: true,
+        sameSite: "none",
+        path: "/",
+        secure: true,
+        // domain: ".yourdomain.com", // ถ้า deploy จริงให้ใส่ domain
+      },
+    },
   },
   callbacks: {
     async signIn({ user, account, profile }) {
