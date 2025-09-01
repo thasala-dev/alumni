@@ -20,17 +20,22 @@ export const authOptions: NextAuthOptions = {
     CredentialsProvider({
       name: "Credentials",
       credentials: {
-        email: { label: "Email", type: "email" },
+        email: { label: "Email or Username", type: "text" },
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) return null;
 
-        // ค้นหา user ที่มี email ตรงกัน และมี password_hash
+        // ค้นหา user ที่มี email หรือ username ตรงกัน และมี password_hash
         const user = await prisma.user.findFirst({
           where: {
             AND: [
-              { email: credentials.email },
+              {
+                OR: [
+                  { email: credentials.email },
+                  { username: credentials.email },
+                ],
+              },
               {
                 password_hash: {
                   not: null, // ต้องมี password_hash เท่านั้น
@@ -246,8 +251,7 @@ export const authOptions: NextAuthOptions = {
             session.user.id = userInDb.id;
             session.user.role = userInDb.role;
             session.user.status = userInDb.status;
-            session.user.image =
-              userInDb.image || session.user.image || "/placeholder-user.jpg";
+            session.user.image = userInDb.image || session.user.image;
             session.user.name = userInDb.name || session.user.name;
 
             console.log(

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useTheme } from "next-themes";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   Sheet,
   SheetContent,
@@ -36,9 +37,7 @@ import {
   Home,
   ChartSpline,
 } from "lucide-react";
-
 import { useAuth } from "@/contexts/auth-context";
-import { ro } from "date-fns/locale";
 
 export default function NavbarMenuItems() {
   const { user, isLoading, logout } = useAuth();
@@ -274,11 +273,13 @@ export default function NavbarMenuItems() {
               <button className="flex items-center gap-3 py-2 rounded-2xl hover:bg-[#81B214]/10/80 dark:hover:bg-neutral-800/50 transition-all duration-300 group">
                 <div className="relative">
                   <div className="absolute -inset-0.5 rounded-full transition duration-300"></div>
-                  <img
-                    src={user?.image || "/placeholder-user.jpg"}
-                    alt="User"
-                    className="relative h-10 w-10 rounded-full border-2 border-white dark:border-neutral-700 object-cover"
-                  />
+
+                  <Avatar className="h-11 w-11">
+                    <AvatarImage src={user?.image} />
+                    <AvatarFallback className="bg-[#81B214]/10 dark:bg-[#81B214] text-[#81B214] dark:text-white text-2xl font-semibold">
+                      {user?.name.charAt(0)}
+                    </AvatarFallback>
+                  </Avatar>
                 </div>
                 <span className="hidden lg:inline text-sm font-semibold text-gray-800 dark:text-gray-100 group-hover:text-[#81B214] dark:group-hover:text-[#81B214] transition-colors duration-300">
                   {user?.name || "บัญชีของฉัน"}

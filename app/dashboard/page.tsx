@@ -5,7 +5,7 @@ import { discussionCategory } from "@/lib/utils";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Avatar } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   Users,
   MapPin,
@@ -345,13 +345,13 @@ export default function DashboardPage() {
           <Card className="bg-white dark:bg-gray-900/80 border-gray-200 dark:border-gray-700 p-0">
             <CardContent className="p-4">
               <div className="flex items-start space-x-4">
-                <Avatar className="w-12 h-12">
-                  <img
-                    src={user?.image || "/placeholder-user.jpg"}
-                    alt="Your avatar"
-                    className="w-full h-full object-cover rounded-full border border-[#81B214] border-2"
-                  />
+                <Avatar className="h-12 w-12">
+                  <AvatarImage src={user?.image} />
+                  <AvatarFallback className="bg-[#81B214]/10 dark:bg-[#81B214] text-[#81B214] dark:text-white text-2xl font-semibold">
+                    {user?.name.charAt(0)}
+                  </AvatarFallback>
                 </Avatar>
+
                 <div className="flex-1">
                   <Textarea
                     placeholder="แลกเปลี่ยนประสบการณ์ หรือข้อมูลข่าวสารที่น่าสนใจ..."
@@ -419,12 +419,11 @@ export default function DashboardPage() {
                 <div className="flex items-start justify-between mb-4">
                   {post.category_id === "0" ? (
                     <div className="flex items-center space-x-3">
-                      <Avatar className="w-12 h-12">
-                        <img
-                          src={post.user?.image || "/placeholder-user.jpg"}
-                          alt={post.user?.name}
-                          className="w-full h-full object-cover rounded-full border border-[#81B214] border-2"
-                        />
+                      <Avatar className="h-12 w-12">
+                        <AvatarImage src={post.user?.image} />
+                        <AvatarFallback className="bg-[#81B214]/10 dark:bg-[#81B214] text-[#81B214] dark:text-white text-2xl font-semibold">
+                          {post.user?.name.charAt(0)}
+                        </AvatarFallback>
                       </Avatar>
                       <div>
                         <div className="font-semibold text-gray-900 dark:text-gray-100 flex flex-row items-top gap-2">
@@ -555,15 +554,13 @@ export default function DashboardPage() {
                           key={comment.id}
                           className="flex items-start space-x-3"
                         >
-                          <Avatar className="w-8 h-8">
-                            <img
-                              src={
-                                comment.user?.image || "/placeholder-user.jpg"
-                              }
-                              alt={comment.user?.name}
-                              className="w-full h-full object-cover rounded-full border border-[#81B214] border-2"
-                            />
+                          <Avatar className="h-8 w-8">
+                            <AvatarImage src={comment.user?.image} />
+                            <AvatarFallback className="bg-[#81B214]/10 dark:bg-[#81B214] text-[#81B214] dark:text-white text-2xl font-semibold">
+                              {comment.user?.name.charAt(0)}
+                            </AvatarFallback>
                           </Avatar>
+
                           <div className="flex-1">
                             <div className="rounded-lg pl-3">
                               <div className="flex items-start justify-between mb-2">
