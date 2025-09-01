@@ -112,7 +112,24 @@ const mockNews: News[] = [
 ];
 
 export default function DashboardPage() {
-  const { data: session, status } = useSession();
+  interface SessionUser {
+    id?: string;
+    role?: string;
+    name?: string | null;
+    email?: string | null;
+    image?: string | null;
+    alumni_profiles?: any[];
+  }
+
+  interface SessionData {
+    user?: SessionUser;
+    [key: string]: any;
+  }
+
+  const { data: session, status } = useSession() as {
+    data: SessionData;
+    status: string;
+  };
   const [posts, setPosts] = useState<any[]>([]);
 
   const [newPost, setNewPost] = useState("");
@@ -169,7 +186,7 @@ export default function DashboardPage() {
       loadMorePosts({
         page: pagination.current,
         limit: pagination.limit,
-        user_id: session?.user?.id,
+        user_id: (session?.user as { id?: string })?.id,
       });
     }
   }, [pagination.current, status]);
@@ -194,12 +211,20 @@ export default function DashboardPage() {
         if (!res.ok) throw new Error("Failed to create post");
 
         setPosts([]);
-        setPagination({
-          current: 1,
-          total: 1,
-          count: 1,
-          limit: 10,
-        });
+        if (pagination.current !== 1) {
+          setPagination({
+            current: 1,
+            total: 1,
+            count: 1,
+            limit: 10,
+          });
+        } else {
+          loadMorePosts({
+            page: pagination.current,
+            limit: pagination.limit,
+            user_id: session?.user?.id,
+          });
+        }
 
         setNewPost("");
         setNewPostImage("");

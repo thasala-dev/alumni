@@ -35,6 +35,15 @@ import {
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
   Search,
   Filter,
   MoreHorizontal,
@@ -53,6 +62,7 @@ import {
 } from "lucide-react";
 import { getCurrentUser, type User } from "@/lib/auth";
 import { useSession } from "next-auth/react";
+import { AdmitYear } from "@/lib/utils";
 
 export default function AdminUsersPage() {
   const { data: session, status } = useSession();
@@ -73,7 +83,19 @@ export default function AdminUsersPage() {
     | "SUSPENDED"
   >("all");
   const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
+  const [selectedUser, setSelectedUser] = useState<any>(null);
+  const [actionDialog, setActionDialog] = useState<{
+    open: boolean;
+    type: "approve" | "reject" | "suspend" | "delete" | "role" | "details";
+    user?: any;
+    newRole?: "admin" | "alumni";
+  }>({ open: false, type: "details" });
   const router = useRouter();
+
+  // Fix body pointer-events issue when dialog closes
+  useEffect(() => {
+    document.body.style.pointerEvents = "";
+  }, [actionDialog.open]);
 
   useEffect(() => {
     const initializePage = async () => {
@@ -98,17 +120,85 @@ export default function AdminUsersPage() {
     initializePage();
   }, [router, session]);
 
-  const handleUpdateUser = (userId: string, updates: Partial<any>) => {
-    setUsers((prevUsers) =>
-      prevUsers.map((user) =>
-        user.id === userId ? { ...user, ...updates } : user
-      )
-    );
+  const handleUpdateUser = async (userId: string, updates: Partial<any>) => {
+    try {
+      const response = await fetch(`/api/user/${userId}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(updates),
+      });
+
+      if (response.ok) {
+        // Update local state only if API call succeeds
+        setUsers((prevUsers) =>
+          prevUsers.map((user) =>
+            user.id === userId ? { ...user, ...updates } : user
+          )
+        );
+      } else {
+        console.error("Failed to update user");
+        alert("เกิดข้อผิดพลาดในการอัพเดตข้อมูลผู้ใช้");
+      }
+    } catch (error) {
+      console.error("Error updating user:", error);
+      alert("เกิดข้อผิดพลาดในการเชื่อมต่อ API");
+    }
   };
 
-  const handleDeleteUser = (userId: string) => {
-    if (confirm("คุณแน่ใจหรือไม่ที่จะลบผู้ใช้นี้?")) {
-      setUsers((prevUsers) => prevUsers.filter((user) => user.id !== userId));
+  const handleDeleteUser = async (userId: string) => {
+    try {
+      const response = await fetch(`/api/user/${userId}`, {
+        method: "DELETE",
+      });
+
+      if (response.ok) {
+        // Update local state only if API call succeeds
+        setUsers((prevUsers) => prevUsers.filter((user) => user.id !== userId));
+      } else {
+        console.error("Failed to delete user");
+        alert("เกิดข้อผิดพลาดในการลบผู้ใช้");
+      }
+    } catch (error) {
+      console.error("Error deleting user:", error);
+      alert("เกิดข้อผิดพลาดในการเชื่อมต่อ API");
+    }
+  };
+
+  const executeAction = async () => {
+    const { type, user, newRole } = actionDialog;
+    if (!user) return;
+
+    try {
+      switch (type) {
+        case "approve":
+          await handleUpdateUser(user.id, { status: "APPROVED" });
+          break;
+        case "reject":
+          await handleUpdateUser(user.id, { status: "REJECTED" });
+          break;
+        case "suspend":
+          await handleUpdateUser(user.id, { status: "SUSPENDED" });
+          break;
+        case "delete":
+          await handleDeleteUser(user.id);
+          break;
+        case "role":
+          if (newRole) {
+            await handleUpdateUser(user.id, { role: newRole });
+          }
+          break;
+      }
+      // Clear dialog state completely after successful action
+      setActionDialog({ open: false, type: "details", user: undefined });
+      // Force clear pointer-events from body
+      setTimeout(() => {
+        document.body.style.pointerEvents = "";
+      }, 100);
+    } catch (error) {
+      console.error("Error executing action:", error);
+      // Keep dialog open if there's an error
     }
   };
 
@@ -129,35 +219,93 @@ export default function AdminUsersPage() {
     }
   };
 
-  const handleBulkApprove = () => {
+  const handleBulkApprove = async () => {
     if (
       selectedUsers.length > 0 &&
       confirm(`อนุมัติผู้ใช้ ${selectedUsers.length} คน?`)
     ) {
-      setUsers((prevUsers) =>
-        prevUsers.map((user) =>
-          selectedUsers.includes(user.id)
-            ? { ...user, status: "APPROVED" as const }
-            : user
-        )
-      );
-      setSelectedUsers([]);
+      try {
+        // Update each selected user via API
+        await Promise.all(
+          selectedUsers.map((userId) =>
+            handleUpdateUser(userId, { status: "APPROVED" })
+          )
+        );
+        setSelectedUsers([]);
+        alert(`อนุมัติผู้ใช้สำเร็จ ${selectedUsers.length} คน`);
+      } catch (error) {
+        console.error("Error in bulk approve:", error);
+        alert("เกิดข้อผิดพลาดในการอนุมัติผู้ใช้");
+      }
     }
   };
 
-  const handleBulkReject = () => {
+  const handleBulkReject = async () => {
     if (
       selectedUsers.length > 0 &&
       confirm(`ปฏิเสธผู้ใช้ ${selectedUsers.length} คน?`)
     ) {
-      setUsers((prevUsers) =>
-        prevUsers.map((user) =>
-          selectedUsers.includes(user.id)
-            ? { ...user, status: "REJECTED" as const }
-            : user
-        )
-      );
-      setSelectedUsers([]);
+      try {
+        // Update each selected user via API
+        await Promise.all(
+          selectedUsers.map((userId) =>
+            handleUpdateUser(userId, { status: "REJECTED" })
+          )
+        );
+        setSelectedUsers([]);
+        alert(`ปฏิเสธผู้ใช้สำเร็จ ${selectedUsers.length} คน`);
+      } catch (error) {
+        console.error("Error in bulk reject:", error);
+        alert("เกิดข้อผิดพลาดในการปฏิเสธผู้ใช้");
+      }
+    }
+  };
+
+  // Approve all pending users
+  const handleApproveAll = async () => {
+    const pendingUsers = filteredUsers.filter(
+      (user) => user.status === "PENDING_APPROVAL"
+    );
+    if (
+      pendingUsers.length > 0 &&
+      confirm(`อนุมัติผู้ใช้ที่รออนุมัติทั้งหมด ${pendingUsers.length} คน?`)
+    ) {
+      try {
+        // Update all pending users via API
+        await Promise.all(
+          pendingUsers.map((user) =>
+            handleUpdateUser(user.id, { status: "APPROVED" })
+          )
+        );
+        alert(`อนุมัติผู้ใช้สำเร็จ ${pendingUsers.length} คน`);
+      } catch (error) {
+        console.error("Error in approve all:", error);
+        alert("เกิดข้อผิดพลาดในการอนุมัติผู้ใช้ทั้งหมด");
+      }
+    }
+  };
+
+  // Reject all pending users
+  const handleRejectAll = async () => {
+    const pendingUsers = filteredUsers.filter(
+      (user) => user.status === "PENDING_APPROVAL"
+    );
+    if (
+      pendingUsers.length > 0 &&
+      confirm(`ปฏิเสธผู้ใช้ที่รออนุมัติทั้งหมด ${pendingUsers.length} คน?`)
+    ) {
+      try {
+        // Update all pending users via API
+        await Promise.all(
+          pendingUsers.map((user) =>
+            handleUpdateUser(user.id, { status: "REJECTED" })
+          )
+        );
+        alert(`ปฏิเสธผู้ใช้สำเร็จ ${pendingUsers.length} คน`);
+      } catch (error) {
+        console.error("Error in reject all:", error);
+        alert("เกิดข้อผิดพลาดในการปฏิเสธผู้ใช้ทั้งหมด");
+      }
     }
   };
 
@@ -416,7 +564,50 @@ export default function AdminUsersPage() {
             </div>
           )}
 
-          <div className="mt-6 text-right">
+          <div className="mt-6 flex justify-between items-center">
+            {/* Bulk Actions for All Pending Users */}
+            <div className="flex gap-2">
+              <Button
+                variant="default"
+                onClick={handleApproveAll}
+                className="rounded-xl bg-gradient-to-r from-[#81B214] to-[#50B003] text-white font-bold shadow hover:from-[#A3C957] hover:to-[#81B214]"
+                disabled={
+                  filteredUsers.filter(
+                    (user) => user.status === "PENDING_APPROVAL"
+                  ).length === 0
+                }
+              >
+                <CheckCircle className="w-4 h-4 mr-2" />
+                อนุมัติทั้งหมด (
+                {
+                  filteredUsers.filter(
+                    (user) => user.status === "PENDING_APPROVAL"
+                  ).length
+                }
+                )
+              </Button>
+              <Button
+                variant="destructive"
+                onClick={handleRejectAll}
+                className="rounded-xl font-bold shadow"
+                disabled={
+                  filteredUsers.filter(
+                    (user) => user.status === "PENDING_APPROVAL"
+                  ).length === 0
+                }
+              >
+                <XCircle className="w-4 h-4 mr-2" />
+                ปฏิเสธทั้งหมด (
+                {
+                  filteredUsers.filter(
+                    (user) => user.status === "PENDING_APPROVAL"
+                  ).length
+                }
+                )
+              </Button>
+            </div>
+
+            {/* Clear Filters */}
             <Button
               variant="outline"
               onClick={() => {
@@ -439,7 +630,7 @@ export default function AdminUsersPage() {
           <Table>
             <TableHeader>
               <TableRow className="dark:border-gray-700">
-                <TableHead className="w-12 dark:text-gray-300">
+                {/* <TableHead className="w-12 dark:text-gray-300">
                   <input
                     type="checkbox"
                     checked={
@@ -449,16 +640,25 @@ export default function AdminUsersPage() {
                     onChange={handleSelectAll}
                     className="rounded border-gray-300 dark:border-gray-600 dark:bg-gray-700"
                   />
+                </TableHead> */}
+                <TableHead className="text-center dark:text-gray-300">
+                  ผู้ใช้งาน
                 </TableHead>
-                <TableHead className="dark:text-gray-300">อีเมล</TableHead>
-                <TableHead className="dark:text-gray-300">บทบาท</TableHead>
-                <TableHead className="dark:text-gray-300">สถานะ</TableHead>
+                <TableHead className="text-center dark:text-gray-300">
+                  ศิษย์เก่า
+                </TableHead>
+                <TableHead className="text-center dark:text-gray-300">
+                  บทบาท
+                </TableHead>
+                <TableHead className="text-center dark:text-gray-300">
+                  สถานะ
+                </TableHead>
 
-                <TableHead className="hidden lg:table-cell dark:text-gray-300">
+                <TableHead className="text-center hidden lg:table-cell dark:text-gray-300">
                   วันที่สร้าง
                 </TableHead>
-                <TableHead className="text-right dark:text-gray-300">
-                  การดำเนินการ
+                <TableHead className="text-center dark:text-gray-300">
+                  Action
                 </TableHead>
               </TableRow>
             </TableHeader>
@@ -466,21 +666,54 @@ export default function AdminUsersPage() {
               {filteredUsers.length > 0 ? (
                 filteredUsers.map((user) => (
                   <TableRow key={user.id} className="dark:border-gray-700">
-                    <TableCell>
+                    {/* <TableCell>
                       <input
                         type="checkbox"
                         checked={selectedUsers.includes(user.id)}
                         onChange={() => handleSelectUser(user.id)}
                         className="rounded border-gray-300 dark:border-gray-600 dark:bg-gray-700"
                       />
+                    </TableCell> */}
+                    <TableCell className="dark:text-gray-200">
+                      <div className="inline-flex items-center gap-3">
+                        <img
+                          src={user.image || "/placeholder-user.jpg"}
+                          alt={user.name}
+                          className="h-10 w-10 rounded-full"
+                        />
+                        <div>
+                          <div className="font-medium">{user.name}</div>
+                          <div className="text-gray-500 text-sm">
+                            {user.email}
+                          </div>
+                        </div>
+                      </div>
                     </TableCell>
-                    <TableCell className="font-medium dark:text-gray-200">
-                      {user.email}
+                    <TableCell>
+                      {user.alumni_profiles.length > 0 ? (
+                        user.alumni_profiles.map((profile: any) => (
+                          <div key={profile.id}>
+                            <div>{profile.programname}</div>
+                            <div>
+                              {profile.studentcode} (รุ่นที่{" "}
+                              {AdmitYear(profile.admit_year)})
+                            </div>
+                          </div>
+                        ))
+                      ) : (
+                        <div className="text-gray-500">
+                          ไม่มีข้อมูลศิษย์เก่า
+                        </div>
+                      )}
                     </TableCell>
                     <TableCell>
                       <Badge
                         variant="secondary"
-                        className="dark:bg-gray-700 dark:text-gray-200"
+                        className={
+                          user.role === "admin"
+                            ? "text-orange-700 bg-orange-200"
+                            : "text-purple-700 bg-purple-200"
+                        }
                       >
                         {user.role === "admin" ? "ผู้ดูแลระบบ" : "ศิษย์เก่า"}
                       </Badge>
@@ -502,7 +735,7 @@ export default function AdminUsersPage() {
                     <TableCell className="hidden lg:table-cell dark:text-gray-300">
                       {new Date(user.created_at).toLocaleDateString("th-TH")}
                     </TableCell>
-                    <TableCell className="text-right">
+                    <TableCell className="text-center">
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                           <Button
@@ -518,11 +751,13 @@ export default function AdminUsersPage() {
                           className="dark:bg-gray-900/80 dark:border-gray-700"
                         >
                           <DropdownMenuItem
-                            onClick={() => {
-                              if (typeof window !== "undefined") {
-                                alert(`ดูรายละเอียด ${user.email}`);
-                              }
-                            }}
+                            onClick={() =>
+                              setActionDialog({
+                                open: true,
+                                type: "details",
+                                user,
+                              })
+                            }
                             className="dark:text-gray-200 dark:hover:bg-gray-700"
                           >
                             ดูรายละเอียด
@@ -531,8 +766,10 @@ export default function AdminUsersPage() {
                           {user.status !== "APPROVED" && (
                             <DropdownMenuItem
                               onClick={() =>
-                                handleUpdateUser(user.id, {
-                                  status: "APPROVED",
+                                setActionDialog({
+                                  open: true,
+                                  type: "approve",
+                                  user,
                                 })
                               }
                               className="dark:text-gray-200 dark:hover:bg-gray-700"
@@ -541,25 +778,14 @@ export default function AdminUsersPage() {
                               อนุมัติ
                             </DropdownMenuItem>
                           )}
-                          {user.status !== "PENDING_APPROVAL" &&
-                            user.status !== "REJECTED" && (
-                              <DropdownMenuItem
-                                onClick={() =>
-                                  handleUpdateUser(user.id, {
-                                    status: "PENDING_APPROVAL",
-                                  })
-                                }
-                                className="dark:text-gray-200 dark:hover:bg-gray-700"
-                              >
-                                <Clock className="mr-2 h-4 w-4 text-yellow-600 dark:text-yellow-400" />{" "}
-                                ตั้งค่าเป็นรออนุมัติ
-                              </DropdownMenuItem>
-                            )}
+
                           {user.status !== "REJECTED" && (
                             <DropdownMenuItem
                               onClick={() =>
-                                handleUpdateUser(user.id, {
-                                  status: "REJECTED",
+                                setActionDialog({
+                                  open: true,
+                                  type: "reject",
+                                  user,
                                 })
                               }
                               className="dark:text-gray-200 dark:hover:bg-gray-700"
@@ -571,8 +797,10 @@ export default function AdminUsersPage() {
                           {user.status !== "SUSPENDED" && (
                             <DropdownMenuItem
                               onClick={() =>
-                                handleUpdateUser(user.id, {
-                                  status: "SUSPENDED",
+                                setActionDialog({
+                                  open: true,
+                                  type: "suspend",
+                                  user,
                                 })
                               }
                               className="dark:text-gray-200 dark:hover:bg-gray-700"
@@ -585,7 +813,12 @@ export default function AdminUsersPage() {
                           {user.role === "alumni" && (
                             <DropdownMenuItem
                               onClick={() =>
-                                handleUpdateUser(user.id, { role: "admin" })
+                                setActionDialog({
+                                  open: true,
+                                  type: "role",
+                                  user,
+                                  newRole: "admin",
+                                })
                               }
                               className="dark:text-gray-200 dark:hover:bg-gray-700"
                             >
@@ -596,7 +829,12 @@ export default function AdminUsersPage() {
                           {user.role === "admin" && (
                             <DropdownMenuItem
                               onClick={() =>
-                                handleUpdateUser(user.id, { role: "alumni" })
+                                setActionDialog({
+                                  open: true,
+                                  type: "role",
+                                  user,
+                                  newRole: "alumni",
+                                })
                               }
                               className="dark:text-gray-200 dark:hover:bg-gray-700"
                             >
@@ -607,7 +845,13 @@ export default function AdminUsersPage() {
                           <DropdownMenuSeparator className="dark:bg-gray-700" />
                           <DropdownMenuItem
                             className="text-red-600 dark:text-red-400 dark:hover:bg-gray-700"
-                            onClick={() => handleDeleteUser(user.id)}
+                            onClick={() =>
+                              setActionDialog({
+                                open: true,
+                                type: "delete",
+                                user,
+                              })
+                            }
                           >
                             <Trash2 className="mr-2 h-4 w-4" /> ลบผู้ใช้
                           </DropdownMenuItem>
@@ -630,6 +874,169 @@ export default function AdminUsersPage() {
           </Table>
         </CardContent>
       </Card>
+
+      {/* Action Dialog */}
+      <Dialog
+        open={actionDialog.open}
+        onOpenChange={(open: boolean) => {
+          if (!open) {
+            // Clear dialog state completely when closing
+            setActionDialog({ open: false, type: "details", user: undefined });
+            // Force clear pointer-events from body
+            setTimeout(() => {
+              document.body.style.pointerEvents = "";
+            }, 100);
+          }
+        }}
+      >
+        <DialogContent className="dark:bg-gray-900/80 dark:border-gray-700 max-w-2xl">
+          <DialogHeader>
+            <DialogTitle className="dark:text-gray-200">
+              {actionDialog.type === "details" && "รายละเอียดผู้ใช้"}
+              {actionDialog.type === "approve" && "ยืนยันการอนุมัติ"}
+              {actionDialog.type === "reject" && "ยืนยันการปฏิเสธ"}
+              {actionDialog.type === "suspend" && "ยืนยันการระงับ"}
+              {actionDialog.type === "delete" && "ยืนยันการลบ"}
+              {actionDialog.type === "role" && "ยืนยันการเปลี่ยนบทบาท"}
+            </DialogTitle>
+            <DialogDescription className="dark:text-gray-400">
+              {actionDialog.type === "details" &&
+                `แสดงรายละเอียดของ ${actionDialog.user?.email}`}
+              {actionDialog.type === "approve" &&
+                `คุณต้องการอนุมัติบัญชี ${actionDialog.user?.email} หรือไม่?`}
+              {actionDialog.type === "reject" &&
+                `คุณต้องการปฏิเสธบัญชี ${actionDialog.user?.email} หรือไม่?`}
+              {actionDialog.type === "suspend" &&
+                `คุณต้องการระงับบัญชี ${actionDialog.user?.email} หรือไม่?`}
+              {actionDialog.type === "delete" &&
+                `คุณต้องการลบบัญชี ${actionDialog.user?.email} หรือไม่? การดำเนินการนี้ไม่สามารถกู้คืนได้`}
+              {actionDialog.type === "role" &&
+                `คุณต้องการเปลี่ยนบทบาทของ ${actionDialog.user?.email} เป็น ${
+                  actionDialog.newRole === "admin" ? "ผู้ดูแลระบบ" : "ศิษย์เก่า"
+                } หรือไม่?`}
+            </DialogDescription>
+          </DialogHeader>
+
+          {actionDialog.type === "details" && actionDialog.user && (
+            <div className="space-y-4 dark:text-gray-200">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                    อีเมล
+                  </label>
+                  <p className="text-sm">{actionDialog.user.email}</p>
+                </div>
+                <div>
+                  <label className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                    บทบาท
+                  </label>
+                  <p className="text-sm">
+                    {actionDialog.user.role === "admin"
+                      ? "ผู้ดูแลระบบ"
+                      : "ศิษย์เก่า"}
+                  </p>
+                </div>
+                <div>
+                  <label className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                    สถานะ
+                  </label>
+                  <p className="text-sm">
+                    {actionDialog.user.status === "PENDING_APPROVAL" &&
+                      "รออนุมัติ"}
+                    {actionDialog.user.status === "APPROVED" && "อนุมัติแล้ว"}
+                    {actionDialog.user.status === "REJECTED" && "ถูกปฏิเสธ"}
+                    {actionDialog.user.status === "SUSPENDED" && "ถูกระงับ"}
+                    {actionDialog.user.status === "UNREGISTERED" &&
+                      "ยังไม่ได้ลงทะเบียน"}
+                  </p>
+                </div>
+                <div>
+                  <label className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                    วันที่สร้าง
+                  </label>
+                  <p className="text-sm">
+                    {new Date(actionDialog.user.created_at).toLocaleDateString(
+                      "th-TH"
+                    )}
+                  </p>
+                </div>
+              </div>
+              {actionDialog.user.username && (
+                <div>
+                  <label className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                    ชื่อผู้ใช้
+                  </label>
+                  <p className="text-sm">{actionDialog.user.username}</p>
+                </div>
+              )}
+              {actionDialog.user.name && (
+                <div>
+                  <label className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                    ชื่อ-นามสกุล
+                  </label>
+                  <p className="text-sm">{actionDialog.user.name}</p>
+                </div>
+              )}
+            </div>
+          )}
+
+          <DialogFooter>
+            {actionDialog.type === "details" ? (
+              <Button
+                onClick={() => {
+                  setActionDialog({
+                    open: false,
+                    type: "details",
+                    user: undefined,
+                  });
+                  // Force clear pointer-events from body
+                  setTimeout(() => {
+                    document.body.style.pointerEvents = "";
+                  }, 100);
+                }}
+              >
+                ปิด
+              </Button>
+            ) : (
+              <>
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setActionDialog({
+                      open: false,
+                      type: "details",
+                      user: undefined,
+                    });
+                    // Force clear pointer-events from body
+                    setTimeout(() => {
+                      document.body.style.pointerEvents = "";
+                    }, 100);
+                  }}
+                >
+                  ยกเลิก
+                </Button>
+                <Button
+                  variant={
+                    actionDialog.type === "delete" ? "destructive" : "default"
+                  }
+                  onClick={executeAction}
+                  className={
+                    actionDialog.type === "approve"
+                      ? "bg-green-600 hover:bg-green-700"
+                      : ""
+                  }
+                >
+                  {actionDialog.type === "approve" && "อนุมัติ"}
+                  {actionDialog.type === "reject" && "ปฏิเสธ"}
+                  {actionDialog.type === "suspend" && "ระงับ"}
+                  {actionDialog.type === "delete" && "ลบ"}
+                  {actionDialog.type === "role" && "เปลี่ยนบทบาท"}
+                </Button>
+              </>
+            )}
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

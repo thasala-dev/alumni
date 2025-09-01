@@ -23,7 +23,7 @@ export const authOptions: NextAuthOptions = {
       },
       async authorize(credentials) {
         if (!credentials?.username || !credentials?.password) return null;
-        const user = await prisma.User.findFirst({
+        const user = await prisma.user.findFirst({
           where: {
             OR: [
               { username: credentials.username },
@@ -49,8 +49,8 @@ export const authOptions: NextAuthOptions = {
         return {
           id: user.id,
           email: user.email,
-          name: user.username,
-          role: user.role,
+          name: user.name,
+          role: user.role ?? undefined, // ensure role is string | undefined
         };
       },
     }),
@@ -92,7 +92,7 @@ export const authOptions: NextAuthOptions = {
 
         // ค้นหา user ที่ email ตรงกัน
         const existingUser = await prisma.user.findUnique({
-          where: { email: user.email },
+          where: { email: user.email ?? undefined },
         });
 
         if (existingUser) {
@@ -129,7 +129,7 @@ export const authOptions: NextAuthOptions = {
             data: {
               username: user.name || undefined,
               name: user.name || undefined,
-              image: user.image || undefined,
+              //image: user.image || undefined,
             },
           });
         } else {
