@@ -3,38 +3,33 @@
 import type React from "react";
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { useSession, signOut } from "next-auth/react";
 import NavbarMenuItems from "@/components/navbar-menu";
 import AsideMenuItems from "@/components/aside-menu";
+import { useAuth } from "@/contexts/auth-context";
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
 }
 export default function DashboardLayout({ children }: DashboardLayoutProps) {
+  const { user, isLoading, isLoggedIn } = useAuth();
   const router = useRouter();
-  const { data: session, status } = useSession();
-  type UserWithStatus = typeof session extends { user?: infer U }
-    ? U & { status?: string }
-    : { status?: string };
-  const user = session?.user as UserWithStatus;
 
   useEffect(() => {
-    if (status === "loading") return;
-    if (!user) {
+    if (isLoading) return;
+    if (!isLoggedIn) {
       router.push("/auth/login");
       return;
     }
-
-    if (user.status === "PENDING_APPROVAL") {
+    if (user && user.status === "PENDING_APPROVAL") {
       router.push("/auth/pending-approval");
       return;
-    } else if (user.status === "UNREGISTERED") {
+    } else if (user && user.status === "UNREGISTERED") {
       router.push("/auth/verify-identity");
       return;
     }
-  }, [user, status, router]);
+  }, [user, isLoading, router]);
 
-  if (status === "loading") {
+  if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>

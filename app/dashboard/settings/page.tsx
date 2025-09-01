@@ -32,7 +32,8 @@ import {
   XCircle,
 } from "lucide-react";
 import { useTheme } from "next-themes";
-import { useSession } from "next-auth/react";
+import { useAuth } from "@/contexts/auth-context";
+import { is } from "date-fns/locale";
 
 const demoPrivacySettings: any = {
   profile_privacy: "alumni-only",
@@ -49,10 +50,9 @@ const demoNotificationSettings: any = {
 };
 
 export default function SettingsPage() {
-  const { data: session, status } = useSession();
-  // Tab state must be before any conditional return
+  const { user, isLoading } = useAuth();
   const [tab, setTab] = useState<string>("profile");
-  const [user, setUser] = useState<{ id: string; email: string } | null>(null);
+
   const [profile, setProfile] = useState<any>({
     id: "",
     email: "",
@@ -88,17 +88,16 @@ export default function SettingsPage() {
   }, [theme]);
 
   useEffect(() => {
-    if (status !== "loading") {
+    console.log("User:", user);
+    if (!isLoading && user) {
       fetchProfile();
     }
-  }, [status]);
+  }, [isLoading, user]);
 
   const fetchProfile = async () => {
     setLoading(true);
     try {
-      const res = await fetch(
-        "/api/alumniProfile?user_id=" + (session?.user as any)?.id
-      );
+      const res = await fetch("/api/alumniProfile?user_id=" + user?.id);
       const data = await res.json();
       console.log("Fetched alumni profiles:", data, status);
       setProfile(data);
@@ -106,11 +105,6 @@ export default function SettingsPage() {
       console.error("Error fetching alumni profiles:", error);
     }
     setLoading(false);
-  };
-
-  const handleThemeChange = () => {
-    setDarkMode((prev) => (prev === "dark" ? "light" : "dark"));
-    setTheme(darkMode === "dark" ? "light" : "dark");
   };
 
   const handleProfileChange = (
@@ -153,7 +147,7 @@ export default function SettingsPage() {
     setSaving(false);
   };
 
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="space-y-6">
         <div className="animate-pulse">

@@ -13,29 +13,39 @@ import { compare } from "bcryptjs";
 const prisma = new PrismaClient();
 
 export const authOptions: NextAuthOptions = {
-  adapter: PrismaAdapter(prisma),
+  // ปิด PrismaAdapter เพื่อให้จัดการ OAuth เอง
+  // adapter: PrismaAdapter(prisma),
+  debug: true,
   providers: [
     CredentialsProvider({
       name: "Credentials",
       credentials: {
-        username: { label: "Username", type: "text" },
+        email: { label: "Email", type: "email" },
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
-        if (!credentials?.username || !credentials?.password) return null;
+        if (!credentials?.email || !credentials?.password) return null;
+
+        // ค้นหา user ที่มี email ตรงกัน และมี password_hash
         const user = await prisma.user.findFirst({
           where: {
-            OR: [
-              { username: credentials.username },
-              { email: credentials.username },
+            AND: [
+              { email: credentials.email },
+              {
+                password_hash: {
+                  not: null, // ต้องมี password_hash เท่านั้น
+                },
+              },
             ],
           },
         });
+
         if (!user) {
-          throw new Error("รหัสผ่านไม่ถูกต้อง");
+          throw new Error("ไม่พบผู้ใช้งาน หรือบัญชีนี้ไม่ได้ตั้งรหัสผ่าน");
         }
+
         if (!user.password_hash) {
-          // บัญชีนี้สมัครด้วย OAuth
+          // บัญชีนี้สมัครด้วย OAuth - ไม่ควรเกิดขึ้นเพราะเรา filter แล้ว
           throw new Error(
             "บัญชีนี้สมัครด้วย Google/Facebook กรุณาเข้าสู่ระบบด้วยปุ่ม Social Login"
           );
@@ -45,6 +55,7 @@ export const authOptions: NextAuthOptions = {
         if (!isValid) {
           throw new Error("รหัสผ่านไม่ถูกต้อง");
         }
+
         // Return only required fields for NextAuth session/jwt
         return {
           id: user.id,
@@ -84,32 +95,103 @@ export const authOptions: NextAuthOptions = {
   },
   callbacks: {
     async signIn({ user, account, profile }) {
-      // Only run for OAuth (Google, Facebook)
-      if (account?.provider === "google" || account?.provider === "facebook") {
-        // if (!user?.email) {
-        //   return false;
-        // }
+      console.log("[signIn] Starting signIn callback", {
+        provider: account?.provider,
+        email: user.email,
+      });
 
-        // ค้นหา user ที่ email ตรงกัน
-        const existingUser = await prisma.user.findUnique({
-          where: { email: user.email ?? undefined },
-        });
+      // For OAuth providers (Google, Facebook, Apple) - ให้ login ได้ทุกกรณีตาม email
+      if (
+        account?.provider === "google" ||
+        account?.provider === "facebook" ||
+        account?.provider === "apple"
+      ) {
+        if (!user.email) {
+          console.log("[signIn] ERROR: No email provided for OAuth");
+          // Return true แทน false เพื่อไม่ให้ Access Denied
+          return true;
+        }
 
-        if (existingUser) {
-          // เช็คว่ามี account record สำหรับ provider นี้หรือยัง
-          const existingAccount = await prisma.account.findUnique({
-            where: {
-              provider_providerAccountId: {
-                provider: account.provider,
-                providerAccountId: String(account.providerAccountId),
-              },
-            },
+        try {
+          // ค้นหา user ที่มี email เดียวกัน (ไม่สนใจว่ามี password_hash หรือไม่)
+          const existingUser = await prisma.user.findUnique({
+            where: { email: user.email },
+            include: { accounts: true },
           });
-          if (!existingAccount) {
-            // สร้าง account record เชื่อมกับ user เดิม
+
+          console.log("[signIn] Existing user found:", existingUser);
+
+          if (existingUser) {
+            // ตรวจสอบว่ามี account สำหรับ provider นี้แล้วหรือไม่
+            const existingAccount = existingUser.accounts.find(
+              (acc) => acc.provider === account.provider
+            );
+
+            console.log("[signIn] Existing account:", existingAccount);
+
+            if (!existingAccount) {
+              // สร้าง account ใหม่เชื่อมกับ user เดิม
+              console.log("[signIn] Creating new account for existing user");
+              await prisma.account.create({
+                data: {
+                  userId: existingUser.id,
+                  type: account.type,
+                  provider: account.provider,
+                  providerAccountId: String(account.providerAccountId),
+                  refresh_token: account.refresh_token,
+                  access_token: account.access_token,
+                  expires_at: account.expires_at,
+                  token_type: account.token_type,
+                  scope: account.scope,
+                  id_token: account.id_token,
+                  session_state: account.session_state,
+                },
+              });
+              console.log("[signIn] Account created successfully");
+            }
+
+            // อัปเดตข้อมูลผู้ใช้
+            await prisma.user.update({
+              where: { id: existingUser.id },
+              data: {
+                name: user.name || existingUser.name,
+                image: user.image || existingUser.image,
+              },
+            });
+
+            console.log("[signIn] User updated successfully");
+          } else {
+            // สร้าง user ใหม่
+            console.log("[signIn] Creating new user");
+
+            // Generate unique username
+            let usernameToSet =
+              user.name || user.email?.split("@")[0] || "user";
+            let candidate = usernameToSet;
+            let counter = 1;
+
+            while (
+              await prisma.user.findUnique({ where: { username: candidate } })
+            ) {
+              candidate = `${usernameToSet}${counter}`;
+              counter++;
+            }
+
+            const newUser = await prisma.user.create({
+              data: {
+                email: user.email!,
+                username: candidate,
+                name: user.name || undefined,
+                image: user.image || undefined,
+                role: "alumni",
+                status: "UNREGISTERED",
+              },
+            });
+
+            // สร้าง account สำหรับ user ใหม่
             await prisma.account.create({
               data: {
-                userId: existingUser.id,
+                userId: newUser.id,
                 type: account.type,
                 provider: account.provider,
                 providerAccountId: String(account.providerAccountId),
@@ -122,86 +204,76 @@ export const authOptions: NextAuthOptions = {
                 session_state: account.session_state,
               },
             });
+
+            console.log("[signIn] New user and account created successfully");
           }
-          // อัปเดตข้อมูล user (optional)
-          await prisma.user.update({
-            where: { id: existingUser.id },
-            data: {
-              username: user.name || undefined,
-              name: user.name || undefined,
-              //image: user.image || undefined,
-            },
-          });
-        } else {
-          // ถ้าไม่มี user เดิม สร้างใหม่
-          // Generate unique username
-          let usernameToSet = user.name || undefined;
-          if (usernameToSet) {
-            let base = usernameToSet;
-            let suffix = 0;
-            let candidate = base;
-            // If username exists, try base+number, fallback to email prefix
-            while (
-              await prisma.user.findUnique({ where: { username: candidate } })
-            ) {
-              suffix++;
-              candidate = base + suffix;
-              if (suffix > 5 && user.email) {
-                // fallback to email prefix + random 4 digits
-                const prefix = user.email.split("@")[0];
-                candidate = prefix + Math.floor(1000 + Math.random() * 9000);
-              }
-            }
-            usernameToSet = candidate;
-          } else if (user.email) {
-            // fallback: use email prefix + random 4 digits
-            const prefix = user.email.split("@")[0];
-            usernameToSet = prefix + Math.floor(1000 + Math.random() * 9000);
-          }
-          await prisma.user.create({
-            data: {
-              email: user.email,
-              username: usernameToSet,
-              name: user.name || undefined,
-              image: user.image || undefined,
-              role: "alumni",
-              status: "UNREGISTERED",
-              accounts: {
-                create: {
-                  type: account.type,
-                  provider: account.provider,
-                  providerAccountId: String(account.providerAccountId),
-                  refresh_token: account.refresh_token,
-                  access_token: account.access_token,
-                  expires_at: account.expires_at,
-                  token_type: account.token_type,
-                  scope: account.scope,
-                  id_token: account.id_token,
-                  session_state: account.session_state,
-                },
-              },
-            },
-          });
+
+          return true;
+        } catch (error) {
+          console.error("[signIn] ERROR in OAuth signIn:", error);
+          // Return true แทน false เพื่อไม่ให้เกิด Access Denied
+          // แต่ user อาจไม่สามารถใช้งานได้จนกว่าจะแก้ปัญหา
+          return true;
         }
       }
-      // ให้ PrismaAdapter จัดการ linking user/account อัตโนมัติ
+
+      // สำหรับ credentials login - ได้ผ่าน authorize แล้ว
       return true;
     },
-    async session({ session, token, user }: any) {
-      const userInDb = await prisma.user.findFirst({
-        where: { id: token.sub },
+    async session({ session, token }: any) {
+      console.log("[session] Building session", {
+        tokenSub: token.sub,
+        sessionEmail: session.user.email,
       });
-      // Attach user id and role to session
+
       if (token && session.user) {
-        session.user.id = token.sub;
-        session.user.role = userInDb?.role || token.role;
-        session.user.status = userInDb?.status;
+        try {
+          let userInDb;
+
+          // ตรวจสอบว่า token มี id ที่เป็น UUID ที่ถูกต้องหรือไม่
+          if (token.id && (token.id.length === 36 || token.id.length === 32)) {
+            // ใช้ token.id สำหรับ credentials login
+            userInDb = await prisma.user.findFirst({ where: { id: token.id } });
+          }
+
+          // ถ้าไม่พบ user จาก id ให้ใช้ email (สำหรับ OAuth)
+          if (!userInDb && session.user.email) {
+            userInDb = await prisma.user.findFirst({
+              where: { email: session.user.email },
+            });
+          }
+
+          if (userInDb) {
+            session.user.id = userInDb.id;
+            session.user.role = userInDb.role;
+            session.user.status = userInDb.status;
+            session.user.image =
+              userInDb.image || session.user.image || "/placeholder-user.jpg";
+            session.user.name = userInDb.name || session.user.name;
+
+            console.log(
+              "[session] Session built successfully for user:",
+              userInDb.id
+            );
+          }
+        } catch (error) {
+          console.error("[session] Error building session:", error);
+        }
       }
+
       return session;
     },
-    async jwt({ token, user }: any) {
+    async jwt({ token, user, account }: any) {
       if (user) {
+        // สำหรับ credentials login user.id จะเป็น UUID
+        // สำหรับ OAuth login user.id อาจไม่ใช่ UUID หรือไม่มี
+        if (account?.provider === "credentials") {
+          token.id = user.id;
+        }
+        // เก็บข้อมูลอื่นๆ ที่ไม่เกี่ยวกับ database ID
         token.role = user.role;
+        token.status = user.status;
+        token.email = user.email;
       }
       return token;
     },

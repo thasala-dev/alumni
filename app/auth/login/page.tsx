@@ -37,7 +37,7 @@ export default function LoginPage() {
     setError("");
     const res = await signIn("credentials", {
       redirect: false,
-      username: email,
+      email: email,
       password,
     });
     if (res?.error) {
@@ -182,14 +182,14 @@ export default function LoginPage() {
                     className="font-medium text-[#81B214] dark:text-[#A3C957] flex items-center gap-2"
                   >
                     <User className="w-4 h-4 text-[#81B214] dark:text-[#A3C957]" />
-                    Username / Email
+                    Email
                   </Label>
                   <Input
                     id="email"
                     type="text"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    placeholder="Username / Email"
+                    placeholder="Email"
                     required
                     className="rounded-xl border-gray-300 dark:border-[#A3C957] focus:border-[#81B214] dark:focus:border-[#A3C957] focus:ring-[#A3C957]/30 dark:focus:ring-[#81B214]/30 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm transition-all duration-200 hover:shadow-md dark:text-white dark:placeholder-gray-400"
                   />

@@ -34,27 +34,14 @@ import {
   Moon,
   Monitor,
   Home,
-  Paperclip,
   ChartSpline,
 } from "lucide-react";
-import { signOut } from "next-auth/react";
-import { useSession } from "next-auth/react";
 
-// Extend the default Session user type to include 'role'
-import type { DefaultSession } from "next-auth";
-
-declare module "next-auth" {
-  interface Session {
-    user: {
-      role?: string;
-    } & DefaultSession["user"];
-  }
-  interface User {
-    role?: string;
-  }
-}
+import { useAuth } from "@/contexts/auth-context";
+import { ro } from "date-fns/locale";
 
 export default function NavbarMenuItems() {
+  const { user, isLoading, logout } = useAuth();
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
 
@@ -70,7 +57,6 @@ export default function NavbarMenuItems() {
     { id: 2, message: "การประชุมใหญ่สมาคมศิษย์เก่าประจำปี 2568" },
     { id: 3, message: "อัปเดตข้อมูลใบประกอบวิชาชีพเภสัชกรรม" },
   ]);
-  const { data: session, status } = useSession();
 
   const router = useRouter();
   const pathname = usePathname();
@@ -85,7 +71,7 @@ export default function NavbarMenuItems() {
     { name: "แผนที่การกระจาย", href: "/dashboard/map", icon: Map },
     { name: "ข่าวสารศิษย์เก่า", href: "/dashboard/news", icon: Newspaper },
 
-    ...(session?.user?.role === "admin"
+    ...(user?.role === "admin"
       ? [
           {
             name: "จัดการสมาชิก",
@@ -108,7 +94,8 @@ export default function NavbarMenuItems() {
   ];
 
   const handleSignOut = async () => {
-    await signOut({ callbackUrl: "/auth/login" });
+    await logout();
+    router.push("/auth/login");
   };
 
   const getThemeIcon = () => {
@@ -288,13 +275,13 @@ export default function NavbarMenuItems() {
                 <div className="relative">
                   <div className="absolute -inset-0.5 rounded-full transition duration-300"></div>
                   <img
-                    src={session?.user?.image || "/placeholder-user.jpg"}
+                    src={user?.image || "/placeholder-user.jpg"}
                     alt="User"
                     className="relative h-10 w-10 rounded-full border-2 border-white dark:border-neutral-700 object-cover"
                   />
                 </div>
                 <span className="hidden lg:inline text-sm font-semibold text-gray-800 dark:text-gray-100 group-hover:text-[#81B214] dark:group-hover:text-[#81B214] transition-colors duration-300">
-                  {session?.user?.name || "บัญชีของฉัน"}
+                  {user?.name || "บัญชีของฉัน"}
                 </span>
                 <ChevronDown className="w-4 h-4 text-gray-500 group-hover:text-[#81B214] dark:group-hover:text-[#81B214] transition-all duration-300 group-hover:rotate-180" />
               </button>

@@ -1,8 +1,34 @@
 "use client";
 
-import { use, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { discussionCategory } from "@/lib/utils";
-// Simple Dialog component for image URL input
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { Avatar } from "@/components/ui/avatar";
+import {
+  Users,
+  MapPin,
+  Newspaper,
+  MessageSquare,
+  Heart,
+  MessageCircle,
+  Share,
+  Camera,
+  Send,
+  MoreHorizontal,
+  Briefcase,
+  GraduationCap,
+  Clock,
+  Loader2,
+  Verified,
+  X,
+  Trash,
+  User,
+} from "lucide-react";
+import { useAuth } from "@/contexts/auth-context";
+import { AdmitYear, timeAgo } from "@/lib/utils";
+
 function ImageUrlDialog({
   open,
   onClose,
@@ -47,33 +73,6 @@ function ImageUrlDialog({
     </div>
   );
 }
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
-import { Avatar } from "@/components/ui/avatar";
-import {
-  Users,
-  MapPin,
-  Newspaper,
-  MessageSquare,
-  Heart,
-  MessageCircle,
-  Share,
-  Camera,
-  Send,
-  MoreHorizontal,
-  Briefcase,
-  GraduationCap,
-  Clock,
-  Loader2,
-  Verified,
-  X,
-  Trash,
-  User,
-} from "lucide-react";
-import { useSession } from "next-auth/react";
-import { AdmitYear, timeAgo } from "@/lib/utils";
-import { ca } from "date-fns/locale";
 
 interface News {
   id: number;
@@ -112,28 +111,9 @@ const mockNews: News[] = [
 ];
 
 export default function DashboardPage() {
-  interface SessionUser {
-    id?: string;
-    role?: string;
-    name?: string | null;
-    email?: string | null;
-    image?: string | null;
-    alumni_profiles?: any[];
-  }
-
-  interface SessionData {
-    user?: SessionUser;
-    [key: string]: any;
-  }
-
-  const { data: session, status } = useSession() as {
-    data: SessionData;
-    status: string;
-  };
+  const { user, isLoading } = useAuth();
   const [posts, setPosts] = useState<any[]>([]);
-
   const [newPost, setNewPost] = useState("");
-
   const [showComments, setShowComments] = useState<{ [key: number]: boolean }>(
     {}
   );
@@ -182,20 +162,20 @@ export default function DashboardPage() {
   };
 
   useEffect(() => {
-    if (status !== "loading") {
+    if (!isLoading && user) {
       loadMorePosts({
         page: pagination.current,
         limit: pagination.limit,
-        user_id: (session?.user as { id?: string })?.id,
+        user_id: user?.id,
       });
     }
-  }, [pagination.current, status]);
+  }, [pagination.current, isLoading, user]);
 
   const handlePost = async () => {
     if (newPost.trim()) {
       const data: any = {
         category_id: "0",
-        user_id: session?.user?.id,
+        user_id: user?.id,
         content: newPost,
         image: newPostImage || undefined,
       };
@@ -222,7 +202,7 @@ export default function DashboardPage() {
           loadMorePosts({
             page: pagination.current,
             limit: pagination.limit,
-            user_id: session?.user?.id,
+            user_id: user?.id,
           });
         }
 
@@ -238,7 +218,7 @@ export default function DashboardPage() {
     const post = posts.find((p) => p.id === postId);
     const data: any = {
       topic_id: postId,
-      user_id: session?.user?.id,
+      user_id: user?.id,
       isLiked: !post.isLiked,
     };
 
@@ -275,7 +255,7 @@ export default function DashboardPage() {
       console.log("New comment:", comment, postId);
       const data: any = {
         topic_id: postId,
-        user_id: session?.user?.id,
+        user_id: user?.id,
         content: comment,
       };
       try {
@@ -367,7 +347,7 @@ export default function DashboardPage() {
               <div className="flex items-start space-x-4">
                 <Avatar className="w-12 h-12">
                   <img
-                    src={session?.user?.image || "/placeholder-user.jpg"}
+                    src={user?.image || "/placeholder-user.jpg"}
                     alt="Your avatar"
                     className="w-full h-full object-cover rounded-full border border-[#81B214] border-2"
                   />
@@ -512,7 +492,7 @@ export default function DashboardPage() {
                     </div>
                   )}
 
-                  {post.user?.id === session?.user?.id && (
+                  {post.user?.id === user?.id && (
                     <Button
                       variant="ghost"
                       size="sm"
@@ -595,7 +575,7 @@ export default function DashboardPage() {
                                     <Verified className="h-5 w-5 text-blue-500" />
                                   )}
                                 </div>
-                                {comment.user?.id === session?.user?.id && (
+                                {comment.user?.id === user?.id && (
                                   <Button
                                     variant="ghost"
                                     size="sm"
@@ -621,7 +601,7 @@ export default function DashboardPage() {
                     <div className="flex items-start space-x-3">
                       <Avatar className="w-8 h-8">
                         <img
-                          src={session?.user?.image || "/placeholder-user.jpg"}
+                          src={user?.image || "/placeholder-user.jpg"}
                           alt="Your avatar"
                           className="w-full h-full object-cover rounded-full border border-[#81B214] border-2"
                         />
