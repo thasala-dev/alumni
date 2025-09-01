@@ -61,12 +61,10 @@ import {
   ShieldQuestion,
 } from "lucide-react";
 import { getCurrentUser, type User } from "@/lib/auth";
-import { useSession } from "next-auth/react";
+
 import { AdmitYear } from "@/lib/utils";
 
 export default function AdminUsersPage() {
-  const { data: session, status } = useSession();
-
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [users, setUsers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -99,10 +97,6 @@ export default function AdminUsersPage() {
 
   useEffect(() => {
     const initializePage = async () => {
-      if (!session || session.user.role !== "admin") {
-        router.push("/dashboard");
-        return;
-      }
       setLoading(true);
       try {
         const res = await fetch("/api/user");
@@ -118,7 +112,7 @@ export default function AdminUsersPage() {
       setLoading(false);
     };
     initializePage();
-  }, [router, session]);
+  }, [router]);
 
   const handleUpdateUser = async (userId: string, updates: Partial<any>) => {
     try {
@@ -335,26 +329,6 @@ export default function AdminUsersPage() {
           <div className="h-96 bg-gray-200 dark:bg-gray-700 rounded"></div>
         </div>
       </div>
-    );
-  }
-
-  if (!session || session.user.role !== "admin") {
-    return (
-      <Card className="w-full max-w-md mx-auto mt-10 dark:bg-gray-900/80 dark:border-gray-700 p-4">
-        <CardHeader className="text-center">
-          <CardTitle className="text-2xl font-bold text-red-600 dark:text-red-400">
-            ไม่ได้รับอนุญาต
-          </CardTitle>
-          <CardDescription className="dark:text-gray-400">
-            คุณไม่มีสิทธิ์เข้าถึงหน้านี้
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="text-center">
-          <Button onClick={() => router.push("/dashboard")}>
-            กลับสู่แดชบอร์ด
-          </Button>
-        </CardContent>
-      </Card>
     );
   }
 
