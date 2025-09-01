@@ -165,8 +165,7 @@ export const authOptions: NextAuthOptions = {
             console.log("[signIn] Creating new user");
 
             // Generate unique username
-            let usernameToSet =
-              user.name || user.email?.split("@")[0] || "user";
+            let usernameToSet = user.email || user.name || "user";
             let candidate = usernameToSet;
             let counter = 1;
 
