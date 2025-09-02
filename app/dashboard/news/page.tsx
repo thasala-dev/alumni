@@ -1,17 +1,11 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   Newspaper,
   Plus,
@@ -20,483 +14,839 @@ import {
   Calendar,
   Edit,
   Trash2,
+  ShieldCheck,
+  Send,
+  Clock,
+  User,
+  Trash,
+  Heart,
+  X,
+  Camera,
 } from "lucide-react";
+import { AdmitYear, timeAgo, discussionCategory } from "@/lib/utils";
+import { useAuth } from "@/contexts/auth-context";
 
-import { useSession } from "next-auth/react";
-
-interface NewsItem {
-  id: string;
-  title: string;
-  content: string;
-  author: {
-    name: string;
-    email: string;
-  };
-  published: boolean;
-  created_at: string;
-  updated_at: string;
-  comments_count: number;
-}
-
-interface Comment {
-  id: string;
-  content: string;
-  author: {
-    name: string;
-    email: string;
-  };
-  created_at: string;
-}
-
-// Demo data
-const demoNews: NewsItem[] = [
-  {
-    id: "1",
-    title: "ประกาศการจัดงานสังสรรค์ศิษย์เก่าประจำปี 2024",
-    content:
-      "เรียนศิษย์เก่าทุกท่าน\n\nขอเชิญร่วมงานสังสรรค์ศิษย์เก่าประจำปี 2024 ในวันเสาร์ที่ 15 มิถุนายน 2024 เวลา 18:00 น. ณ โรงแรมแกรนด์ ไฮแอท เอราวัณ กรุงเทพฯ\n\nกิจกรรมภายในงาน:\n- พิธีเปิดงานและการแสดงจากนักศึกษาปัจจุบัน\n- งานเลี้ยงสังสรรค์และการแลกเปลี่ยนประสบการณ์\n- การมอบรางวัลศิษย์เก่าดีเด่น\n- การจับรางวัลใหญ่\n\nค่าบัตรเข้างาน 1,500 บาทต่อท่าน (รวมอาหารและเครื่องดื่ม)\n\nสนใจสมัครได้ที่เว็บไซต์หรือติดต่อสำนักงานศิษย์เก่า",
-    author: {
-      name: "ผู้ดูแลระบบ",
-      email: "admin@example.com",
-    },
-    published: true,
-    created_at: "2024-01-15T10:00:00Z",
-    updated_at: "2024-01-15T10:00:00Z",
-    comments_count: 12,
-  },
-  {
-    id: "2",
-    title: "เปิดรับสมัครทุนการศึกษาสำหรับบุตรศิษย์เก่า",
-    content:
-      "สมาคมศิษย์เก่าขอประกาศเปิดรับสมัครทุนการศึกษาสำหรับบุตรศิษย์เก่า ประจำปีการศึกษา 2567\n\nเงื่อนไข:\n- เป็นบุตรของศิษย์เก่าที่เป็นสมาชิกสมาคม\n- มีผลการเรียนเฉลี่ยไม่ต่ำกว่า 3.00\n- มีความประพฤติดี\n- ครอบครัวมีรายได้ไม่เกิน 30,000 บาทต่อเดือน\n\nจำนวนทุน: 20 ทุน ๆ ละ 20,000 บาท\n\nกำหนดส่งใบสมัคร: 31 มีนาคม 2567\n\nดาวน์โหลดใบสมัครได้ที่เว็บไซต์สมาคมศิษย์เก่า",
-    author: {
-      name: "ผู้ดูแลระบบ",
-      email: "admin@example.com",
-    },
-    published: true,
-    created_at: "2024-01-10T14:30:00Z",
-    updated_at: "2024-01-10T14:30:00Z",
-    comments_count: 8,
-  },
-  {
-    id: "3",
-    title: "ผลการประชุมคณะกรรมการสมาคมศิษย์เก่า ครั้งที่ 1/2567",
-    content:
-      "สรุปผลการประชุมคณะกรรมการสมาคมศิษย์เก่า เรื่องแผนงานประจำปี 2567 และการเตรียมงานสำหรับกิจกรรมในอนาคต",
-    author: {
-      name: "ผู้ดูแลระบบ",
-      email: "admin@example.com",
-    },
-    published: true,
-    created_at: "2024-01-05T09:00:00Z",
-    updated_at: "2024-01-05T09:00:00Z",
-    comments_count: 3,
-  },
-];
-
-// Demo comments for news item 1
-const demoCommentsNews1: Comment[] = [
-  {
-    id: "1",
-    content: "ขอบคุณสำหรับข้อมูลครับ รอไปงานแน่นอน!",
-    author: { name: "สมชาย ใจดี", email: "somchai@example.com" },
-    created_at: "2024-01-16T09:00:00Z",
-  },
-  {
-    id: "2",
-    content: "สนใจมากเลยค่ะ จะไปร่วมงานแน่นอน",
-    author: { name: "มาลี สวยงาม", email: "malee@example.com" },
-    created_at: "2024-01-16T10:30:00Z",
-  },
-  {
-    id: "3",
-    content: "งานจัดที่ไหนครับ?",
-    author: { name: "กมล ทำดี", email: "kamon@example.com" },
-    created_at: "2024-01-16T11:00:00Z",
-  },
-];
-
-// Demo comments for news item 2
-const demoCommentsNews2: Comment[] = [
-  {
-    id: "4",
-    content: "ดีจังเลยค่ะ มีทุนการศึกษาให้บุตรหลานด้วย",
-    author: { name: "สมศักดิ์ เก่งมาก", email: "somsak@example.com" },
-    created_at: "2024-01-11T10:00:00Z",
-  },
-  {
-    id: "5",
-    content: "เงื่อนไขชัดเจนดีครับ",
-    author: { name: "พรชัย มีสุข", email: "pornchai@example.com" },
-    created_at: "2024-01-11T11:00:00Z",
-  },
-];
-
-export default function NewsPage() {
-  const { data: session, status } = useSession();
-  const user = session?.user as any;
-
-  const [news, setNews] = useState<NewsItem[]>([]);
-  const [selectedNews, setSelectedNews] = useState<NewsItem | null>(null);
-  const [comments, setComments] = useState<Comment[]>([]);
-  const [newComment, setNewComment] = useState("");
-  const [loading, setLoading] = useState(true); // Start loading to simulate fetch
-
-  const [searchTerm, setSearchTerm] = useState("");
-
-  useEffect(() => {
-    const initializePage = async () => {
-      await new Promise((resolve) => setTimeout(resolve, 500)); // Simulate network delay
-
-      setNews(demoNews);
-      setLoading(false);
-    };
-    initializePage();
-  }, []);
-
-  const handleNewsClick = async (newsItem: NewsItem) => {
-    setSelectedNews(newsItem);
-    await new Promise((resolve) => setTimeout(resolve, 300)); // Simulate comment fetching delay
-
-    // Assign demo comments based on news item ID
-    if (newsItem.id === "1") {
-      setComments(demoCommentsNews1);
-    } else if (newsItem.id === "2") {
-      setComments(demoCommentsNews2);
-    } else {
-      setComments([]); // No comments for other demo news
-    }
-  };
-
-  const handleAddComment = async () => {
-    if (!newComment.trim() || !user) return;
-
-    await new Promise((resolve) => setTimeout(resolve, 500)); // Simulate comment submission delay
-
-    const demoComment: Comment = {
-      id: Date.now().toString(),
-      content: newComment,
-      author: { name: user.email.split("@")[0], email: user.email }, // Use current demo user's email for author
-      created_at: new Date().toISOString(),
-    };
-    setComments([...comments, demoComment]);
-    setNewComment("");
-    // Update comments_count for the selected news item in demoNews
-    setNews((prevNews) =>
-      prevNews.map((item) =>
-        item.id === selectedNews?.id
-          ? { ...item, comments_count: item.comments_count + 1 }
-          : item
-      )
-    );
-    if (selectedNews) {
-      setSelectedNews((prev) =>
-        prev ? { ...prev, comments_count: prev.comments_count + 1 } : null
-      );
-    }
-  };
-
-  const filteredNews = news.filter(
-    (item) =>
-      item.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      item.content.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
-  if (loading) {
-    return (
-      <div className="space-y-6">
-        <div className="animate-pulse">
-          <div className="h-10 bg-gray-200 dark:bg-gray-700 rounded w-1/4 mb-8"></div>{" "}
-          {/* Larger placeholder for title */}
-          <div className="space-y-4">
-            {[...Array(3)].map((_, i) => (
-              <div
-                key={i}
-                className="h-32 bg-gray-200 dark:bg-gray-700 rounded-xl"
-              ></div>
-            ))}
-          </div>
+function ImageUrlDialog({
+  open,
+  onClose,
+  value,
+  onChange,
+}: {
+  open: boolean;
+  onClose: () => void;
+  value: string;
+  onChange: (v: string) => void;
+}) {
+  if (!open) return null;
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+      <div className="bg-white dark:bg-gray-900 rounded-xl shadow-xl p-6 w-full max-w-sm relative animate-fade-in-up">
+        <div className="mb-2 font-semibold text-gray-900 dark:text-white">
+          แนบรูปภาพ (URL)
+        </div>
+        <input
+          type="url"
+          placeholder="วางลิงก์รูปภาพ (URL)"
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          className="border rounded px-3 py-2 text-sm w-full focus:outline-none focus:ring-2 focus:ring-[#81B214] dark:bg-gray-800 dark:text-white"
+        />
+        {value && (
+          <img
+            src={value}
+            alt="Preview"
+            className="w-full max-h-64 object-contain rounded border border-gray-200 dark:border-gray-700 mt-3"
+          />
+        )}
+        <div className="flex justify-end gap-2 mt-4">
+          <button
+            onClick={onClose}
+            className="px-4 py-2 rounded bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600"
+          >
+            ปิด
+          </button>
         </div>
       </div>
-    );
-  }
+    </div>
+  );
+}
+
+function NewsDialog({
+  open,
+  onClose,
+  onSave,
+  editingPost,
+}: {
+  open: boolean;
+  onClose: () => void;
+  onSave: (data: any) => void;
+  editingPost?: any;
+}) {
+  const [title, setTitle] = useState("");
+  const [content, setContent] = useState("");
+  const [image, setImage] = useState("");
+  const [showImageDialog, setShowImageDialog] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  // Reset form when dialog opens/closes or editing post changes
+  useEffect(() => {
+    if (open) {
+      if (editingPost) {
+        setTitle(editingPost.title || "");
+        setContent(editingPost.content || "");
+        setImage(editingPost.image || "");
+      } else {
+        setTitle("");
+        setContent("");
+        setImage("");
+      }
+    }
+  }, [open, editingPost]);
+
+  const handleSave = async () => {
+    if (!title.trim() || !content.trim()) return;
+
+    setLoading(true);
+    try {
+      await onSave({
+        title: title.trim(),
+        content: content.trim(),
+        image: image.trim() || undefined,
+      });
+
+      // Reset form
+      setTitle("");
+      setContent("");
+      setImage("");
+      onClose();
+    } catch (error) {
+      console.error("Error saving news:", error);
+    }
+    setLoading(false);
+  };
+
+  if (!open) return null;
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+      <div className="bg-white dark:bg-gray-900 rounded-xl shadow-xl p-6 w-full max-w-2xl relative animate-fade-in-up max-h-[90vh] overflow-y-auto">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
+            {editingPost ? "แก้ไขข่าว" : "เพิ่มข่าวใหม่"}
+          </h2>
+          <button
+            onClick={onClose}
+            className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+          >
+            <X className="h-5 w-5" />
+          </button>
+        </div>
+
+        <div className="space-y-4">
+          {/* Title */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              หัวข้อข่าว *
+            </label>
+            <Input
+              placeholder="กรอกหัวข้อข่าว..."
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              className="w-full"
+            />
+          </div>
+
+          {/* Content */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              เนื้อหาข่าว *
+            </label>
+            <Textarea
+              placeholder="กรอกเนื้อหาข่าว..."
+              value={content}
+              onChange={(e) => setContent(e.target.value)}
+              className="w-full resize-none"
+              rows={8}
+            />
+          </div>
+
+          {/* Image */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              รูปภาพประกอบ
+            </label>
+            <div className="flex gap-2">
+              <Input
+                placeholder="URL รูปภาพ (ไม่บังคับ)"
+                value={image}
+                onChange={(e) => setImage(e.target.value)}
+                className="flex-1"
+              />
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setShowImageDialog(true)}
+              >
+                <Camera className="h-4 w-4" />
+              </Button>
+            </div>
+
+            {image && (
+              <div className="mt-3 relative">
+                <button
+                  type="button"
+                  className="absolute top-2 right-2 h-7 w-7 rounded-full bg-red-500 text-white flex items-center justify-center hover:bg-red-600 cursor-pointer shadow z-10"
+                  onClick={() => setImage("")}
+                  aria-label="ลบรูปภาพ"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+                <img
+                  src={image}
+                  alt="Preview"
+                  className="w-full max-h-64 object-contain rounded border border-gray-200 dark:border-gray-700"
+                />
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Actions */}
+        <div className="flex justify-end gap-3 mt-6">
+          <Button variant="outline" onClick={onClose} disabled={loading}>
+            ยกเลิก
+          </Button>
+          <Button
+            onClick={handleSave}
+            disabled={!title.trim() || !content.trim() || loading}
+            className="bg-[#81B214] hover:bg-[#50B003]"
+          >
+            {loading
+              ? "กำลังบันทึก..."
+              : editingPost
+              ? "บันทึกการแก้ไข"
+              : "สร้างข่าว"}
+          </Button>
+        </div>
+
+        {/* Image URL Dialog */}
+        <ImageUrlDialog
+          open={showImageDialog}
+          onClose={() => setShowImageDialog(false)}
+          value={image}
+          onChange={setImage}
+        />
+      </div>
+    </div>
+  );
+}
+
+export default function NewsPage() {
+  const { user, isLoading } = useAuth();
+  const [posts, setPosts] = useState<any[]>([]);
+  const [hasMore, setHasMore] = useState(true);
+  const [expandedPosts, setExpandedPosts] = useState<{
+    [key: number]: boolean;
+  }>({});
+  const [expandedComments, setExpandedComments] = useState<{
+    [key: number]: boolean;
+  }>({});
+  const [showComments, setShowComments] = useState<{ [key: number]: boolean }>(
+    {}
+  );
+  const [newComment, setNewComment] = useState<{ [key: number]: string }>({});
+  const [loading, setLoading] = useState(true); // Start loading to simulate fetch
+  const [showNewsDialog, setShowNewsDialog] = useState(false);
+  const [editingPost, setEditingPost] = useState<any>(null);
+  const [pagination, setPagination] = useState({
+    current: 1,
+    total: 1,
+    count: 0,
+    limit: 10,
+  });
+
+  const loadMorePosts = async ({ page, limit, user_id }: any) => {
+    setLoading(true);
+    try {
+      const searchParams = new URLSearchParams({
+        page: page.toString(),
+        limit: limit.toString(),
+        user_id: user_id,
+        category_id: "99",
+      });
+
+      const res = await fetch(`/api/discussionTopics?${searchParams}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      if (!res.ok) throw new Error("Failed to create post");
+
+      const { data, total } = await res.json();
+      setPosts((prev) => {
+        const existingIds = new Set(prev.map((p) => p.id));
+        const newData = data.filter((item: any) => !existingIds.has(item.id));
+        return [...prev, ...newData];
+      });
+
+      setHasMore(data.length > 0);
+    } catch (error) {
+      console.error("Error creating post:", error);
+    }
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    if (!isLoading && user) {
+      loadMorePosts({
+        page: pagination.current,
+        limit: pagination.limit,
+        user_id: user?.id,
+      });
+    }
+  }, [pagination.current, isLoading, user]);
+
+  const handleLike = async (postId: number) => {
+    const post = posts.find((p) => p.id === postId);
+    const data: any = {
+      topic_id: postId,
+      user_id: user?.id,
+      isLiked: !post.isLiked,
+    };
+
+    try {
+      const res = await fetch("/api/discussionLikes", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+      if (!res.ok) throw new Error("Failed to create post");
+      const resData = await res.json();
+
+      setPosts(
+        posts.map((post) =>
+          post.id === postId
+            ? {
+                ...post,
+                isLiked: !post.isLiked,
+                discussion_likes: resData.data,
+              }
+            : post
+        )
+      );
+    } catch (error) {
+      console.error("Error liking post:", error);
+    }
+  };
+
+  const handleComment = async (postId: number) => {
+    const comment = newComment[postId];
+    if (comment?.trim()) {
+      console.log("New comment:", comment, postId);
+      const data: any = {
+        topic_id: postId,
+        user_id: user?.id,
+        content: comment,
+      };
+      try {
+        const res = await fetch("/api/discussionReplies", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        });
+        if (!res.ok) throw new Error("Failed to create post");
+        const resData = await res.json();
+
+        setPosts(
+          posts.map((post) =>
+            post.id === postId
+              ? {
+                  ...post,
+                  discussion_replies: [
+                    ...(post.discussion_replies || []),
+                    resData.topic,
+                  ],
+                }
+              : post
+          )
+        );
+        setNewComment({ ...newComment, [postId]: "" });
+      } catch (error) {
+        console.error("Error creating post:", error);
+      }
+    }
+  };
+
+  const toggleComments = (postId: number) => {
+    setShowComments({
+      ...showComments,
+      [postId]: !showComments[postId],
+    });
+  };
+
+  const togglePostExpansion = (postId: number) => {
+    setExpandedPosts({
+      ...expandedPosts,
+      [postId]: !expandedPosts[postId],
+    });
+  };
+
+  const toggleCommentExpansion = (commentId: number) => {
+    setExpandedComments({
+      ...expandedComments,
+      [commentId]: !expandedComments[commentId],
+    });
+  };
+
+  const shouldTruncateContent = (content: string) => {
+    const lines = content.split("\n");
+    return lines.length > 3 || content.length > 200;
+  };
+
+  const getTruncatedContent = (content: string) => {
+    if (content.length > 200) {
+      return content.substring(0, 200);
+    }
+    return content;
+  };
+
+  const handleCreateNews = () => {
+    setEditingPost(null);
+    setShowNewsDialog(true);
+  };
+
+  const handleEditNews = (post: any) => {
+    setEditingPost(post);
+    setShowNewsDialog(true);
+  };
+
+  const handleSaveNews = async (newsData: any) => {
+    try {
+      if (editingPost) {
+        // Update existing news
+        const res = await fetch(`/api/discussionTopics/${editingPost.id}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            ...newsData,
+            category_id: "99",
+            user_id: user?.id,
+          }),
+        });
+        if (!res.ok) throw new Error("Failed to update news");
+
+        // Update the post in the list
+        setPosts(
+          posts.map((post) =>
+            post.id === editingPost.id ? { ...post, ...newsData } : post
+          )
+        );
+      } else {
+        // Create new news
+        const res = await fetch("/api/discussionTopics", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            ...newsData,
+            category_id: "99",
+            user_id: user?.id,
+          }),
+        });
+        if (!res.ok) throw new Error("Failed to create news");
+
+        // Refresh the posts list
+        setPosts([]);
+        setPagination((prev) => ({ ...prev, current: 1 }));
+        loadMorePosts({
+          page: 1,
+          limit: pagination.limit,
+          user_id: user?.id,
+        });
+      }
+    } catch (error) {
+      console.error("Error saving news:", error);
+      throw error;
+    }
+  };
+
+  const handleDeleteNews = async (postId: number) => {
+    if (!confirm("คุณแน่ใจหรือไม่ที่จะลบข่าวนี้?")) return;
+
+    try {
+      const res = await fetch(`/api/discussionTopics/${postId}`, {
+        method: "DELETE",
+      });
+      if (!res.ok) throw new Error("Failed to delete news");
+
+      // Remove the post from the list
+      setPosts(posts.filter((post) => post.id !== postId));
+    } catch (error) {
+      console.error("Error deleting news:", error);
+    }
+  };
 
   return (
     <div className="space-y-8">
-      {" "}
-      {/* Increased overall spacing */}
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold text-[#81B214]">ข่าวสาร</h1>{" "}
-          {/* Bolder title */}
           <p className="text-lg text-gray-600 dark:text-gray-400">
             ข่าวประชาสัมพันธ์และกิจกรรมต่างๆ
-          </p>{" "}
-          {/* Larger text */}
+          </p>
         </div>
         {user?.role === "admin" && (
-          <Button className="rounded-lg bg-[#81B214] hover:bg-[#50B003] transition-colors">
+          <Button
+            onClick={handleCreateNews}
+            className="rounded-lg bg-[#81B214] hover:bg-[#50B003] transition-colors"
+          >
             <Plus className="mr-2 h-4 w-4" />
             เพิ่มข่าวใหม่
           </Button>
         )}
       </div>
       <div className="grid grid-cols-1 gap-4">
-        {/* News List */}
         <div className="space-y-6">
-          {/* Search */}
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 dark:text-gray-500" />{" "}
-            {/* Centered icon */}
-            <Input
-              placeholder="ค้นหาข่าว..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10 rounded-lg focus-visible:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100 dark:placeholder-gray-400"
-            />
-          </div>
-
-          {/* News Items */}
-          <div className="space-y-4">
-            {filteredNews.map((item) => (
-              <Card
-                key={item.id}
-                className={`cursor-pointer shadow-md hover:shadow-xl transition-all duration-300 rounded-xl dark:bg-gray-900/80 dark:border-gray-700 dark:hover:shadow-gray-900/20 ${
-                  /* Enhanced shadow and hover */
-                  selectedNews?.id === item.id
-                    ? "ring-2 ring-blue-500 border-blue-500 dark:ring-blue-400 dark:border-blue-400"
-                    : "" /* Enhanced selected state */
-                }`}
-                onClick={() => handleNewsClick(item)}
-              >
-                <CardContent className="p-4">
-                  <div className="flex items-start justify-between mb-4">
-                    <div className="flex-1 pr-4">
-                      {" "}
-                      {/* Added right padding */}
-                      <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2\">
-                        {item.title}
-                      </h3>{" "}
-                      {/* Larger, bolder title */}
-                      <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-gray-500 dark:text-gray-400">
-                        {" "}
-                        {/* Added flex-wrap and gap */}
-                        <div className="flex items-center">
-                          <Edit className="mr-1.5 h-4 w-4 text-gray-400 dark:text-gray-500" />{" "}
-                          {/* Adjusted spacing, added text color to icon */}
-                          {item.author.name}
-                        </div>
-                        <div className="flex items-center">
-                          <Calendar className="mr-1.5 h-4 w-4 text-gray-400 dark:text-gray-500" />{" "}
-                          {/* Adjusted spacing, added text color to icon */}
-                          {new Date(item.created_at).toLocaleDateString(
-                            "th-TH"
+          {posts.map((post) => (
+            <Card
+              key={post.id}
+              className="bg-white dark:bg-gray-900/80 border-gray-200 dark:border-gray-700 p-0"
+            >
+              <CardContent className="p-4">
+                <div className="flex items-start justify-between mb-4">
+                  {post.category_id === "0" ? (
+                    <div className="flex items-center space-x-3">
+                      <Avatar className="h-12 w-12">
+                        <AvatarImage src={post.user?.image} />
+                        <AvatarFallback className="bg-[#81B214]/10 dark:bg-[#81B214] text-[#81B214] dark:text-white text-2xl font-semibold">
+                          {post.user?.name.charAt(0)}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div>
+                        <div className="font-semibold text-gray-900 dark:text-gray-100 flex flex-row items-top gap-2">
+                          <div className="items-center">{post.user?.name}</div>
+                          {post.user?.role === "admin" && (
+                            <ShieldCheck className="h-5 w-5 text-blue-500" />
                           )}
                         </div>
-                        <div className="flex items-center">
-                          <MessageCircle className="mr-1.5 h-4 w-4 text-gray-400 dark:text-gray-500" />{" "}
-                          {/* Adjusted spacing, added text color to icon */}
-                          {item.comments_count} ความคิดเห็น
+                        <div className="flex items-center text-sm text-gray-500 dark:text-gray-400 gap-2">
+                          {post.user?.alumni_profiles.length > 0 && (
+                            <>
+                              {post.user?.alumni_profiles[0]?.name && (
+                                <>
+                                  <span>
+                                    {post.user?.alumni_profiles[0]?.name}
+                                  </span>
+                                  <span>•</span>
+                                </>
+                              )}
+
+                              <span>
+                                รุ่นที่{" "}
+                                {AdmitYear(
+                                  post.user?.alumni_profiles[0]?.admit_year
+                                )}
+                              </span>
+                              <span>•</span>
+                            </>
+                          )}
+
+                          <Clock className="h-3 w-3" />
+                          <span>{timeAgo(post.created_at)}</span>
                         </div>
                       </div>
                     </div>
-                    {user?.role === "admin" && (
-                      <div className="flex space-x-2">
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="rounded-full hover:bg-gray-100 dark:hover:bg-gray-700"
+                  ) : (
+                    <div>
+                      <div className="flex space-x-3">
+                        {post.category_id === "99" ? (
+                          <a href={`/dashboard/news/${post.id}`}>
+                            <div className="text-xl font-semibold text-gray-900 dark:text-gray-100">
+                              {post.title}
+                            </div>
+                          </a>
+                        ) : (
+                          <div className="text-xl font-semibold text-gray-900 dark:text-gray-100">
+                            {post.title}
+                          </div>
+                        )}
+                      </div>
+
+                      <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-gray-500 dark:text-gray-400">
+                        {discussionCategory
+                          .filter(
+                            (category) => category.id === post.category_id
+                          )
+                          .map((category) => (
+                            <div
+                              key={category.id}
+                              className="flex items-center"
+                            >
+                              <a
+                                href={`/dashboard/discussion/${category.id}`}
+                                className="flex items-center"
+                              >
+                                <category.icon
+                                  className={`mr-1.5 h-4 w-4 ${category.color}`}
+                                />
+                                <span className={category.color}>
+                                  {category.name}
+                                </span>
+                              </a>
+                            </div>
+                          ))}
+
+                        <div className="flex items-center">
+                          <User className="mr-1.5 h-4 w-4 text-gray-400 dark:text-gray-500" />{" "}
+                          {post.user?.name}
+                        </div>
+
+                        <div className="flex items-center">
+                          <Calendar className="mr-1.5 h-4 w-4 text-gray-400 dark:text-gray-500" />{" "}
+                          {timeAgo(post.created_at)}
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {post.user?.id === user?.id && (
+                    <>
+                      <Button
+                        onClick={() => handleEditNews(post)}
+                        variant="ghost"
+                        size="sm"
+                        className="hover:bg-gray-100 dark:hover:bg-gray-700"
+                      >
+                        <Edit className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        onClick={() => handleDeleteNews(post.id)}
+                        variant="ghost"
+                        size="sm"
+                        className="text-red-500 dark:text-red-400 hover:text-red-700 dark:hover:text-red-200 hover:bg-red-100 dark:hover:bg-red-900"
+                      >
+                        <Trash className="h-4 w-4" />
+                      </Button>
+                    </>
+                  )}
+                </div>
+
+                {post.category_id === "99" && post.image && (
+                  <img
+                    src={post.image}
+                    alt="Post image"
+                    className="w-full max-h-100 object-contain rounded border border-gray-200 dark:border-gray-700 mb-4"
+                  />
+                )}
+
+                {/* Post Content */}
+                <div className="text-gray-800 dark:text-gray-200 mb-4 leading-relaxed">
+                  <div className="whitespace-pre-wrap">
+                    {expandedPosts[post.id] ||
+                    !shouldTruncateContent(post.content)
+                      ? post.content
+                      : getTruncatedContent(post.content)}
+                  </div>
+                  {shouldTruncateContent(post.content) && (
+                    <div
+                      onClick={() => togglePostExpansion(post.id)}
+                      className="text-[#81B214]  font-medium mt-2 text-sm cursor-pointer"
+                    >
+                      {expandedPosts[post.id] ? "ย่อเนื้อหา" : "...อ่านต่อ"}
+                    </div>
+                  )}
+                </div>
+
+                {/* Post Image */}
+                {post.category_id !== "99" && post.image && (
+                  <img
+                    src={post.image}
+                    alt="Post image"
+                    className="w-full max-h-100 object-contain rounded border border-gray-200 dark:border-gray-700 mb-4"
+                  />
+                )}
+
+                {/* Post Actions */}
+                <div className="flex items-center justify-between pt-4 border-t border-gray-100 dark:border-gray-700">
+                  <div className="flex items-center space-x-6">
+                    <div
+                      onClick={() => handleLike(post.id)}
+                      className={`flex items-center space-x-2 cursor-pointer ${
+                        post.isLiked
+                          ? "text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
+                          : "text-gray-600 hover:text-red-600 dark:text-gray-400 dark:hover:text-red-400"
+                      }`}
+                    >
+                      <Heart
+                        className={`h-6 w-6 mr-2 ${
+                          post.isLiked ? "fill-current" : ""
+                        }`}
+                      />
+                      {post.discussion_likes.length}
+                    </div>
+                    <div
+                      onClick={() => toggleComments(post.id)}
+                      className="flex items-center space-x-2 cursor-pointer text-gray-600 dark:text-gray-400 hover:text-blue-600"
+                    >
+                      <MessageCircle className="h-6 w-6 mr-2 " />
+                      {post.discussion_replies?.length}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Comments Section */}
+                {showComments[post.id] && (
+                  <div className="pt-4">
+                    {/* Existing Comments */}
+                    <div className="space-y-3 mb-4">
+                      {post.discussion_replies.map((comment: any) => (
+                        <div
+                          key={comment.id}
+                          className="flex items-start space-x-3"
                         >
-                          {" "}
-                          {/* Changed to icon size, rounded */}
-                          <Edit className="h-4 w-4" />
-                        </Button>
+                          <Avatar className="h-8 w-8">
+                            <AvatarImage src={comment.user?.image} />
+                            <AvatarFallback className="bg-[#81B214]/10 dark:bg-[#81B214] text-[#81B214] dark:text-white text-2xl font-semibold">
+                              {comment.user?.name.charAt(0)}
+                            </AvatarFallback>
+                          </Avatar>
+
+                          <div className="flex-1">
+                            <div className="rounded-lg pl-3">
+                              <div className="flex items-center justify-between">
+                                <div className="font-semibold text-sm text-gray-900 dark:text-gray-100 flex flex-row items-top gap-2 mb-2">
+                                  <div className="items-center">
+                                    {comment.user?.name}
+                                  </div>
+                                  {comment.user?.role === "admin" && (
+                                    <ShieldCheck className="h-5 w-5 text-blue-500" />
+                                  )}
+                                </div>
+                                {comment.user?.id === user?.id && (
+                                  <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    className="text-red-500 dark:text-red-400 hover:text-red-700 dark:hover:text-red-200 hover:bg-red-100 dark:hover:bg-red-900"
+                                  >
+                                    <Trash className="h-4 w-4" />
+                                  </Button>
+                                )}
+                              </div>
+                              <div className="text-gray-800 dark:text-gray-200 leading-relaxed">
+                                <div className="whitespace-pre-wrap">
+                                  {expandedComments[comment.id] ||
+                                  !shouldTruncateContent(comment.content)
+                                    ? comment.content
+                                    : getTruncatedContent(comment.content)}
+                                </div>
+                                {shouldTruncateContent(comment.content) && (
+                                  <button
+                                    onClick={() =>
+                                      toggleCommentExpansion(comment.id)
+                                    }
+                                    className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 font-medium mt-1 text-xs"
+                                  >
+                                    {expandedComments[comment.id]
+                                      ? "ย่อ"
+                                      : "อ่านต่อ..."}
+                                  </button>
+                                )}
+                              </div>
+                            </div>
+                            <p className="text-xs text-gray-500 dark:text-gray-300 mt-1 ml-3">
+                              {timeAgo(comment.created_at)}
+                            </p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* Add Comment */}
+                    <div className="flex items-start space-x-3">
+                      <Avatar className="w-8 h-8">
+                        <Avatar className="h-8 w-8">
+                          <AvatarImage src={user?.image} />
+                          <AvatarFallback className="bg-[#81B214]/10 dark:bg-[#81B214] text-[#81B214] dark:text-white text-2xl font-semibold">
+                            {user?.name.charAt(0)}
+                          </AvatarFallback>
+                        </Avatar>
+                      </Avatar>
+                      <div className="flex-1 flex space-x-2">
+                        <Textarea
+                          placeholder="เขียนความคิดเห็น..."
+                          value={newComment[post.id] || ""}
+                          onChange={(e) =>
+                            setNewComment({
+                              ...newComment,
+                              [post.id]: e.target.value,
+                            })
+                          }
+                          className="resize-none border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder:text-gray-500 dark:placeholder:text-gray-400 focus:border-blue-500 dark:focus:border-blue-400"
+                          rows={2}
+                        />
                         <Button
-                          variant="ghost"
-                          size="icon"
-                          className="rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 text-red-500 hover:text-red-600 dark:text-red-400 dark:hover:text-red-300"
+                          onClick={() => handleComment(post.id)}
+                          disabled={!newComment[post.id]?.trim()}
+                          className="bg-[#81B214] text-white"
                         >
-                          {" "}
-                          {/* Changed to icon size, rounded, added red color */}
-                          <Trash2 className="h-4 w-4" />
+                          <Send className="h-4 w-4" />
                         </Button>
                       </div>
-                    )}
+                    </div>
                   </div>
-                  <p className="text-gray-700 dark:text-gray-300 line-clamp-3 leading-relaxed">
-                    {item.content.substring(0, 200)}...
-                  </p>{" "}
-                  {/* Adjusted text color and line height */}
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+                )}
+              </CardContent>
+            </Card>
+          ))}
 
-          {filteredNews.length === 0 && (
-            <Card className="shadow-md rounded-xl dark:bg-gray-900/80 dark:border-gray-700">
-              {" "}
-              {/* Added shadow and rounded corners */}
-              <CardContent className="p-12 text-center">
-                <Newspaper className="mx-auto h-16 w-16 text-gray-400 dark:text-gray-500 mb-6" />{" "}
-                {/* Larger icon, increased spacing */}
-                <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">
-                  ไม่พบข่าวสาร
-                </h3>{" "}
-                {/* Larger, bolder title */}
-                <p className="text-gray-600 dark:text-gray-400 text-base">
-                  ลองเปลี่ยนคำค้นหา
-                </p>{" "}
-                {/* Larger text */}
+          {/* Loading indicator */}
+          {loading && (
+            <Card className="bg-white dark:bg-gray-900/80 border-gray-200 dark:border-gray-700">
+              <CardContent className="p-8">
+                <div className="flex items-center justify-center space-x-3">
+                  <div className="animate-spin rounded-full h-8 w-8 border-2 border-gray-300 dark:border-gray-600 border-t-blue-600 dark:border-t-blue-400"></div>
+                  <span className="text-gray-600 dark:text-gray-400 font-medium">
+                    กำลังโหลดโพสต์เพิ่มเติม...
+                  </span>
+                </div>
               </CardContent>
             </Card>
           )}
-        </div>
 
-        {/* News Detail & Comments */}
-        <div className="space-y-6">
-          {selectedNews ? (
-            <>
-              <Card className="shadow-md rounded-xl dark:bg-gray-900/80 dark:border-gray-700">
-                {" "}
-                {/* Added shadow and rounded corners */}
-                <CardHeader className="pb-4">
-                  {" "}
-                  {/* Adjusted padding */}
-                  <CardTitle className="text-xl font-semibold text-gray-900 dark:text-gray-100">
-                    {selectedNews.title}
-                  </CardTitle>{" "}
-                  {/* Larger, bolder title */}
-                  <CardDescription className="text-gray-600 dark:text-gray-400">
-                    โดย {selectedNews.author.name} •{" "}
-                    {new Date(selectedNews.created_at).toLocaleDateString(
-                      "th-TH"
-                    )}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="pt-0">
-                  {" "}
-                  {/* Adjusted padding */}
-                  <div className="prose prose-sm max-w-none text-gray-800 dark:text-gray-200 leading-relaxed">
-                    {" "}
-                    {/* Adjusted text color and line height */}
-                    {selectedNews.content
-                      .split("\n")
-                      .map((paragraph, index) => (
-                        <p key={index} className="mb-3">
-                          {paragraph}
-                        </p>
-                      ))}
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* Comments */}
-              <Card className="shadow-md rounded-xl dark:bg-gray-900/80 dark:border-gray-700">
-                {" "}
-                {/* Added shadow and rounded corners */}
-                <CardHeader className="pb-4">
-                  {" "}
-                  {/* Adjusted padding */}
-                  <CardTitle className="flex items-center text-xl font-semibold dark:text-gray-100">
-                    {" "}
-                    {/* Larger, bolder title */}
-                    <MessageCircle className="mr-2 h-5 w-5 text-blue-600 dark:text-blue-400" />{" "}
-                    {/* Added text color to icon */}
-                    ความคิดเห็น ({comments.length})
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-6">
-                  {" "}
-                  {/* Increased spacing */}
-                  {/* Add Comment */}
-                  {user && (
-                    <div className="space-y-3">
-                      <Textarea
-                        placeholder="แสดงความคิดเห็น..."
-                        value={newComment}
-                        onChange={(e) => setNewComment(e.target.value)}
-                        rows={4}
-                        className="rounded-lg focus-visible:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100 dark:placeholder-gray-400"
-                      />
-                      <Button
-                        onClick={handleAddComment}
-                        disabled={!newComment.trim()}
-                        className="rounded-lg bg-blue-600 hover:bg-blue-700 dark:bg-blue-600 dark:hover:bg-blue-700 transition-colors"
-                      >
-                        {" "}
-                        {/* Rounded button */}
-                        ส่งความคิดเห็น
-                      </Button>
-                    </div>
-                  )}
-                  {/* Comments List */}
-                  <div className="space-y-4">
-                    {comments.map((comment) => (
-                      <div key={comment.id} className="flex space-x-3">
-                        <Avatar className="h-9 w-9">
-                          {" "}
-                          {/* Slightly larger avatar */}
-                          <AvatarFallback className="bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 text-sm font-medium">
-                            {" "}
-                            {/* Adjusted text size */}
-                            {comment.author.name.charAt(0)}
-                          </AvatarFallback>
-                        </Avatar>
-                        <div className="flex-1">
-                          <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 border border-gray-100 dark:border-gray-600 shadow-sm">
-                            {" "}
-                            {/* Enhanced comment bubble styling */}
-                            <div className="flex items-center justify-between mb-1">
-                              <span className="text-sm font-semibold text-gray-800 dark:text-gray-200">
-                                {comment.author.name}
-                              </span>{" "}
-                              {/* Bolder text */}
-                              <span className="text-xs text-gray-500 dark:text-gray-400">
-                                {new Date(
-                                  comment.created_at
-                                ).toLocaleDateString("th-TH")}
-                              </span>
-                            </div>
-                            <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
-                              {comment.content}
-                            </p>{" "}
-                            {/* Adjusted text color and line height */}
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                  {comments.length === 0 && (
-                    <div className="text-center py-8 text-gray-500 dark:text-gray-400">
-                      <MessageCircle className="mx-auto h-12 w-12 mb-4 text-gray-400 dark:text-gray-500" />{" "}
-                      {/* Larger icon, increased spacing */}
-                      <p className="text-base">ยังไม่มีความคิดเห็น</p>{" "}
-                      {/* Larger text */}
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-            </>
-          ) : (
-            <Card className="shadow-md rounded-xl dark:bg-gray-900/80 dark:border-gray-700\">
-              {" "}
-              {/* Added shadow and rounded corners */}
-              <CardContent className="p-12 text-center">
-                <Newspaper className="mx-auto h-16 w-16 text-gray-400 dark:text-gray-500 mb-6" />{" "}
-                {/* Larger icon, increased spacing */}
-                <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">
-                  เลือกข่าวที่ต้องการอ่าน
-                </h3>{" "}
-                {/* Larger, bolder title */}
-                <p className="text-gray-600 dark:text-gray-400 text-base">
-                  คลิกที่ข่าวในรายการเพื่อดูรายละเอียดและความคิดเห็น
-                </p>{" "}
-                {/* Larger text */}
-              </CardContent>
-            </Card>
+          {/* Load more button */}
+          {hasMore && !loading && (
+            <div className="flex justify-center my-4">
+              <div
+                onClick={() =>
+                  setPagination((prev) => ({
+                    ...prev,
+                    current: prev.current + 1,
+                  }))
+                }
+                className="text-[#81B214] bg-[#81B214]/10 w-full p-8 text-lg font-semibold cursor-pointer rounded-md text-center hover:bg-[#81B214]/20 transition"
+              >
+                โหลดโพสต์เพิ่มเติม
+              </div>
+            </div>
           )}
         </div>
       </div>
+
+      {/* News Dialog */}
+      <NewsDialog
+        open={showNewsDialog}
+        onClose={() => setShowNewsDialog(false)}
+        onSave={handleSaveNews}
+        editingPost={editingPost}
+      />
     </div>
   );
 }

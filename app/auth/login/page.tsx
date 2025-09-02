@@ -2,7 +2,7 @@
 
 import type React from "react";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -19,17 +19,29 @@ import { signIn } from "next-auth/react";
 import { DemoNotice } from "@/components/demo-notice";
 import { Facebook, Mail, Lock, LogIn, User } from "lucide-react";
 import { ThemeToggle } from "@/components/theme-toggle";
-// Removed: import { isSupabaseConfigured } from "@/lib/supabase"
-
-// isDemoMode is now always true as we are using mock data
-const isDemoMode = true;
+import { is } from "date-fns/locale";
+import { useAuth } from "@/contexts/auth-context";
 
 export default function LoginPage() {
+  const { user, isLoading, isLoggedIn } = useAuth();
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const router = useRouter();
+
+  useEffect(() => {
+    if (!isLoading && isLoggedIn && user) {
+      if (user.status === "APPROVED") {
+        router.push("/dashboard");
+      } else if (user.status === "PENDING_APPROVAL") {
+        router.push("/auth/pending-approval");
+      } else if (user.status === "UNREGISTERED") {
+        router.push("/auth/verify-identity");
+      }
+    }
+  }, [router, isLoading, user]);
 
   const handleEmailLogin = async (e: React.FormEvent) => {
     e.preventDefault();

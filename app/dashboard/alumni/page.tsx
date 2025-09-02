@@ -237,7 +237,6 @@ export default function AlumniPage() {
                   <AvatarFallback className="bg-[#81B214]/10 dark:bg-[#81B214] text-[#81B214] dark:text-white text-2xl font-semibold">
                     {/* Larger fallback text */}
                     {person.first_name.charAt(0)}
-                    {person.last_name.charAt(0)}
                   </AvatarFallback>
                 </Avatar>
                 <div className="flex-1 min-w-0 pt-1">

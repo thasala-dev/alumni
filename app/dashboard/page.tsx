@@ -25,6 +25,8 @@ import {
   X,
   Trash,
   User,
+  ShieldCheck,
+  Calendar,
 } from "lucide-react";
 import { useAuth } from "@/contexts/auth-context";
 import { AdmitYear, timeAgo } from "@/lib/utils";
@@ -74,42 +76,6 @@ function ImageUrlDialog({
   );
 }
 
-interface News {
-  id: number;
-  title: string;
-  excerpt: string;
-  image: string;
-  timestamp: string;
-  category: string;
-}
-
-const mockNews: News[] = [
-  {
-    id: 1,
-    title: "ประกาศรับสมัครงานเภสัชกรโรงพยาบาลเอกชน",
-    excerpt: "โรงพยาบาลเอกชนชั้นนำหลายแห่งเปิดรับสมัครเภสัชกรประจำ...",
-    image: "/placeholder.jpg",
-    timestamp: "1 วันที่แล้ว",
-    category: "งาน",
-  },
-  {
-    id: 2,
-    title: "การอบรมเชิงปฏิบัติการ: เภสัชกรรมคลินิกสมัยใหม่",
-    excerpt: "สภาเภสัชกรรมจัดการอบรมเพื่อยกระดับทักษะเภสัชกร...",
-    image: "/placeholder.jpg",
-    timestamp: "2 วันที่แล้ว",
-    category: "การศึกษา",
-  },
-  {
-    id: 3,
-    title: "อัปเดตแนวทางการรักษาใหม่ของ WHO",
-    excerpt: "องค์การอนามัยโลกประกาศแนวทางการรักษาที่อัปเดต...",
-    image: "/placeholder.jpg",
-    timestamp: "3 วันที่แล้ว",
-    category: "ข่าวสาร",
-  },
-];
-
 export default function DashboardPage() {
   const { user, isLoading } = useAuth();
   const [posts, setPosts] = useState<any[]>([]);
@@ -122,6 +88,12 @@ export default function DashboardPage() {
   const [newComment, setNewComment] = useState<{ [key: number]: string }>({});
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
+  const [expandedPosts, setExpandedPosts] = useState<{
+    [key: number]: boolean;
+  }>({});
+  const [expandedComments, setExpandedComments] = useState<{
+    [key: number]: boolean;
+  }>({});
 
   const [pagination, setPagination] = useState({
     current: 1,
@@ -129,6 +101,37 @@ export default function DashboardPage() {
     count: 0,
     limit: 10,
   });
+
+  const [stat, setStat] = useState({
+    alumni: 0,
+    discussion: 0,
+    news: 0,
+    province: 0,
+  });
+
+  const [latestNews, setLatestNews] = useState([]);
+
+  useEffect(() => {
+    const fetchStat = async () => {
+      try {
+        const statRes = await fetch("/api/dashboard", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+        if (!statRes.ok) throw new Error("Failed to fetch statistics");
+
+        const statData = await statRes.json();
+        setStat(statData.stat);
+        setLatestNews(statData.latestNews || []);
+      } catch (error) {
+        console.error("Error fetching statistics:", error);
+      }
+    };
+
+    fetchStat();
+  }, []);
 
   const loadMorePosts = async ({ page, limit, user_id }: any) => {
     setLoading(true);
@@ -296,6 +299,32 @@ export default function DashboardPage() {
     });
   };
 
+  const togglePostExpansion = (postId: number) => {
+    setExpandedPosts({
+      ...expandedPosts,
+      [postId]: !expandedPosts[postId],
+    });
+  };
+
+  const toggleCommentExpansion = (commentId: number) => {
+    setExpandedComments({
+      ...expandedComments,
+      [commentId]: !expandedComments[commentId],
+    });
+  };
+
+  const shouldTruncateContent = (content: string) => {
+    const lines = content.split("\n");
+    return lines.length > 3 || content.length > 200;
+  };
+
+  const getTruncatedContent = (content: string) => {
+    if (content.length > 200) {
+      return content.substring(0, 200);
+    }
+    return content;
+  };
+
   return (
     <div className="max-w-4xl mx-auto space-y-6">
       {/* Quick Stats */}
@@ -303,7 +332,7 @@ export default function DashboardPage() {
         <Card className="text-center p-4 bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 border-blue-200 dark:border-blue-800">
           <Users className="h-8 w-8 mx-auto text-blue-600 dark:text-blue-400 mb-2" />
           <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-            2,847
+            {stat.alumni.toLocaleString()}
           </div>
           <div className="text-sm text-gray-600 dark:text-gray-400">
             ศิษย์เก่า
@@ -312,25 +341,25 @@ export default function DashboardPage() {
         <Card className="text-center p-4 bg-gradient-to-br from-orange-50 to-orange-100 dark:from-orange-900/20 dark:to-orange-800/20 border-orange-200 dark:border-orange-800">
           <MapPin className="h-8 w-8 mx-auto text-orange-600 dark:text-orange-400 mb-2" />
           <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-            45
+            {stat.province}
           </div>
           <div className="text-sm text-gray-600 dark:text-gray-400">
             จังหวัด
           </div>
         </Card>
         <Card className="text-center p-4 bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-800/20 border-green-200 dark:border-green-800">
-          <Briefcase className="h-8 w-8 mx-auto text-green-600 dark:text-green-400 mb-2" />
+          <Newspaper className="h-8 w-8 mx-auto text-green-600 dark:text-green-400 mb-2" />
           <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-            156
+            {stat.news}
           </div>
           <div className="text-sm text-gray-600 dark:text-gray-400">
-            ตำแหน่งงาน
+            ข่าวสาร
           </div>
         </Card>
         <Card className="text-center p-4 bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-800/20 border-purple-200 dark:border-purple-800">
           <MessageSquare className="h-8 w-8 mx-auto text-purple-600 dark:text-purple-400 mb-2" />
           <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-            298
+            {stat.discussion}
           </div>
           <div className="text-sm text-gray-600 dark:text-gray-400">
             กระทู้ศิษย์เก่า
@@ -429,7 +458,7 @@ export default function DashboardPage() {
                         <div className="font-semibold text-gray-900 dark:text-gray-100 flex flex-row items-top gap-2">
                           <div className="items-center">{post.user?.name}</div>
                           {post.user?.role === "admin" && (
-                            <Verified className="h-5 w-5 text-blue-500" />
+                            <ShieldCheck className="h-5 w-5 text-blue-500" />
                           )}
                         </div>
                         <div className="flex items-center text-sm text-gray-500 dark:text-gray-400 gap-2">
@@ -462,36 +491,57 @@ export default function DashboardPage() {
                   ) : (
                     <div>
                       <div className="flex space-x-3">
-                        <div className="text-xl font-semibold text-gray-900 dark:text-gray-100">
-                          {post.title}
+                        {post.category_id === "99" ? (
+                          <a href={`/dashboard/news/${post.id}`}>
+                            <div className="text-xl font-semibold text-gray-900 dark:text-gray-100">
+                              {post.title}
+                            </div>
+                          </a>
+                        ) : (
+                          <div className="text-xl font-semibold text-gray-900 dark:text-gray-100">
+                            {post.title}
+                          </div>
+                        )}
+                      </div>
+
+                      <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-gray-500 dark:text-gray-400">
+                        {discussionCategory
+                          .filter(
+                            (category) => category.id === post.category_id
+                          )
+                          .map((category) => (
+                            <div
+                              key={category.id}
+                              className="flex items-center"
+                            >
+                              <a
+                                href={`/dashboard/discussion/${category.id}`}
+                                className="flex items-center"
+                              >
+                                <category.icon
+                                  className={`mr-1.5 h-4 w-4 ${category.color}`}
+                                />
+                                <span className={category.color}>
+                                  {category.name}
+                                </span>
+                              </a>
+                            </div>
+                          ))}
+
+                        <div className="flex items-center">
+                          <User className="mr-1.5 h-4 w-4 text-gray-400 dark:text-gray-500" />{" "}
+                          {post.user?.name}
+                        </div>
+
+                        <div className="flex items-center">
+                          <Calendar className="mr-1.5 h-4 w-4 text-gray-400 dark:text-gray-500" />{" "}
+                          {timeAgo(post.created_at)}
                         </div>
                       </div>
-                      {discussionCategory
-                        .filter((category) => category.id === post.category_id)
-                        .map((category) => (
-                          <div
-                            key={category.id}
-                            className="flex items-center space-x-2"
-                          >
-                            <category.icon
-                              className={`h-4 w-4 ${category.color}`}
-                            />
-                            <span className={category.color}>
-                              {category.name}
-                            </span>
-                            <span className="text-gray-400">•</span>
-                            <span>
-                              <User className="h-4 w-4 text-gray-500" />
-                            </span>
-                            <span className="text-gray-500">
-                              {post.user?.name}
-                            </span>
-                          </div>
-                        ))}
                     </div>
                   )}
 
-                  {post.user?.id === user?.id && (
+                  {post.category_id === "0" && post.user?.id === user?.id && (
                     <Button
                       variant="ghost"
                       size="sm"
@@ -502,17 +552,38 @@ export default function DashboardPage() {
                   )}
                 </div>
 
-                {/* Post Content */}
-                <p className="text-gray-800 dark:text-gray-200 mb-4 leading-relaxed">
-                  {post.content}
-                </p>
-
-                {/* Post Image */}
-                {post.image && (
+                {post.category_id === "99" && post.image && (
                   <img
                     src={post.image}
                     alt="Post image"
-                    className="w-full h-64 object-cover rounded-lg mb-4"
+                    className="w-full max-h-100 object-contain rounded border border-gray-200 dark:border-gray-700 mb-4"
+                  />
+                )}
+
+                {/* Post Content */}
+                <div className="text-gray-800 dark:text-gray-200 mb-4 leading-relaxed">
+                  <div className="whitespace-pre-wrap">
+                    {expandedPosts[post.id] ||
+                    !shouldTruncateContent(post.content)
+                      ? post.content
+                      : getTruncatedContent(post.content)}
+                  </div>
+                  {shouldTruncateContent(post.content) && (
+                    <div
+                      onClick={() => togglePostExpansion(post.id)}
+                      className="text-[#81B214]  font-medium mt-2 text-sm cursor-pointer"
+                    >
+                      {expandedPosts[post.id] ? "ย่อเนื้อหา" : "...อ่านต่อ"}
+                    </div>
+                  )}
+                </div>
+
+                {/* Post Image */}
+                {post.category_id !== "99" && post.image && (
+                  <img
+                    src={post.image}
+                    alt="Post image"
+                    className="w-full max-h-100 object-contain rounded border border-gray-200 dark:border-gray-700 mb-4"
                   />
                 )}
 
@@ -563,13 +634,13 @@ export default function DashboardPage() {
 
                           <div className="flex-1">
                             <div className="rounded-lg pl-3">
-                              <div className="flex items-start justify-between mb-2">
+                              <div className="flex items-center justify-between">
                                 <div className="font-semibold text-sm text-gray-900 dark:text-gray-100 flex flex-row items-top gap-2 mb-2">
                                   <div className="items-center">
                                     {comment.user?.name}
                                   </div>
                                   {comment.user?.role === "admin" && (
-                                    <Verified className="h-5 w-5 text-blue-500" />
+                                    <ShieldCheck className="h-5 w-5 text-blue-500" />
                                   )}
                                 </div>
                                 {comment.user?.id === user?.id && (
@@ -582,9 +653,26 @@ export default function DashboardPage() {
                                   </Button>
                                 )}
                               </div>
-                              <p className="text-gray-800 dark:text-gray-100">
-                                {comment.content}
-                              </p>
+                              <div className="text-gray-800 dark:text-gray-200 leading-relaxed">
+                                <div className="whitespace-pre-wrap">
+                                  {expandedComments[comment.id] ||
+                                  !shouldTruncateContent(comment.content)
+                                    ? comment.content
+                                    : getTruncatedContent(comment.content)}
+                                </div>
+                                {shouldTruncateContent(comment.content) && (
+                                  <button
+                                    onClick={() =>
+                                      toggleCommentExpansion(comment.id)
+                                    }
+                                    className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 font-medium mt-1 text-xs"
+                                  >
+                                    {expandedComments[comment.id]
+                                      ? "ย่อ"
+                                      : "อ่านต่อ..."}
+                                  </button>
+                                )}
+                              </div>
                             </div>
                             <p className="text-xs text-gray-500 dark:text-gray-300 mt-1 ml-3">
                               {timeAgo(comment.created_at)}
@@ -597,11 +685,12 @@ export default function DashboardPage() {
                     {/* Add Comment */}
                     <div className="flex items-start space-x-3">
                       <Avatar className="w-8 h-8">
-                        <img
-                          src={user?.image || "/placeholder-user.jpg"}
-                          alt="Your avatar"
-                          className="w-full h-full object-cover rounded-full border border-[#81B214] border-2"
-                        />
+                        <Avatar className="h-8 w-8">
+                          <AvatarImage src={user?.image} />
+                          <AvatarFallback className="bg-[#81B214]/10 dark:bg-[#81B214] text-[#81B214] dark:text-white text-2xl font-semibold">
+                            {user?.name.charAt(0)}
+                          </AvatarFallback>
+                        </Avatar>
                       </Avatar>
                       <div className="flex-1 flex space-x-2">
                         <Textarea
@@ -679,7 +768,7 @@ export default function DashboardPage() {
         </div>
 
         {/* Sidebar */}
-        <div className="space-y-6">
+        <div className="hidden sm:block space-y-6">
           {/* Recent News */}
           <Card className="bg-white dark:bg-gray-900/80 border-gray-200 dark:border-gray-700">
             <CardHeader>
@@ -690,9 +779,9 @@ export default function DashboardPage() {
               </div>
             </CardHeader>
             <CardContent className="space-y-4">
-              {mockNews.map((news) => (
+              {latestNews.map((news: any, index) => (
                 <div
-                  key={news.id}
+                  key={index}
                   className="border-b border-gray-100 pb-4 last:border-b-0"
                 >
                   <div className="flex space-x-3">
@@ -702,61 +791,21 @@ export default function DashboardPage() {
                       className="w-16 h-16 object-cover rounded-lg"
                     />
                     <div className="flex-1">
-                      <h4 className="font-medium text-sm text-gray-900 dark:text-gray-100  mb-1 line-clamp-2">
-                        {news.title}
-                      </h4>
+                      <a href={`/news/${news.id}`}>
+                        <h4 className="font-medium text-sm text-gray-900 dark:text-gray-100  mb-1 line-clamp-2">
+                          {news.title}
+                        </h4>
+                      </a>
                       <p className="text-xs text-gray-600 dark:text-gray-200 mb-2 line-clamp-2">
-                        {news.excerpt}
+                        {news.content}
                       </p>
                       <div className="flex items-center text-xs text-gray-500 dark:text-gray-400 space-x-2">
-                        <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded">
-                          {news.category}
-                        </span>
-                        <span>{news.timestamp}</span>
+                        <span>{timeAgo(news.created_at)}</span>
                       </div>
                     </div>
                   </div>
                 </div>
               ))}
-            </CardContent>
-          </Card>
-
-          {/* Quick Links */}
-          <Card className="bg-white dark:bg-gray-900/80 border-gray-200 dark:border-gray-700">
-            <CardHeader>
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-                ลิงก์ด่วน
-              </h3>
-            </CardHeader>
-            <CardContent className="space-y-2">
-              <Button
-                variant="ghost"
-                className="w-full justify-start text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
-              >
-                <Users className="h-4 w-4 mr-3" />
-                ค้นหาศิษย์เก่า
-              </Button>
-              <Button
-                variant="ghost"
-                className="w-full justify-start text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
-              >
-                <Briefcase className="h-4 w-4 mr-3" />
-                ตำแหน่งงานว่าง
-              </Button>
-              <Button
-                variant="ghost"
-                className="w-full justify-start text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
-              >
-                <GraduationCap className="h-4 w-4 mr-3" />
-                หลักสูตรอบรม
-              </Button>
-              <Button
-                variant="ghost"
-                className="w-full justify-start text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
-              >
-                <MapPin className="h-4 w-4 mr-3" />
-                แผนที่เภสัชกร
-              </Button>
             </CardContent>
           </Card>
         </div>

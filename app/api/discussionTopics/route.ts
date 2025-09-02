@@ -10,10 +10,14 @@ export async function GET(req: NextRequest) {
   const page = parseInt(searchParams.get("page") || "1");
   const limit = parseInt(searchParams.get("limit") || "20");
   const user_id = searchParams.get("user_id");
+  const category_id = searchParams.get("category_id");
 
   try {
     const [data] = await Promise.all([
       prisma.discussion_topics.findMany({
+        where: {
+          category_id: category_id ? category_id : undefined,
+        },
         select: {
           id: true,
           category_id: true,
