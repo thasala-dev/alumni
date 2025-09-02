@@ -618,7 +618,7 @@ export default function NewsPage() {
                   )}
 
                   {post.user?.id === user?.id && (
-                    <>
+                    <div className="flex space-x-1">
                       <Button
                         onClick={() => handleEditNews(post)}
                         variant="ghost"
@@ -635,7 +635,7 @@ export default function NewsPage() {
                       >
                         <Trash className="h-4 w-4" />
                       </Button>
-                    </>
+                    </div>
                   )}
                 </div>
 
