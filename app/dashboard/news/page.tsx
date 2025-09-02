@@ -182,13 +182,6 @@ function NewsDialog({
                 onChange={(e) => setImage(e.target.value)}
                 className="flex-1"
               />
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => setShowImageDialog(true)}
-              >
-                <Camera className="h-4 w-4" />
-              </Button>
             </div>
 
             {image && (
@@ -241,6 +234,58 @@ function NewsDialog({
   );
 }
 
+function ConfirmDialog({
+  open,
+  onClose,
+  onConfirm,
+  title,
+  message,
+  loading,
+}: {
+  open: boolean;
+  onClose: () => void;
+  onConfirm: () => void;
+  title: string;
+  message: string;
+  loading?: boolean;
+}) {
+  if (!open) return null;
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+      <div className="bg-white dark:bg-gray-900 rounded-xl shadow-xl p-6 w-full max-w-md relative animate-fade-in-up">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
+            {title}
+          </h2>
+          <button
+            onClick={onClose}
+            disabled={loading}
+            className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+          >
+            <X className="h-5 w-5" />
+          </button>
+        </div>
+
+        <p className="text-gray-600 dark:text-gray-300 mb-6">{message}</p>
+
+        <div className="flex justify-end gap-3">
+          <Button variant="outline" onClick={onClose} disabled={loading}>
+            ยกเลิก
+          </Button>
+          <Button
+            onClick={onConfirm}
+            disabled={loading}
+            className="bg-red-600 hover:bg-red-700 text-white"
+          >
+            {loading ? "กำลังลบ..." : "ลบ"}
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function NewsPage() {
   const { user, isLoading } = useAuth();
   const [posts, setPosts] = useState<any[]>([]);
@@ -258,6 +303,15 @@ export default function NewsPage() {
   const [loading, setLoading] = useState(true); // Start loading to simulate fetch
   const [showNewsDialog, setShowNewsDialog] = useState(false);
   const [editingPost, setEditingPost] = useState<any>(null);
+  const [showConfirmDialog, setShowConfirmDialog] = useState(false);
+  const [deletingPostId, setDeletingPostId] = useState<number | null>(null);
+  const [deleteLoading, setDeleteLoading] = useState(false);
+  const [showConfirmCommentDialog, setShowConfirmCommentDialog] =
+    useState(false);
+  const [deletingCommentId, setDeletingCommentId] = useState<number | null>(
+    null
+  );
+  const [deleteCommentLoading, setDeleteCommentLoading] = useState(false);
   const [pagination, setPagination] = useState({
     current: 1,
     total: 1,
@@ -479,19 +533,86 @@ export default function NewsPage() {
   };
 
   const handleDeleteNews = async (postId: number) => {
-    if (!confirm("คุณแน่ใจหรือไม่ที่จะลบข่าวนี้?")) return;
+    setDeletingPostId(postId);
+    setShowConfirmDialog(true);
+  };
 
+  const confirmDeleteNews = async () => {
+    if (!deletingPostId) return;
+
+    setDeleteLoading(true);
     try {
-      const res = await fetch(`/api/discussionTopics/${postId}`, {
+      const res = await fetch(`/api/discussionTopics/${deletingPostId}`, {
         method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          user_id: user?.id,
+        }),
       });
       if (!res.ok) throw new Error("Failed to delete news");
 
       // Remove the post from the list
-      setPosts(posts.filter((post) => post.id !== postId));
+      setPosts(posts.filter((post) => post.id !== deletingPostId));
+
+      // Close dialog and reset state
+      setShowConfirmDialog(false);
+      setDeletingPostId(null);
     } catch (error) {
       console.error("Error deleting news:", error);
     }
+    setDeleteLoading(false);
+  };
+
+  const cancelDeleteNews = () => {
+    setShowConfirmDialog(false);
+    setDeletingPostId(null);
+  };
+
+  const handleDeleteComment = (commentId: number) => {
+    setDeletingCommentId(commentId);
+    setShowConfirmCommentDialog(true);
+  };
+
+  const confirmDeleteComment = async () => {
+    if (!deletingCommentId) return;
+
+    setDeleteCommentLoading(true);
+    try {
+      const res = await fetch(`/api/discussionReplies/${deletingCommentId}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          user_id: user?.id,
+        }),
+      });
+      if (!res.ok) throw new Error("Failed to delete comment");
+
+      // Remove the comment from the posts
+      setPosts(
+        posts.map((post) => ({
+          ...post,
+          discussion_replies: post.discussion_replies.filter(
+            (comment: any) => comment.id !== deletingCommentId
+          ),
+        }))
+      );
+
+      // Close dialog and reset state
+      setShowConfirmCommentDialog(false);
+      setDeletingCommentId(null);
+    } catch (error) {
+      console.error("Error deleting comment:", error);
+    }
+    setDeleteCommentLoading(false);
+  };
+
+  const cancelDeleteComment = () => {
+    setShowConfirmCommentDialog(false);
+    setDeletingCommentId(null);
   };
 
   return (
@@ -631,6 +752,7 @@ export default function NewsPage() {
                         onClick={() => handleDeleteNews(post.id)}
                         variant="ghost"
                         size="sm"
+                        disabled={deleteLoading && deletingPostId === post.id}
                         className="text-red-500 dark:text-red-400 hover:text-red-700 dark:hover:text-red-200 hover:bg-red-100 dark:hover:bg-red-900"
                       >
                         <Trash className="h-4 w-4" />
@@ -734,6 +856,13 @@ export default function NewsPage() {
                                   <Button
                                     variant="ghost"
                                     size="sm"
+                                    onClick={() =>
+                                      handleDeleteComment(comment.id)
+                                    }
+                                    disabled={
+                                      deleteCommentLoading &&
+                                      deletingCommentId === comment.id
+                                    }
                                     className="text-red-500 dark:text-red-400 hover:text-red-700 dark:hover:text-red-200 hover:bg-red-100 dark:hover:bg-red-900"
                                   >
                                     <Trash className="h-4 w-4" />
@@ -846,6 +975,26 @@ export default function NewsPage() {
         onClose={() => setShowNewsDialog(false)}
         onSave={handleSaveNews}
         editingPost={editingPost}
+      />
+
+      {/* Confirm Delete Dialog */}
+      <ConfirmDialog
+        open={showConfirmDialog}
+        onClose={cancelDeleteNews}
+        onConfirm={confirmDeleteNews}
+        title="ยืนยันการลบข่าว"
+        message="คุณแน่ใจหรือไม่ที่จะลบข่าวนี้?"
+        loading={deleteLoading}
+      />
+
+      {/* Confirm Delete Comment Dialog */}
+      <ConfirmDialog
+        open={showConfirmCommentDialog}
+        onClose={cancelDeleteComment}
+        onConfirm={confirmDeleteComment}
+        title="ยืนยันการลบความคิดเห็น"
+        message="คุณแน่ใจหรือไม่ที่จะลบความคิดเห็นนี้?"
+        loading={deleteCommentLoading}
       />
     </div>
   );

@@ -76,6 +76,58 @@ function ImageUrlDialog({
   );
 }
 
+function ConfirmDialog({
+  open,
+  onClose,
+  onConfirm,
+  title,
+  message,
+  loading,
+}: {
+  open: boolean;
+  onClose: () => void;
+  onConfirm: () => void;
+  title: string;
+  message: string;
+  loading?: boolean;
+}) {
+  if (!open) return null;
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+      <div className="bg-white dark:bg-gray-900 rounded-xl shadow-xl p-6 w-full max-w-md relative animate-fade-in-up">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
+            {title}
+          </h2>
+          <button
+            onClick={onClose}
+            disabled={loading}
+            className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+          >
+            <X className="h-5 w-5" />
+          </button>
+        </div>
+
+        <p className="text-gray-600 dark:text-gray-300 mb-6">{message}</p>
+
+        <div className="flex justify-end gap-3">
+          <Button variant="outline" onClick={onClose} disabled={loading}>
+            ยกเลิก
+          </Button>
+          <Button
+            onClick={onConfirm}
+            disabled={loading}
+            className="bg-red-600 hover:bg-red-700 text-white"
+          >
+            {loading ? "กำลังลบ..." : "ลบ"}
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function DashboardPage() {
   const { user, isLoading } = useAuth();
   const [posts, setPosts] = useState<any[]>([]);
@@ -108,6 +160,17 @@ export default function DashboardPage() {
     news: 0,
     province: 0,
   });
+
+  // Delete confirmation states
+  const [showConfirmDialog, setShowConfirmDialog] = useState(false);
+  const [deletingPostId, setDeletingPostId] = useState<number | null>(null);
+  const [deleteLoading, setDeleteLoading] = useState(false);
+  const [showConfirmCommentDialog, setShowConfirmCommentDialog] =
+    useState(false);
+  const [deletingCommentId, setDeletingCommentId] = useState<number | null>(
+    null
+  );
+  const [deleteCommentLoading, setDeleteCommentLoading] = useState(false);
 
   const [latestNews, setLatestNews] = useState([]);
 
@@ -290,6 +353,89 @@ export default function DashboardPage() {
         console.error("Error creating post:", error);
       }
     }
+  };
+
+  const handleDeleteTopics = async (postId: number) => {
+    setDeletingPostId(postId);
+    setShowConfirmDialog(true);
+  };
+
+  const confirmDeleteTopic = async () => {
+    if (!deletingPostId) return;
+
+    setDeleteLoading(true);
+    try {
+      const res = await fetch(`/api/discussionTopics/${deletingPostId}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          user_id: user?.id,
+        }),
+      });
+      if (!res.ok) throw new Error("Failed to delete post");
+
+      // Remove the post from the list
+      setPosts(posts.filter((post) => post.id !== deletingPostId));
+
+      // Close dialog and reset state
+      setShowConfirmDialog(false);
+      setDeletingPostId(null);
+    } catch (error) {
+      console.error("Error deleting post:", error);
+    }
+    setDeleteLoading(false);
+  };
+
+  const cancelDeleteTopic = () => {
+    setShowConfirmDialog(false);
+    setDeletingPostId(null);
+  };
+
+  const handleDeleteComment = (commentId: number) => {
+    setDeletingCommentId(commentId);
+    setShowConfirmCommentDialog(true);
+  };
+
+  const confirmDeleteComment = async () => {
+    if (!deletingCommentId) return;
+
+    setDeleteCommentLoading(true);
+    try {
+      const res = await fetch(`/api/discussionReplies/${deletingCommentId}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          user_id: user?.id,
+        }),
+      });
+      if (!res.ok) throw new Error("Failed to delete comment");
+
+      // Remove the comment from the posts
+      setPosts(
+        posts.map((post) => ({
+          ...post,
+          discussion_replies: post.discussion_replies.filter(
+            (comment: any) => comment.id !== deletingCommentId
+          ),
+        }))
+      );
+
+      // Close dialog and reset state
+      setShowConfirmCommentDialog(false);
+      setDeletingCommentId(null);
+    } catch (error) {
+      console.error("Error deleting comment:", error);
+    }
+    setDeleteCommentLoading(false);
+  };
+
+  const cancelDeleteComment = () => {
+    setShowConfirmCommentDialog(false);
+    setDeletingCommentId(null);
   };
 
   const toggleComments = (postId: number) => {
@@ -543,6 +689,7 @@ export default function DashboardPage() {
 
                   {post.category_id === "0" && post.user?.id === user?.id && (
                     <Button
+                      onClick={() => handleDeleteTopics(post.id)}
                       variant="ghost"
                       size="sm"
                       className="text-red-500 dark:text-red-400 hover:text-red-700 dark:hover:text-red-200 hover:bg-red-100 dark:hover:bg-red-900"
@@ -645,6 +792,9 @@ export default function DashboardPage() {
                                 </div>
                                 {comment.user?.id === user?.id && (
                                   <Button
+                                    onClick={() =>
+                                      handleDeleteComment(comment.id)
+                                    }
                                     variant="ghost"
                                     size="sm"
                                     className="text-red-500 dark:text-red-400 hover:text-red-700 dark:hover:text-red-200 hover:bg-red-100 dark:hover:bg-red-900"
@@ -810,6 +960,32 @@ export default function DashboardPage() {
           </Card>
         </div>
       </div>
+
+      {/* Confirmation Dialogs */}
+      <ConfirmDialog
+        open={showConfirmDialog}
+        onClose={cancelDeleteTopic}
+        onConfirm={confirmDeleteTopic}
+        title="ยืนยันการลบโพสต์"
+        message="คุณแน่ใจหรือไม่ที่จะลบโพสต์นี้?"
+        loading={deleteLoading}
+      />
+
+      <ConfirmDialog
+        open={showConfirmCommentDialog}
+        onClose={cancelDeleteComment}
+        onConfirm={confirmDeleteComment}
+        title="ยืนยันการลบความคิดเห็น"
+        message="คุณแน่ใจหรือไม่ที่จะลบความคิดเห็นนี้?"
+        loading={deleteCommentLoading}
+      />
+
+      <ImageUrlDialog
+        open={showImageDialog}
+        onClose={() => setShowImageDialog(false)}
+        value={newPostImage}
+        onChange={setNewPostImage}
+      />
     </div>
   );
 }
