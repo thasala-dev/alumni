@@ -36,6 +36,8 @@ export async function GET(req: NextRequest) {
                 select: {
                   id: true,
                   admit_year: true,
+                  current_position: true,
+                  current_province: true,
                 },
               },
             },
@@ -55,6 +57,8 @@ export async function GET(req: NextRequest) {
                     select: {
                       id: true,
                       admit_year: true,
+                      current_position: true,
+                      current_province: true,
                     },
                   },
                 },

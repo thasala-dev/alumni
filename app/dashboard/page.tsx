@@ -602,7 +602,19 @@ export default function DashboardPage() {
                       </Avatar>
                       <div>
                         <div className="font-semibold text-gray-900 dark:text-gray-100 flex flex-row items-top gap-2">
-                          <div className="items-center">{post.user?.name}</div>
+                          {post.user?.alumni_profiles.length > 0 ? (
+                            <a
+                              className="items-center"
+                              href={`/dashboard/alumni/${post.user?.alumni_profiles[0]?.id}`}
+                            >
+                              {post.user?.name}
+                            </a>
+                          ) : (
+                            <div className="items-center">
+                              {post.user?.name}
+                            </div>
+                          )}
+
                           {post.user?.role === "admin" && (
                             <ShieldCheck className="h-5 w-5 text-blue-500" />
                           )}
@@ -626,10 +638,34 @@ export default function DashboardPage() {
                                 )}
                               </span>
                               <span>•</span>
+                              {post.user?.alumni_profiles[0]
+                                ?.current_position && (
+                                <>
+                                  <Briefcase className="h-4 w-4" />
+                                  <span>
+                                    {
+                                      post.user?.alumni_profiles[0]
+                                        ?.current_position
+                                    }
+                                  </span>
+                                </>
+                              )}
+                              {post.user?.alumni_profiles[0]
+                                ?.current_province && (
+                                <>
+                                  <MapPin className="h-4 w-4" />
+                                  <span>
+                                    {
+                                      post.user?.alumni_profiles[0]
+                                        ?.current_province
+                                    }
+                                  </span>
+                                </>
+                              )}
                             </>
                           )}
 
-                          <Clock className="h-3 w-3" />
+                          <Clock className="h-4 w-4" />
                           <span>{timeAgo(post.created_at)}</span>
                         </div>
                       </div>
@@ -782,13 +818,26 @@ export default function DashboardPage() {
                           <div className="flex-1">
                             <div className="rounded-lg pl-3">
                               <div className="flex items-center justify-between">
-                                <div className="font-semibold text-sm text-gray-900 dark:text-gray-100 flex flex-row items-top gap-2 mb-2">
-                                  <div className="items-center">
-                                    {comment.user?.name}
+                                <div>
+                                  <div className="font-semibold text-sm text-gray-900 dark:text-gray-100 flex flex-row items-top gap-2 mb-2">
+                                    {comment.user?.alumni_profiles.length >
+                                    0 ? (
+                                      <a
+                                        className="items-center"
+                                        href={`/dashboard/alumni/${comment.user?.alumni_profiles[0]?.id}`}
+                                      >
+                                        {comment.user?.name}
+                                      </a>
+                                    ) : (
+                                      <div className="items-center">
+                                        {comment.user?.name}
+                                      </div>
+                                    )}
+
+                                    {comment.user?.role === "admin" && (
+                                      <ShieldCheck className="h-5 w-5 text-blue-500" />
+                                    )}
                                   </div>
-                                  {comment.user?.role === "admin" && (
-                                    <ShieldCheck className="h-5 w-5 text-blue-500" />
-                                  )}
                                 </div>
                                 {comment.user?.id === user?.id && (
                                   <Button
@@ -803,6 +852,7 @@ export default function DashboardPage() {
                                   </Button>
                                 )}
                               </div>
+
                               <div className="text-gray-800 dark:text-gray-200 leading-relaxed">
                                 <div className="whitespace-pre-wrap">
                                   {expandedComments[comment.id] ||
