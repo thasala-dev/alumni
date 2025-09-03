@@ -19,8 +19,6 @@ import {
   Calendar,
   Quote,
 } from "lucide-react";
-// Removed: import { supabase, isSupabaseConfigured } from "../../../lib/supabase"
-import { getCurrentUser } from "@/lib/auth";
 
 // Demo data for categories
 const demoCategories: any[] = [
@@ -68,16 +66,26 @@ const demoCategories: any[] = [
 
 export default function DiscussionBoardPage() {
   const [categories, setCategories] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true); // Start loading to simulate fetch
-  const [user, setUser] = useState<any | null>(null);
+
+  const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     const initializePage = async () => {
-      await new Promise((resolve) => setTimeout(resolve, 500)); // Simulate network delay
-      const currentUser = await getCurrentUser();
-      setUser(currentUser);
       setCategories(demoCategories);
+      try {
+        const stat = await fetch("/api/discussionMain");
+        const data = await stat.json();
+        setCategories((prev) =>
+          prev.map((category) => ({
+            ...category,
+            topic_count: data[category.id] ?? category.topic_count,
+          }))
+        );
+      } catch (e) {
+        console.error("Error fetching user:", e);
+      }
+
       setLoading(false);
     };
     initializePage();

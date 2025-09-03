@@ -40,7 +40,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
   return (
     <>
       <NavbarMenuItems />
-      <div className="max-w-7xl mx-auto flex flex-row gap-4 px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-7xl mx-auto flex flex-row gap-4 px-2 sm:px-4 lg:px-6 py-6">
         <AsideMenuItems />
         <main className="flex-1 min-w-0">{children}</main>
       </div>

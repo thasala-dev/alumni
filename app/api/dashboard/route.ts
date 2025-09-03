@@ -5,9 +5,7 @@ const prisma = new PrismaClient();
 
 // GET /api/alumniProfile - get all alumni profiles or by id
 export async function GET(req: Request) {
-  const { searchParams } = new URL(req.url);
-
-  const [alumni, discussion, news, latestNews] = await Promise.all([
+  const [alumni, discussion, news, latestNews, province] = await Promise.all([
     prisma.alumni_profiles.count({}),
     prisma.discussion_topics.count({
       where: {
@@ -32,15 +30,23 @@ export async function GET(req: Request) {
       },
       take: 6,
     }),
+    prisma.alumni_profiles.groupBy({
+      where: {
+        current_province: {
+          not: null,
+        },
+      },
+      by: ["current_province"],
+    }),
   ]);
 
-  const province = 56;
+  // const province = 56;
   return NextResponse.json({
     stat: {
       alumni,
       discussion,
       news,
-      province,
+      province: province.length || 0,
     },
     latestNews,
   });

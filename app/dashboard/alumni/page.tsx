@@ -221,7 +221,7 @@ export default function AlumniPage() {
       </div>
       {/* Alumni Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {filteredAlumni.map((person) => (
+        {filteredAlumni.map((person: any) => (
           <Card
             key={person.id}
             className="shadow-md hover:shadow-xl transition-shadow duration-300 rounded-xl dark:bg-gray-900/80 dark:border-gray-700 dark:hover:shadow-gray-900/20"
@@ -265,10 +265,10 @@ export default function AlumniPage() {
                   {/* Added text color to icon */}
                   <div className="truncate">
                     <div className="font-medium">
-                      {person.current_work?.position || "-"}
+                      {person.current_position || "-"}
                     </div>
                     <div className="text-sm text-gray-600 dark:text-gray-400">
-                      {person.current_work?.company_name || "-"}
+                      {person.current_company}
                     </div>
                     {/* Adjusted text size */}
                   </div>
@@ -277,7 +277,7 @@ export default function AlumniPage() {
                   {/* Larger text */}
                   <MapPin className="mr-2 h-4 w-4 text-gray-500 dark:text-gray-400" />
                   {/* Added text color to icon */}
-                  {person.current_work?.province || "-"}
+                  {person.current_province || "-"}
                 </div>
               </div>
 

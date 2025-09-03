@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   ComposableMap,
   Geographies,
@@ -12,87 +12,9 @@ import { ThailandTopoJson } from "@/data/thailand-geo";
 import { ProvincePositions } from "@/data/thailand-province";
 import { useTheme } from "next-themes";
 
-interface ProvinceData {
-  provinceCode?: string; // Optional code for the province
-  name: string;
-  count: number;
-  coordinates: [number, number]; // [longitude, latitude]
-}
-
-// Demo data for alumni distribution by province
-const demoProvinceData: ProvinceData[] = [
-  {
-    provinceCode: "th-10",
-    name: "กรุงเทพมหานคร",
-    count: 342,
-    coordinates: [100.5018, 13.7563],
-  },
-  {
-    provinceCode: "th-80",
-    name: "นครศรีธรรมราช",
-    count: 156,
-    coordinates: [98.9893, 18.7883],
-  },
-  {
-    provinceCode: "th-40",
-    name: "ขอนแก่น",
-    count: 98,
-    coordinates: [102.8358, 16.4325],
-  },
-  {
-    provinceCode: "th-90",
-    name: "สงขลา",
-    count: 87,
-    coordinates: [100.5955, 7.2],
-  },
-  {
-    provinceCode: "th-20",
-    name: "ชลบุรี",
-    count: 76,
-    coordinates: [100.9883, 13.36],
-  },
-  {
-    provinceCode: "th-83",
-    name: "ภูเก็ต",
-    count: 50,
-    coordinates: [98.3923, 7.8804],
-  },
-  {
-    provinceCode: "th-30",
-    name: "นครราชสีมา",
-    count: 45,
-    coordinates: [102.0833, 14.975],
-  },
-  {
-    provinceCode: "th-21",
-    name: "ระยอง",
-    count: 30,
-    coordinates: [101.2186, 12.6767],
-  },
-  {
-    provinceCode: "th-41",
-    name: "อุดรธานี",
-    count: 28,
-    coordinates: [102.8425, 17.4138],
-  },
-  {
-    provinceCode: "th-84",
-    name: "สุราษฎร์ธานี",
-    count: 25,
-    coordinates: [99.3331, 9.1382],
-  },
-];
-
-// Get default color for provinces without data
-const getDefaultProvinceColor = (): string => {
-  // Use a lighter color that works in both light and dark modes
-  return "#e5e7eb"; // Light gray for light mode, will be overridden by SVG styling in dark mode
-};
-
-// Get alumni count for a province
-
 export function MapOverview() {
   const { theme, setTheme } = useTheme();
+  const [provinceData, setProvinceData] = useState<any[]>([]);
   const [selectedProvince, setSelectedProvince] = useState<string | null>(null);
   const [tooltip, setTooltip] = useState<{
     data: {
@@ -116,12 +38,22 @@ export function MapOverview() {
     visible: false,
   });
 
-  // Get default color for provinces without data - theme aware
+  useEffect(() => {
+    const initializePage = async () => {
+      try {
+        const stat = await fetch("/api/map");
+        const data = await stat.json();
+        setProvinceData(data);
+      } catch (e) {
+        console.error("Error fetching user:", e);
+      }
+    };
+    initializePage();
+  }, []);
+
   const getDefaultProvinceColor = (): string => {
     return theme === "dark" ? "#374151" : "#e5e7eb"; // Darker gray for dark mode, light gray for light mode
   };
-
-  // Green color scale for province fill, matching legend
   const getProvinceColor = (count: number): string => {
     if (count >= 200) return "#81B214"; // Deep green
     if (count >= 100) return "#A3C957"; // Medium green
@@ -140,8 +72,8 @@ export function MapOverview() {
       ([code, pos]: [string, any]) => pos.name_eng === geo.properties.name
     )?.[0];
 
-    const provinceData = demoProvinceData.find(
-      (p) => p.provinceCode === provinceCode
+    const provinceDataS = provinceData.find(
+      (p: any) => p.provinceCode === provinceCode
     );
     return {
       provinceName: provinceCode
@@ -152,22 +84,19 @@ export function MapOverview() {
             ] || {}),
           }
         : null,
-      provinceData: provinceData || null,
+      provinceData: provinceDataS || null,
     };
   };
 
   const handleMouseEnter = (geo: any, event: React.MouseEvent) => {
     const { provinceName, provinceData } = getDataofProvince(geo);
-
     const count = provinceData?.count || 0;
-
     setTooltip({
       data: {
         provinceName: provinceName?.name || "ไม่ระบุ",
         provinceCode: provinceName?.code || null,
         alumniCount: count,
       },
-
       x: event.clientX,
       y: event.clientY,
       visible: true,
@@ -239,7 +168,7 @@ export function MapOverview() {
                 })
               }
             </Geographies>
-            {/* {demoProvinceData.slice(0, 5).map((province) => (
+            {/* {provinceData.slice(0, 5).map((province) => (
                 <Annotation
                   key={province.name}
                   subject={province.coordinates}
@@ -277,7 +206,7 @@ export function MapOverview() {
         </div>
 
         {/* Tooltip */}
-        {tooltip.visible && (
+        {tooltip.visible && tooltip.data.alumniCount > 0 && (
           <div
             className="fixed z-50 px-4 py-3 text-sm bg-white/95 dark:bg-gray-900/95 border border-gray-200/80 dark:border-gray-700/80 rounded-xl shadow-2xl pointer-events-none backdrop-blur-md transition-all duration-200 ease-out"
             style={{

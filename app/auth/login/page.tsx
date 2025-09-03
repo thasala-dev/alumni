@@ -118,7 +118,7 @@ export default function LoginPage() {
                 ระบบศิษย์เก่า
               </CardTitle> */}
               <CardDescription className="text-base text-[#81B214] dark:text-[#A3C957] font-medium">
-                ระบบศิษย์เก่า สำนักเภสัชศาสตร์ มหาวิทยาลัยวลัยลักษณ์
+                ระบบศิษย์เก่า สำนักวิชาเภสัชศาสตร์ มหาวิทยาลัยวลัยลักษณ์
               </CardDescription>
             </div>
           </div>

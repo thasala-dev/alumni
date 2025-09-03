@@ -18,8 +18,7 @@ export async function GET(req: Request) {
     const profile = await prisma.alumni_profiles.findFirst({
       where: { user_id: user_id },
     });
-    if (!profile)
-      return NextResponse.json({ error: "Not found" }, { status: 404 });
+
     return NextResponse.json(profile);
   }
   const profiles = await prisma.alumni_profiles.findMany({
@@ -39,12 +38,27 @@ export async function POST(req: Request) {
 
 // PUT /api/alumniProfile - update alumni profile (by id)
 export async function PUT(req: Request) {
-  const data = await req.json();
-  if (!data.id)
-    return NextResponse.json({ error: "Missing id" }, { status: 400 });
-  const profile = await prisma.alumni_profiles.update({
-    where: { id: data.id },
-    data,
-  });
-  return NextResponse.json(profile);
+  try {
+    const data = await req.json();
+    if (!data.id)
+      return NextResponse.json({ error: "Missing id" }, { status: 400 });
+
+    // Remove fields that shouldn't be updated or don't exist in the schema
+    const { user_id, created_at, updated_at, ...updateData } = data;
+
+    const profile = await prisma.alumni_profiles.update({
+      where: { id: data.id },
+      data: updateData,
+    });
+    return NextResponse.json(profile);
+  } catch (error) {
+    console.error("Error updating alumni profile:", error);
+    return NextResponse.json(
+      {
+        error: "Failed to update profile",
+        details: error instanceof Error ? error.message : "Unknown error",
+      },
+      { status: 500 }
+    );
+  }
 }

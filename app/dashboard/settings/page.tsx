@@ -13,6 +13,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
+import { ProvincePositions } from "@/data/thailand-province";
 import {
   Select,
   SelectContent,
@@ -31,15 +32,14 @@ import {
   CheckCircle,
   XCircle,
 } from "lucide-react";
-import { useTheme } from "next-themes";
 import { useAuth } from "@/contexts/auth-context";
-import { is } from "date-fns/locale";
+import LocationMap from "@/components/location-map-direct";
 
 const demoPrivacySettings: any = {
-  profile_privacy: "alumni-only",
-  personal_privacy: "alumni-only",
+  profile_privacy: "alumni_only",
+  personal_privacy: "alumni_only",
   work_privacy: "public",
-  contact_privacy: "alumni-only",
+  contact_privacy: "alumni_only",
 };
 
 const demoNotificationSettings: any = {
@@ -50,8 +50,16 @@ const demoNotificationSettings: any = {
 };
 
 export default function SettingsPage() {
-  const { user, isLoading } = useAuth();
+  const { user, isLoading, isLoggedIn } = useAuth();
   const [tab, setTab] = useState<string>("profile");
+
+  // Helper function to get province name from code
+  const getProvinceName = (provinceCode: string) => {
+    if (!provinceCode) return "";
+    const province =
+      ProvincePositions[provinceCode as keyof typeof ProvincePositions];
+    return province ? province.name : provinceCode;
+  };
 
   const [profile, setProfile] = useState<any>({
     id: "",
@@ -70,6 +78,8 @@ export default function SettingsPage() {
     current_company: "",
     current_position: "",
     current_province: "",
+    latitude: "",
+    longitude: "",
   });
   const [privacy, setPrivacy] = useState<any>(demoPrivacySettings);
   const [notifications, setNotifications] = useState<any>(
@@ -79,17 +89,11 @@ export default function SettingsPage() {
   const [saving, setSaving] = useState<boolean>(false);
   const [saveSuccess, setSaveSuccess] = useState<boolean>(false);
   const [saveError, setSaveError] = useState<boolean>(false);
-
-  const { theme, setTheme } = useTheme();
-  const [darkMode, setDarkMode] = useState<string>("light");
+  const [isAdmin, setIsAdmin] = useState<boolean>(false);
 
   useEffect(() => {
-    return setDarkMode(theme || "light");
-  }, [theme]);
-
-  useEffect(() => {
-    console.log("User:", user);
     if (!isLoading && user) {
+      console.log("User is logged in:", user);
       fetchProfile();
     }
   }, [isLoading, user]);
@@ -97,10 +101,36 @@ export default function SettingsPage() {
   const fetchProfile = async () => {
     setLoading(true);
     try {
+      // Fetch profile data
       const res = await fetch("/api/alumniProfile?user_id=" + user?.id);
       const data = await res.json();
-      console.log("Fetched alumni profiles:", data, status);
-      setProfile(data);
+
+      if (!data) {
+        setIsAdmin(true);
+      } else {
+        setProfile(data);
+
+        // Set privacy settings from profile data
+        setPrivacy({
+          profile_privacy: data.profile_privacy || "alumni_only",
+          personal_privacy: data.personal_privacy || "alumni_only",
+          work_privacy: data.work_privacy || "public",
+          contact_privacy: data.contact_privacy || "alumni_only",
+        });
+
+        // Fetch notification settings
+        try {
+          const notificationRes = await fetch(
+            "/api/notification-settings?user_id=" + user?.id
+          );
+          if (notificationRes.ok) {
+            const notificationData = await notificationRes.json();
+            setNotifications(notificationData);
+          }
+        } catch (error) {
+          console.warn("Error fetching notification settings:", error);
+        }
+      }
     } catch (error) {
       console.error("Error fetching alumni profiles:", error);
     }
@@ -116,6 +146,8 @@ export default function SettingsPage() {
 
   const handlePrivacyChange = (key: any, value: any) => {
     setPrivacy((prev: any) => ({ ...prev, [key]: value }));
+    // Also update the profile state so it can be saved together
+    setProfile((prev: any) => ({ ...prev, [key]: value }));
   };
 
   const handleNotificationChange = (key: any, checked: boolean) => {
@@ -127,21 +159,51 @@ export default function SettingsPage() {
     setSaveSuccess(false);
     setSaveError(false);
 
-    await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate API call
+    try {
+      // Save profile data (includes privacy settings)
+      const profileResponse = await fetch("/api/alumniProfile", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(profile),
+      });
 
-    // In a real app, you'd send profile, privacy, and notification data to your backend
-    console.log("Saving profile:", profile);
-    console.log("Saving privacy:", privacy);
-    console.log("Saving notifications:", notifications);
+      if (!profileResponse.ok) {
+        const errorData = await profileResponse.json();
+        throw new Error(
+          `Failed to save profile data: ${errorData.error || "Unknown error"}`
+        );
+      }
 
-    // Simulate success or failure
-    const success = Math.random() > 0.1; // 90% chance of success
-    if (success) {
+      // Save notification settings
+      const notificationResponse = await fetch("/api/notification-settings", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          user_id: user?.id,
+          ...notifications,
+        }),
+      });
+
+      if (!notificationResponse.ok) {
+        console.warn("Failed to save notification settings");
+      }
+
+      console.log("Profile saved successfully:", profile);
+      console.log("Notification settings:", notifications);
+
       setSaveSuccess(true);
-      setTimeout(() => setSaveSuccess(false), 3000); // Hide success message after 3 seconds
-    } else {
+      setTimeout(() => setSaveSuccess(false), 3000);
+
+      // Refresh profile data to ensure consistency
+      await fetchProfile();
+    } catch (error) {
+      console.error("Error saving settings:", error);
       setSaveError(true);
-      setTimeout(() => setSaveError(false), 3000); // Hide error message after 3 seconds
+      setTimeout(() => setSaveError(false), 3000);
     }
 
     setSaving(false);
@@ -156,6 +218,25 @@ export default function SettingsPage() {
             <div className="h-96 bg-gray-200 dark:bg-gray-700 rounded"></div>
             <div className="h-96 bg-gray-200 dark:bg-gray-700 rounded"></div>
           </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (isAdmin) {
+    return (
+      <div className="space-y-8">
+        <div className="text-center py-12">
+          <div className="mx-auto w-24 h-24 bg-yellow-100 dark:bg-yellow-900/20 rounded-full flex items-center justify-center mb-6">
+            <Lock className="h-12 w-12 text-yellow-600 dark:text-yellow-400" />
+          </div>
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
+            ไม่สามารถเข้าถึงหน้าตั้งค่าได้
+          </h2>
+          <p className="text-lg text-gray-600 dark:text-gray-400 mb-6 max-w-md mx-auto">
+            บัญชีของคุณไม่ใช่บัญชีศิษย์เก่า
+            จึงไม่สามารถใช้งานหน้าตั้งค่าโปรไฟล์ได้
+          </p>
         </div>
       </div>
     );
@@ -221,16 +302,16 @@ export default function SettingsPage() {
               {/* ...existing profile form... */}
               <div className="flex items-center space-x-4">
                 <div className="relative">
-                  <Avatar className="h-24 w-24 ring-4 ring-blue-100 dark:ring-gray-700">
+                  <Avatar className="h-24 w-24">
                     <AvatarImage
-                      src={profile.profile_image_url || "/placeholder-user.jpg"}
+                      src={profile.profile_image_url}
                       alt={`${profile.first_name} ${profile.last_name}`}
                     />
-                    <AvatarFallback className="bg-gradient-to-r from-blue-100 to-purple-100 dark:from-blue-900 dark:to-purple-900 text-blue-600 dark:text-blue-400 text-3xl font-semibold">
+                    <AvatarFallback className="bg-[#81B214]/20 text-[#81B214] font-semibold text-3xl ">
                       {profile.first_name.charAt(0)}
-                      {profile.last_name.charAt(0)}
                     </AvatarFallback>
                   </Avatar>
+
                   {/* <Button
                     variant="outline"
                     size="icon"
@@ -251,7 +332,7 @@ export default function SettingsPage() {
                     {profile.first_name} {profile.last_name}
                   </p>
                   <p className="text-sm text-gray-500 dark:text-gray-400">
-                    อีเมลของคุณ
+                    {profile.studentcode}
                   </p>
                 </div>
               </div>
@@ -326,29 +407,86 @@ export default function SettingsPage() {
                 ข้อมูลการทำงานปัจจุบัน
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="current_company">ชื่อบริษัท</Label>
-                  <Input
-                    id="current_company"
-                    value={profile.current_company ?? ""}
-                    onChange={handleProfileChange}
-                  />
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="current_company">ชื่อบริษัท</Label>
+                    <Input
+                      id="current_company"
+                      value={profile.current_company ?? ""}
+                      onChange={handleProfileChange}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="current_position">ตำแหน่ง</Label>
+                    <Input
+                      id="current_position"
+                      value={profile.current_position ?? ""}
+                      onChange={handleProfileChange}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="current_province">จังหวัดที่ทำงาน</Label>
+                    <Input
+                      id="current_province"
+                      value={getProvinceName(profile.current_province) || ""}
+                      placeholder="เลือกตำแหน่งบนแผนที่เพื่อกำหนดจังหวัด"
+                      readOnly
+                      className="bg-gray-50 dark:bg-gray-900"
+                    />
+                  </div>
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor="current_position">ตำแหน่ง</Label>
-                  <Input
-                    id="current_position"
-                    value={profile.current_position ?? ""}
-                    onChange={handleProfileChange}
+                <div>
+                  <LocationMap
+                    latitude={profile.latitude}
+                    longitude={profile.longitude}
+                    onLocationChange={(
+                      lat,
+                      lng,
+                      provinceCode,
+                      provinceName
+                    ) => {
+                      setProfile((prev: any) => ({
+                        ...prev,
+                        latitude: lat.toString(),
+                        longitude: lng.toString(),
+                        current_province: provinceCode || prev.current_province,
+                      }));
+                    }}
+                    height="300px"
+                    interactive={true}
                   />
-                </div>
-                <div className="space-y-2 md:col-span-2">
-                  <Label htmlFor="current_province">จังหวัดที่ทำงาน</Label>
-                  <Input
-                    id="current_province"
-                    value={profile.current_province ?? ""}
-                    onChange={handleProfileChange}
-                  />
+                  <div className="mt-2 space-y-2">
+                    <div className="grid grid-cols-2 gap-2">
+                      <div className="space-y-1">
+                        <Label htmlFor="latitude" className="text-xs">
+                          ละติจูด (Latitude)
+                        </Label>
+                        <Input
+                          id="latitude"
+                          type="number"
+                          step="any"
+                          value={profile.latitude ?? ""}
+                          onChange={handleProfileChange}
+                          placeholder="13.7563"
+                          className="text-xs"
+                        />
+                      </div>
+                      <div className="space-y-1">
+                        <Label htmlFor="longitude" className="text-xs">
+                          ลองติจูด (Longitude)
+                        </Label>
+                        <Input
+                          id="longitude"
+                          type="number"
+                          step="any"
+                          value={profile.longitude ?? ""}
+                          onChange={handleProfileChange}
+                          placeholder="100.5018"
+                          className="text-xs"
+                        />
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
 
@@ -431,8 +569,8 @@ export default function SettingsPage() {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="public">สาธารณะ</SelectItem>
-                    <SelectItem value="alumni-only">เฉพาะศิษย์เก่า</SelectItem>
-                    <SelectItem value="admin-only">เฉพาะผู้ดูแลระบบ</SelectItem>
+                    <SelectItem value="alumni_only">เฉพาะศิษย์เก่า</SelectItem>
+                    <SelectItem value="admin_only">เฉพาะผู้ดูแลระบบ</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -457,8 +595,8 @@ export default function SettingsPage() {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="public">สาธารณะ</SelectItem>
-                    <SelectItem value="alumni-only">เฉพาะศิษย์เก่า</SelectItem>
-                    <SelectItem value="admin-only">เฉพาะผู้ดูแลระบบ</SelectItem>
+                    <SelectItem value="alumni_only">เฉพาะศิษย์เก่า</SelectItem>
+                    <SelectItem value="admin_only">เฉพาะผู้ดูแลระบบ</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -483,8 +621,8 @@ export default function SettingsPage() {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="public">สาธารณะ</SelectItem>
-                    <SelectItem value="alumni-only">เฉพาะศิษย์เก่า</SelectItem>
-                    <SelectItem value="admin-only">เฉพาะผู้ดูแลระบบ</SelectItem>
+                    <SelectItem value="alumni_only">เฉพาะศิษย์เก่า</SelectItem>
+                    <SelectItem value="admin_only">เฉพาะผู้ดูแลระบบ</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -509,8 +647,8 @@ export default function SettingsPage() {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="public">สาธารณะ</SelectItem>
-                    <SelectItem value="alumni-only">เฉพาะศิษย์เก่า</SelectItem>
-                    <SelectItem value="admin-only">เฉพาะผู้ดูแลระบบ</SelectItem>
+                    <SelectItem value="alumni_only">เฉพาะศิษย์เก่า</SelectItem>
+                    <SelectItem value="admin_only">เฉพาะผู้ดูแลระบบ</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -575,21 +713,6 @@ export default function SettingsPage() {
                   checked={notifications.news_updates}
                   onCheckedChange={(checked) =>
                     handleNotificationChange("news_updates", checked)
-                  }
-                />
-              </div>
-              <div className="flex items-center justify-between p-4 rounded-lg bg-gray-50 dark:bg-gray-800/50 hover:bg-gray-100 dark:hover:bg-gray-700/50 transition-colors">
-                <Label
-                  htmlFor="birthday_reminders"
-                  className="text-gray-900 dark:text-white font-medium"
-                >
-                  แจ้งเตือนวันเกิดศิษย์เก่า
-                </Label>
-                <Switch
-                  id="birthday_reminders"
-                  checked={notifications.birthday_reminders}
-                  onCheckedChange={(checked) =>
-                    handleNotificationChange("birthday_reminders", checked)
                   }
                 />
               </div>

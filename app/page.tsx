@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import dynamic from "next/dynamic";
 import { Button } from "@/components/ui/button";
@@ -39,11 +39,28 @@ const MapOverview = dynamic(
 
 export default function HomePage() {
   const [stats, setStats] = useState({
-    totalAlumni: 2847,
-    totalNews: 65,
-    totalDiscussions: 298,
-    provinces: 45,
+    alumni: 0,
+    news: 0,
+    discussion: 0,
+    province: 0,
   });
+
+  const [news, setNews] = useState<any[]>([]);
+
+  useEffect(() => {
+    const initializePage = async () => {
+      try {
+        const stat = await fetch("/api/dashboard");
+        const data = await stat.json();
+        setStats(data.stat);
+        setNews(data.latestNews);
+        console.log("Fetched dashboard stats:", data);
+      } catch (e) {
+        console.error("Error fetching user:", e);
+      }
+    };
+    initializePage();
+  }, []);
 
   const features = [
     {
@@ -183,7 +200,7 @@ export default function HomePage() {
             <div className="grid grid-cols-1 gap-10 mt-10 animate-fade-in-up delay-400">
               <div className="text-center group transition-all">
                 <div className="text-5xl md:text-6xl font-extrabold text-[#81B214] mb-2 drop-shadow group-hover:scale-110 transition-transform duration-200">
-                  {stats.totalAlumni.toLocaleString()}
+                  {stats.alumni.toLocaleString()}
                 </div>
                 <div className="text-gray-700 dark:text-gray-300 text-lg font-medium">
                   ศิษย์เก่า
@@ -191,7 +208,7 @@ export default function HomePage() {
               </div>
               <div className="text-center group transition-all">
                 <div className="text-5xl md:text-6xl font-extrabold text-blue-600 dark:text-blue-400 mb-2 drop-shadow group-hover:scale-110 transition-transform duration-200">
-                  {stats.provinces}
+                  {stats.province}
                 </div>
                 <div className="text-gray-700 dark:text-gray-300 text-lg font-medium">
                   จังหวัด
@@ -199,7 +216,7 @@ export default function HomePage() {
               </div>
               <div className="text-center group transition-all">
                 <div className="text-5xl md:text-6xl font-extrabold text-purple-600 dark:text-purple-400 mb-2 drop-shadow group-hover:scale-110 transition-transform duration-200">
-                  {stats.totalNews}
+                  {stats.news}
                 </div>
                 <div className="text-gray-700 dark:text-gray-300 text-lg font-medium">
                   ข่าวสาร
@@ -207,7 +224,7 @@ export default function HomePage() {
               </div>
               <div className="text-center group transition-all">
                 <div className="text-5xl md:text-6xl font-extrabold text-orange-500 dark:text-orange-400 mb-2 drop-shadow group-hover:scale-110 transition-transform duration-200">
-                  {stats.totalDiscussions}
+                  {stats.discussion}
                 </div>
                 <div className="text-gray-700 dark:text-gray-300 text-lg font-medium">
                   กระทู้ศิษย์เก่า
@@ -291,50 +308,38 @@ export default function HomePage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {" "}
-            {/* Increased gap */}
-            {recentNews.map((news) => (
-              <Card
-                key={news.id}
-                className="shadow-md hover:shadow-xl transition-shadow duration-300 rounded-xl bg-white dark:bg-gray-900"
-              >
-                {" "}
-                {/* Enhanced shadow and hover */}
-                <CardHeader className="pb-4">
-                  {" "}
-                  {/* Adjusted padding */}
-                  <div className="flex items-center text-sm text-gray-500 dark:text-gray-400 mb-2">
-                    <Calendar className="mr-2 h-4 w-4 text-gray-400 dark:text-gray-500" />{" "}
-                    {/* Added text color to icon */}
-                    {news.date}
-                  </div>
-                  <CardTitle className="text-xl font-semibold line-clamp-2 text-gray-900 dark:text-white">
-                    {news.title}
-                  </CardTitle>{" "}
-                  {/* Larger, bolder title */}
-                </CardHeader>
-                <CardContent className="pt-0">
-                  {" "}
-                  {/* Adjusted padding */}
-                  <p className="text-gray-600 dark:text-gray-300 text-base line-clamp-3 mb-4 leading-relaxed">
-                    {news.excerpt}
-                  </p>{" "}
-                  {/* Adjusted text size and line height */}
-                  <Link href="/auth/login">
-                    <Button
-                      variant="link"
-                      size="sm"
-                      className="p-0 text-[#81B214] hover:text-[#50B003] font-semibold"
-                    >
-                      {" "}
-                      {/* Changed to link variant, bolder */}
-                      อ่านต่อ
-                      <ArrowRight className="ml-1 h-4 w-4" />
-                    </Button>
-                  </Link>
-                </CardContent>
-              </Card>
-            ))}
+            {news.length > 0 &&
+              news.map((news) => (
+                <Card
+                  key={news.id}
+                  className="shadow-md hover:shadow-xl transition-shadow duration-300 rounded-xl bg-white dark:bg-gray-900"
+                >
+                  <CardHeader className="pb-4">
+                    <div className="flex items-center text-sm text-gray-500 dark:text-gray-400 mb-2">
+                      <Calendar className="mr-2 h-4 w-4 text-gray-400 dark:text-gray-500" />{" "}
+                      {news.created_at}
+                    </div>
+                    <CardTitle className="text-xl font-semibold line-clamp-2 text-gray-900 dark:text-white">
+                      {news.title}
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="pt-0">
+                    <p className="text-gray-600 dark:text-gray-300 text-base line-clamp-3 mb-4 leading-relaxed">
+                      {news.content}
+                    </p>
+                    <Link href="/auth/login">
+                      <Button
+                        variant="link"
+                        size="sm"
+                        className="p-0 text-[#81B214] hover:text-[#50B003] font-semibold"
+                      >
+                        อ่านต่อ
+                        <ArrowRight className="ml-1 h-4 w-4" />
+                      </Button>
+                    </Link>
+                  </CardContent>
+                </Card>
+              ))}
           </div>
         </div>
       </section>
@@ -460,31 +465,19 @@ export default function HomePage() {
             </div>
             <div>
               <h4 className="text-lg font-semibold mb-5">ติดต่อเรา</h4>{" "}
-              {/* Increased spacing */}
               <ul className="space-y-3 text-gray-300">
-                {" "}
-                {/* Increased spacing */}
                 <li className="flex items-center text-base">
-                  {" "}
-                  {/* Larger text */}
                   <Phone className="mr-2 h-4 w-4 text-gray-400 dark:text-gray-500" />{" "}
-                  {/* Added text color to icon */}
-                  02-123-4567
+                  0-7567-2808 – 10
                 </li>
                 <li className="flex items-center text-base">
-                  {" "}
-                  {/* Larger text */}
                   <Mail className="mr-2 h-4 w-4 text-gray-400 dark:text-gray-500" />{" "}
-                  {/* Added text color to icon */}
-                  pharmacy@wu.ac.th
+                  pharmwu2019@gmail.com
                 </li>
                 <li className="flex items-start text-base">
-                  {" "}
-                  {/* Larger text */}
                   <MapIcon className="mr-2 h-4 w-4 mt-1 text-gray-400 dark:text-gray-500" />{" "}
-                  {/* Added text color to icon */}
                   <span>
-                    สำนักเภสัชศาสตร์ มหาวิทยาลัยวลัยลักษณ์
+                    สำนักวิชาเภสัชศาสตร์ มหาวิทยาลัยวลัยลักษณ์
                     <br />
                     จังหวัดนครศรีธรรมราช 80160
                   </span>
@@ -494,10 +487,8 @@ export default function HomePage() {
           </div>
 
           <div className="border-t border-gray-800 dark:border-gray-900 mt-10 pt-8 text-center text-gray-400">
-            {" "}
-            {/* Increased spacing */}
             <p>
-              &copy; 2025 ระบบเครือข่ายศิษย์เก่า สำนักเภสัชศาสตร์
+              &copy; 2025 ระบบเครือข่ายศิษย์เก่า สำนักวิชาเภสัชศาสตร์
               มหาวิทยาลัยวลัยลักษณ์. สงวนลิขสิทธิ์.
             </p>
           </div>
