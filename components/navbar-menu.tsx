@@ -347,7 +347,7 @@ export default function NavbarMenuItems() {
                     <button
                       key={item.href}
                       onClick={() => handleNavClick(item.href)}
-                      className={`flex items-center gap-4 px-4 py-3 rounded-2xl font-medium transition-all duration-300
+                      className={`flex items-center gap-4 px-4 py-3 rounded-2xl font-medium transition-all duration-300 cursor-pointer
                     ${
                       isActive
                         ? "bg-gradient-to-r from-[#81B214] to-[#50B003] text-white shadow-lg shadow-blue-500/25"
@@ -359,6 +359,19 @@ export default function NavbarMenuItems() {
                     </button>
                   );
                 })}
+
+                <button
+                  onClick={() => handleNavClick("/dashboard/settings")}
+                  className={`flex items-center gap-4 px-4 py-3 rounded-2xl font-medium transition-all duration-300 cursor-pointer
+                    ${
+                      pathname.startsWith("/dashboard/settings")
+                        ? "bg-gradient-to-r from-[#81B214] to-[#50B003] text-white shadow-lg shadow-blue-500/25"
+                        : "text-gray-800 dark:text-gray-100 hover:bg-[#81B214]/10 dark:hover:bg-neutral-800/50"
+                    }`}
+                >
+                  <Settings className="h-5 w-5" />
+                  <span>ตั้งค่า</span>
+                </button>
                 {/* Theme Toggle in Mobile */}
                 <div className="mt-4 pt-4 border-t border-gray-200 dark:border-neutral-700">
                   <div className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-3 px-4">
