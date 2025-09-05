@@ -18,7 +18,11 @@ export async function GET() {
 
   const yearStat = [] as any[];
 
+  let totalUsers = users.length;
+  let unregistUsers = 0;
+
   users.map((item) => {
+    // activeUsers
     const year = item.admit_year;
     if (year == null) {
       // Skip items with null or undefined admit_year
@@ -35,8 +39,10 @@ export async function GET() {
         suspended: 0,
       });
     }
+
     yearStat.find((item: any) => item.admit_year === year)!.count++;
     if (!item.user || item.user.status === "UNREGISTERED") {
+      unregistUsers++;
       yearStat.find((item: any) => item.admit_year === year)!.unregistered++;
     } else if (item.user.status === "PENDING_APPROVAL") {
       yearStat.find((item: any) => item.admit_year === year)!.pending++;
@@ -53,8 +59,8 @@ export async function GET() {
   return NextResponse.json({
     yearStat: yearStat,
     usage: {
-      active: 80,
-      total: 542,
+      active: totalUsers - unregistUsers,
+      total: totalUsers,
     },
   });
 }
