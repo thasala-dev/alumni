@@ -51,11 +51,7 @@ export default function NavbarMenuItems() {
     router.push(href);
   };
 
-  const [notifications] = useState([
-    { id: 1, message: "ประกาศรับสมัครงานเภสัชกรใหม่" },
-    { id: 2, message: "การประชุมใหญ่สมาคมศิษย์เก่าประจำปี 2568" },
-    { id: 3, message: "อัปเดตข้อมูลใบประกอบวิชาชีพเภสัชกรรม" },
-  ]);
+  const [notifications, setNotifications] = useState([]);
 
   const router = useRouter();
   const pathname = usePathname();
@@ -173,7 +169,6 @@ export default function NavbarMenuItems() {
             );
           })}
 
-          {/* Notifications */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <button className="bg-gray-100 dark:bg-[#252728] relative p-3 rounded-2xl hover:text-[#81B214] hover:bg-[#81B214]/10 transition-all duration-300 group">
@@ -190,9 +185,9 @@ export default function NavbarMenuItems() {
               className="w-80 p-0 rounded-2xl shadow-2xl bg-white/95 dark:bg-[#252728]/95 backdrop-blur-xl border border-gray-200/50 dark:border-neutral-700/50"
             >
               <div className="max-h-80 overflow-y-auto divide-y divide-gray-100 dark:divide-neutral-700">
-                {notifications.map((n) => (
+                {notifications.map((n: any, inx) => (
                   <DropdownMenuItem
-                    key={n.id}
+                    key={inx}
                     className="px-6 py-4 text-sm hover:bg-[#81B214]/10/50 dark:hover:bg-neutral-800/50 transition-colors duration-200"
                   >
                     <div className="flex items-start gap-3">
@@ -209,15 +204,21 @@ export default function NavbarMenuItems() {
                     </div>
                   </DropdownMenuItem>
                 ))}
+
+                {notifications.length === 0 && (
+                  <div className="px-6 py-6 text-center text-gray-500 dark:text-gray-400">
+                    ไม่มีการแจ้งเตือน
+                  </div>
+                )}
               </div>
-              <div className="border-t border-gray-100 dark:border-neutral-700 px-6 py-3 text-center bg-gray-50/50 dark:bg-neutral-800/30">
+              {/* <div className="border-t border-gray-100 dark:border-neutral-700 px-6 py-3 text-center bg-gray-50/50 dark:bg-neutral-800/30">
                 <Link
                   href="/dashboard/news"
                   className="text-[#81B214] dark:text-[#81B214] hover:text-blue-700 dark:hover:text-blue-300 text-sm font-medium transition-colors duration-200"
                 >
                   ดูการแจ้งเตือนทั้งหมด →
                 </Link>
-              </div>
+              </div> */}
             </DropdownMenuContent>
           </DropdownMenu>
 
