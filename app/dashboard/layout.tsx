@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import NavbarMenuItems from "@/components/navbar-menu";
 import AsideMenuItems from "@/components/aside-menu";
 import { useAuth } from "@/contexts/auth-context";
+import { Analytics } from "@vercel/analytics/next";
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -42,6 +43,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
       <NavbarMenuItems />
       <div className="max-w-7xl mx-auto flex flex-row gap-4 px-2 sm:px-4 lg:px-6 py-6">
         <AsideMenuItems />
+        <Analytics />
         <main className="flex-1 min-w-0">{children}</main>
       </div>
     </>
