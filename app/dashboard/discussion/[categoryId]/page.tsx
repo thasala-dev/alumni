@@ -646,15 +646,14 @@ export default function NewsPage() {
             {discussionCategoryCurrent?.description}
           </p>
         </div>
-        {user?.role === "admin" && (
-          <Button
-            onClick={handleCreateNews}
-            className="rounded-lg bg-[#81B214] hover:bg-[#50B003] transition-colors"
-          >
-            <Plus className="mr-2 h-4 w-4" />
-            เพิ่มกระทู้ใหม่
-          </Button>
-        )}
+
+        <Button
+          onClick={handleCreateNews}
+          className="rounded-lg bg-[#81B214] hover:bg-[#50B003] transition-colors"
+        >
+          <Plus className="mr-2 h-4 w-4" />
+          เพิ่มกระทู้ใหม่
+        </Button>
       </div>
       <div className="grid grid-cols-1 gap-4">
         <div className="space-y-6">
