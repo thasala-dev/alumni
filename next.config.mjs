@@ -1,9 +1,6 @@
 /** @type {import('next').NextConfig} */
 
 const nextConfig = {
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
   typescript: {
     ignoreBuildErrors: true,
   },
@@ -19,8 +16,8 @@ const nextConfig = {
         hostname: "**",
       },
     ],
-    domains: ["lh3.googleusercontent.com"],
   },
+  transpilePackages: ["react-simple-maps"],
 };
 
 export default nextConfig;

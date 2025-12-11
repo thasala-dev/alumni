@@ -36,6 +36,7 @@ export default function LocationMap({
   ]);
   const [marker, setMarker] = useState<[number, number] | null>(null);
   const [leaflet, setLeaflet] = useState<any>(null);
+  const [customIcon, setCustomIcon] = useState<any>(null); // NEW
   const [selectedProvince, setSelectedProvince] = useState<string>("");
 
   // Function to find nearest province
@@ -165,7 +166,7 @@ export default function LocationMap({
         });
 
         // Custom green marker for work location
-        (L as any).customMarkerIcon = L.divIcon({
+        const icon = L.divIcon({
           html: `
             <div style="
               background-color: #81B214;
@@ -194,6 +195,7 @@ export default function LocationMap({
           popupAnchor: [0, -25],
         });
 
+        setCustomIcon(icon);
         setLeaflet(L);
         setMounted(true);
       } catch (error) {
@@ -292,7 +294,7 @@ export default function LocationMap({
 
   // Update map marker
   useEffect(() => {
-    if (!mapInstanceRef.current || !leaflet || !marker) return;
+    if (!mapInstanceRef.current || !leaflet || !marker || !customIcon) return;
 
     try {
       // Clear existing markers safely
@@ -310,7 +312,7 @@ export default function LocationMap({
       // Add new marker with custom icon
       const markerInstance = leaflet
         .marker(marker, {
-          icon: (leaflet as any).customMarkerIcon,
+          icon: customIcon,
         })
         .addTo(mapInstanceRef.current);
 
@@ -319,15 +321,14 @@ export default function LocationMap({
           <div style="font-weight: bold; margin-bottom: 4px; color: #81B214;">
             📍 ตำแหน่งที่ทำงาน
           </div>
-          ${
-            selectedProvince
-              ? `
+          ${selectedProvince
+          ? `
             <div style="font-size: 13px; color: #333; margin-bottom: 4px; font-weight: 500;">
               จังหวัด${selectedProvince}
             </div>
           `
-              : ""
-          }
+          : ""
+        }
           <div style="font-size: 12px; color: #666; margin-bottom: 4px;">
             ${marker[0].toFixed(6)}, ${marker[1].toFixed(6)}
           </div>
@@ -342,7 +343,7 @@ export default function LocationMap({
     } catch (error) {
       console.error("Error updating marker:", error);
     }
-  }, [marker, leaflet]);
+  }, [marker, leaflet, customIcon]);
 
   const getCurrentLocation = () => {
     if (navigator.geolocation) {

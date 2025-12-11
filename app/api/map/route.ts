@@ -1,8 +1,6 @@
 import { NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "@/lib/prisma";
 import { ProvincePositions } from "@/data/thailand-province";
-
-const prisma = new PrismaClient();
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
@@ -56,8 +54,8 @@ export async function GET(req: Request) {
       provinceCode: item.current_province,
       name: item.current_province
         ? ProvincePositions[
-            item.current_province as keyof typeof ProvincePositions
-          ]?.name || item.current_province
+          item.current_province as keyof typeof ProvincePositions
+        ]?.name || item.current_province
         : "",
       count: item._count.id,
       ...(show === "alumni" && {
