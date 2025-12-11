@@ -2,6 +2,10 @@
   "name": "my-v0-project",
   "version": "0.1.0",
   "private": true,
+  "overrides": {
+    "react": "$react",
+    "react-dom": "$react-dom"
+  },
   "scripts": {
     "build": "prisma generate && next build",
     "dev": "next dev",
