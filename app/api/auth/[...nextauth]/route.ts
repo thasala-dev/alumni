@@ -135,22 +135,32 @@ export const authOptions: NextAuthOptions = {
             if (!existingAccount) {
               // สร้าง account ใหม่เชื่อมกับ user เดิม
               console.log("[signIn] Creating new account for existing user");
-              await prisma.account.create({
-                data: {
-                  userId: existingUser.id,
-                  type: account.type,
-                  provider: account.provider,
-                  providerAccountId: String(account.providerAccountId),
-                  refresh_token: account.refresh_token,
-                  access_token: account.access_token,
-                  expires_at: account.expires_at,
-                  token_type: account.token_type,
-                  scope: account.scope,
-                  id_token: account.id_token,
-                  session_state: account.session_state,
-                },
-              });
-              console.log("[signIn] Account created successfully");
+              try {
+                await prisma.account.create({
+                  data: {
+                    userId: existingUser.id,
+                    type: account.type,
+                    provider: account.provider,
+                    providerAccountId: String(account.providerAccountId),
+                    refresh_token: account.refresh_token,
+                    access_token: account.access_token,
+                    expires_at: account.expires_at,
+                    token_type: account.token_type,
+                    scope: account.scope,
+                    id_token: account.id_token,
+                    session_state: account.session_state,
+                  },
+                });
+                console.log("[signIn] Account created successfully");
+              } catch (error: any) {
+                if (error.code === "P2002") {
+                  console.log(
+                    "[signIn] Account already linked (P2002), skipping creation"
+                  );
+                } else {
+                  throw error;
+                }
+              }
             }
 
             // อัปเดตข้อมูลผู้ใช้

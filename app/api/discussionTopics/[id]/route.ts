@@ -4,9 +4,10 @@ import { prisma } from "@/lib/prisma";
 // GET: Get a specific discussion topic
 export async function GET(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  props: { params: Promise<{ id: string }> }
 ) {
   try {
+    const params = await props.params;
     const topic = await prisma.discussion_topics.findUnique({
       where: { id: params.id },
       select: {
@@ -74,9 +75,10 @@ export async function GET(
 // PUT: Update a discussion topic
 export async function PUT(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  props: { params: Promise<{ id: string }> }
 ) {
   try {
+    const params = await props.params;
     const body = await req.json();
     const { title, content, category_id, user_id, image } = body;
 
@@ -123,9 +125,10 @@ export async function PUT(
 // DELETE: Delete a discussion topic
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  props: { params: Promise<{ id: string }> }
 ) {
   try {
+    const params = await props.params;
     // Get user_id from request body or headers
     const body = await req.json().catch(() => ({}));
     const user_id = body.user_id;

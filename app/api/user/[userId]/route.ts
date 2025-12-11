@@ -6,9 +6,10 @@ import { authOptions } from "../../auth/[...nextauth]/route";
 // PUT /api/user/[userId] - update user
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { userId: string } }
+  props: { params: Promise<{ userId: string }> }
 ) {
   try {
+    const params = await props.params;
     const { userId } = params;
     const updates = await request.json();
 
@@ -27,6 +28,9 @@ export async function PUT(
         { status: 400 }
       );
     }
+
+    console.log("Updating user:", userId);
+    console.log("Updates:", filteredUpdates);
 
     // Update user in database
     const updatedUser = await prisma.user.update({
@@ -56,9 +60,10 @@ export async function PUT(
 // DELETE /api/user/[userId] - delete user
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { userId: string } }
+  props: { params: Promise<{ userId: string }> }
 ) {
   try {
+    const params = await props.params;
     const { userId } = params;
 
     // Delete user and related data

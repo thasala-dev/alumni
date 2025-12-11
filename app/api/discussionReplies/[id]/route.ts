@@ -1,12 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
-// GET: Get a specific discussion reply
+// GET: Get a specific discussion topic
 export async function GET(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  props: { params: Promise<{ id: string }> }
 ) {
   try {
+    const params = await props.params;
     const reply = await prisma.discussion_replies.findUnique({
       where: { id: params.id },
       select: {
@@ -39,12 +40,13 @@ export async function GET(
   }
 }
 
-// PUT: Update a discussion reply
+// PUT: Update a discussion topic
 export async function PUT(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  props: { params: Promise<{ id: string }> }
 ) {
   try {
+    const params = await props.params;
     const body = await req.json();
     const { content, user_id } = body;
 
@@ -85,12 +87,13 @@ export async function PUT(
   }
 }
 
-// DELETE: Delete a discussion reply
+// DELETE: Delete a discussion topic
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  props: { params: Promise<{ id: string }> }
 ) {
   try {
+    const params = await props.params;
     // Get user_id from request body
     const body = await req.json().catch(() => ({}));
     const user_id = body.user_id;
