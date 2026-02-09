@@ -1,5 +1,7 @@
 /** @type {import('next').NextConfig} */
 
+const isDev = process.env.NODE_ENV === 'development';
+
 const nextConfig = {
   typescript: {
     ignoreBuildErrors: true,
@@ -27,12 +29,19 @@ const nextConfig = {
             key: 'Content-Security-Policy',
             value: [
               "default-src 'self'",
-              "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://accounts.google.com https://apis.google.com", // Next.js requires unsafe-eval for development
-              "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com", // Allow inline styles for styled-jsx and Tailwind
-              "img-src 'self' data: https: http:", // Allow images from external sources
+              // In production, remove unsafe-inline and unsafe-eval where possible
+              isDev 
+                ? "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://accounts.google.com https://apis.google.com https://connect.facebook.net https://www.googletagmanager.com"
+                : "script-src 'self' 'unsafe-eval' https://accounts.google.com https://apis.google.com https://connect.facebook.net https://www.googletagmanager.com https://vercel.live",
+              // Styles need unsafe-inline for Tailwind and styled-jsx
+              "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+              "img-src 'self' data: https: http: blob:",
               "font-src 'self' data: https://fonts.gstatic.com",
-              "connect-src 'self' https://accounts.google.com https://oauth2.googleapis.com",
-              "frame-src 'self' https://accounts.google.com",
+              "connect-src 'self' https://accounts.google.com https://oauth2.googleapis.com https://www.facebook.com https://vitals.vercel-insights.com",
+              "frame-src 'self' https://accounts.google.com https://www.facebook.com",
+              "media-src 'self' data: blob:",
+              "worker-src 'self' blob:",
+              "child-src 'self' blob:",
               "object-src 'none'",
               "base-uri 'self'",
               "form-action 'self'",
