@@ -25,7 +25,20 @@ const nextConfig = {
         headers: [
           {
             key: 'Content-Security-Policy',
-            value: "default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self';",
+            value: [
+              "default-src 'self'",
+              "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://accounts.google.com https://apis.google.com", // Next.js requires unsafe-eval for development
+              "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com", // Allow inline styles for styled-jsx and Tailwind
+              "img-src 'self' data: https: http:", // Allow images from external sources
+              "font-src 'self' data: https://fonts.gstatic.com",
+              "connect-src 'self' https://accounts.google.com https://oauth2.googleapis.com",
+              "frame-src 'self' https://accounts.google.com",
+              "object-src 'none'",
+              "base-uri 'self'",
+              "form-action 'self'",
+              "frame-ancestors 'self'",
+              "upgrade-insecure-requests",
+            ].join('; '),
           },
           {
             key: 'X-Frame-Options',
@@ -37,11 +50,15 @@ const nextConfig = {
           },
           {
             key: 'Referrer-Policy',
-            value: 'origin-when-cross-origin',
+            value: 'strict-origin-when-cross-origin', // More secure than origin-when-cross-origin
           },
           {
             key: 'Permissions-Policy',
             value: 'camera=(), microphone=(), geolocation=(), interest-cohort=()',
+          },
+          {
+            key: 'X-XSS-Protection',
+            value: '1; mode=block',
           },
         ],
       },
