@@ -26,18 +26,14 @@ const nextConfig = {
         source: '/(.*)',
         headers: [
           {
-            key: 'Content-Security-Policy',
+            key: 'Content-Security-Policy-Report-Only',
             value: [
               "default-src 'self'",
-              // In production, remove unsafe-inline and unsafe-eval where possible
-              isDev 
-                ? "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://accounts.google.com https://apis.google.com https://connect.facebook.net https://www.googletagmanager.com"
-                : "script-src 'self' 'unsafe-eval' https://accounts.google.com https://apis.google.com https://connect.facebook.net https://www.googletagmanager.com https://vercel.live",
-              // Styles need unsafe-inline for Tailwind and styled-jsx
+              "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://accounts.google.com https://apis.google.com https://connect.facebook.net https://www.googletagmanager.com https://vercel.live https://va.vercel-scripts.com",
               "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
               "img-src 'self' data: https: http: blob:",
               "font-src 'self' data: https://fonts.gstatic.com",
-              "connect-src 'self' https://accounts.google.com https://oauth2.googleapis.com https://www.facebook.com https://vitals.vercel-insights.com",
+              "connect-src 'self' https://accounts.google.com https://oauth2.googleapis.com https://www.facebook.com https://vitals.vercel-insights.com https://va.vercel-scripts.com wss://ws.vercel.live",
               "frame-src 'self' https://accounts.google.com https://www.facebook.com",
               "media-src 'self' data: blob:",
               "worker-src 'self' blob:",
@@ -46,7 +42,6 @@ const nextConfig = {
               "base-uri 'self'",
               "form-action 'self'",
               "frame-ancestors 'self'",
-              "upgrade-insecure-requests",
             ].join('; '),
           },
           {
