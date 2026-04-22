@@ -34,7 +34,7 @@ const MapOverview = dynamic(
         <div className="text-gray-500 dark:text-gray-400">Loading map...</div>
       </div>
     ),
-  }
+  },
 );
 
 export default function HomePage() {
@@ -370,18 +370,17 @@ export default function HomePage() {
                 เข้าสู่ระบบด้วย Google
               </Button>
             </Link>
-            <Link href="/auth/login">
+            {/* <Link href="/auth/login">
               <Button
                 size="lg"
                 variant="secondary"
                 className="w-full sm:w-auto rounded-lg text-lg font-semibold bg-white dark:bg-gray-900 text-[#81B214] hover:bg-green-50 dark:hover:bg-gray-800 transition-colors"
               >
                 {" "}
-                {/* Enhanced secondary button */}
                 <Facebook className="mr-2 h-5 w-5" />
                 เข้าสู่ระบบด้วย Facebook
               </Button>
-            </Link>
+            </Link> */}
           </div>
         </div>
       </section>
