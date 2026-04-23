@@ -28,101 +28,6 @@ import {
 } from "lucide-react";
 import { AdmitYear } from "@/lib/utils";
 
-// Demo data for alumni profiles
-const demoAlumniProfiles: { [key: string]: any } = {
-  "1": {
-    id: "1",
-    email: "somchai@example.com",
-    first_name: "สมชาย",
-    last_name: "ใจดี",
-    nickname: "ชาย",
-    graduation_year: 2018,
-    major: "เภสัชศาสตร์",
-    bio: "เป็นเภสัชกรที่มีประสบการณ์ในการทำงานด้านเภสัชกรรมชุมชนมาเป็นเวลา 5 ปี มีความสนใจในการพัฒนาระบบการดูแลสุขภาพในชุมชนท้องถิ่น และการใช้เทคโนโลยีเพื่อปรับปรุงการให้บริการทางเภสัชกรรม",
-    current_company: "โรงพยาบาลสงขลา",
-    current_position: "เภสัชกร",
-    current_province: "สงขลา",
-    phone: "081-234-5678",
-    line_id: "somchai_pharmacy",
-    facebook_url: "https://facebook.com/somchai.jaided",
-    linkedin_url: "https://linkedin.com/in/somchai-jaided",
-    profile_image_url: "/placeholder-user.jpg",
-    joined_date: "2018-05-15",
-    is_verified: true,
-    achievements: [
-      "เภสัชกรดีเด่นประจำปี 2022",
-      "รางวัลนวัตกรรมเภสัชกรรมชุมชน",
-      "ผู้นำการเปลี่ยนแปลงด้านสุขภาพดิจิทัล",
-    ],
-    interests: [
-      "เภสัชกรรมชุมชน",
-      "เทคโนโลยีสุขภาพ",
-      "การพัฒนาชุมชน",
-      "การวิจัยทางเภสัชศาสตร์",
-    ],
-  },
-  "2": {
-    id: "2",
-    email: "malee@example.com",
-    first_name: "มาลี",
-    last_name: "สวยงาม",
-    nickname: "มาลี",
-    graduation_year: 2020,
-    major: "เภสัชศาสตร์",
-    bio: "เภสัชกรหญิงที่มีความหลงใหลในการวิจัยและพัฒนายาใหม่ ปัจจุบันทำงานในแผนกวิจัยและพัฒนาของบริษัทยาชั้นนำ มีประสบการณ์ในการพัฒนาผลิตภัณฑ์เสริมอาหารและยาสมุนไพร",
-    current_company: "บริษัทเภสัชกรรมไทย จำกัด",
-    current_position: "นักวิจัยและพัฒนา",
-    current_province: "กรุงเทพมหานคร",
-    phone: "089-876-5432",
-    line_id: "malee_research",
-    facebook_url: "https://facebook.com/malee.suayngam",
-    profile_image_url: "/placeholder-user.jpg",
-    joined_date: "2020-03-20",
-    is_verified: true,
-    achievements: [
-      "นักวิจัยดีเด่นแห่งปี 2023",
-      "สิทธิบัตรการประดิษฐ์ยาสมุนไพร 2 รายการ",
-      "รางวัลนวัตกรรมเยาวชน",
-    ],
-    interests: [
-      "การวิจัยและพัฒนายา",
-      "ยาสมุนไพร",
-      "เคมีเภสัช",
-      "นวัตกรรมทางการแพทย์",
-    ],
-  },
-  "3": {
-    id: "3",
-    email: "narong@example.com",
-    first_name: "ณรงค์",
-    last_name: "เก่งกาจ",
-    nickname: "ณรงค์",
-    graduation_year: 2015,
-    major: "เภสัชศาสตร์",
-    bio: "ผู้ประกอบการที่ประสบความสำเร็จในการเปิดร้านขายยาและเป็นเจ้าของเครือข่ายร้านยาในภาคใต้ มีวิสัยทัศน์ในการพัฒนาธุรกิจเภสัชกรรมให้ทันสมัยและเข้าถึงได้ง่าย",
-    current_company: "เครือข่ายร้านยาณรงค์",
-    current_position: "ผู้ก่อตั้งและประธานเจ้าหน้าที่บริหาร",
-    current_province: "นครศรีธรรมราช",
-    phone: "084-567-8901",
-    line_id: "narong_pharmacy",
-    facebook_url: "https://facebook.com/narong.kengkaj",
-    linkedin_url: "https://linkedin.com/in/narong-kengkaj",
-    profile_image_url: "/placeholder-user.jpg",
-    joined_date: "2015-07-10",
-    is_verified: true,
-    achievements: [
-      "ผู้ประกอบการดีเด่นประจำปี 2021",
-      "รางวัลธุรกิจเภสัชกรรมยั่งยืน",
-      "ผู้นำการเปลี่ยนแปลงทางธุรกิจ",
-    ],
-    interests: [
-      "ธุรกิจเภสัชกรรม",
-      "การจัดการธุรกิจ",
-      "เทคโนโลジีทางการค้า",
-      "การพัฒนาทีม",
-    ],
-  },
-};
 
 export default function AlumniDetailPage() {
   const params = useParams();
@@ -298,14 +203,16 @@ export default function AlumniDetailPage() {
                   </div>
 
                   <div className="flex flex-wrap gap-2">
-                    <Button
-                      size="sm"
-                      onClick={() => handleContact("email")}
-                      className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white"
-                    >
-                      <Mail className="mr-2 h-4 w-4" />
-                      ส่งอีเมล
-                    </Button>
+                    {alumni.email && (
+                      <Button
+                        size="sm"
+                        onClick={() => handleContact("email")}
+                        className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white"
+                      >
+                        <Mail className="mr-2 h-4 w-4" />
+                        ส่งอีเมล
+                      </Button>
+                    )}
                     {alumni.phone && (
                       <Button
                         variant="outline"
@@ -417,17 +324,19 @@ export default function AlumniDetailPage() {
             </CardHeader>
             <CardContent className="p-4 space-y-4">
               <div className="space-y-3">
-                <div className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
-                  <Mail className="h-4 w-4 text-gray-500" />
-                  <div className="flex-1">
-                    <p className="text-sm text-gray-500 dark:text-gray-400">
-                      อีเมล
-                    </p>
-                    <p className="text-gray-900 dark:text-white font-medium">
-                      {alumni.email}
-                    </p>
+                {alumni.email && (
+                  <div className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
+                    <Mail className="h-4 w-4 text-gray-500" />
+                    <div className="flex-1">
+                      <p className="text-sm text-gray-500 dark:text-gray-400">
+                        อีเมล
+                      </p>
+                      <p className="text-gray-900 dark:text-white font-medium">
+                        {alumni.email}
+                      </p>
+                    </div>
                   </div>
-                </div>
+                )}
 
                 {alumni.phone && (
                   <div className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
