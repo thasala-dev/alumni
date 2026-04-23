@@ -735,8 +735,8 @@ export default function AdminUsersPage() {
                   {user.role === "admin" ? "ผู้ดูแลระบบ" : "ศิษย์เก่า"}
                 </Badge>
                 <div className="flex items-center gap-1">
-                  {getStatusIcon(user.status)}
                   <Badge className={getStatusBadgeVariant(user.status)}>
+                    {getStatusIcon(user.status)}
                     {user.status === "PENDING_APPROVAL" && "รออนุมัติ"}
                     {user.status === "APPROVED" && "อนุมัติแล้ว"}
                     {user.status === "REJECTED" && "ถูกปฏิเสธ"}
@@ -786,7 +786,9 @@ export default function AdminUsersPage() {
         <Card className="dark:bg-gray-900/80 dark:border-gray-700">
           <CardContent className="flex flex-col items-center justify-center py-16 text-gray-400 dark:text-gray-500">
             <Users className="h-12 w-12 mb-3 opacity-30" />
-            <p className="text-base font-medium">ไม่พบผู้ใช้ที่ตรงกับเงื่อนไข</p>
+            <p className="text-base font-medium">
+              ไม่พบผู้ใช้ที่ตรงกับเงื่อนไข
+            </p>
           </CardContent>
         </Card>
       )}
