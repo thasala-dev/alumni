@@ -125,7 +125,7 @@ export default function AlumniPage() {
         <h1 className="text-3xl font-bold text-[#81B214]">ข้อมูลศิษย์เก่า</h1>
         {/* Bolder title */}
         <p className="text-lg text-gray-600 dark:text-gray-400">
-          รายชื่อและข้อมูลศิษย์เก่าทั้งหมด (ข้อมูลตัวอย่าง)
+          รายชื่อและข้อมูลศิษย์เก่าทั้งหมด
         </p>
         {/* Larger text */}
       </div>
