@@ -188,7 +188,7 @@ export default function AlumniDetailPage() {
                         className="bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300 px-3 py-1"
                       >
                         <Building className="mr-1 h-3 w-3" />
-                        {alumni.current_position}
+                        {alumni.current_position} at {alumni.current_company}
                       </Badge>
                     )}
                     {alumni.current_province && (
