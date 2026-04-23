@@ -133,7 +133,7 @@ export default function DashboardPage() {
   const [posts, setPosts] = useState<any[]>([]);
   const [newPost, setNewPost] = useState("");
   const [showComments, setShowComments] = useState<{ [key: number]: boolean }>(
-    {}
+    {},
   );
   const [newPostImage, setNewPostImage] = useState("");
   const [showImageDialog, setShowImageDialog] = useState(false);
@@ -168,7 +168,7 @@ export default function DashboardPage() {
   const [showConfirmCommentDialog, setShowConfirmCommentDialog] =
     useState(false);
   const [deletingCommentId, setDeletingCommentId] = useState<number | null>(
-    null
+    null,
   );
   const [deleteCommentLoading, setDeleteCommentLoading] = useState(false);
 
@@ -307,8 +307,8 @@ export default function DashboardPage() {
                 isLiked: !post.isLiked,
                 discussion_likes: resData.data,
               }
-            : post
-        )
+            : post,
+        ),
       );
     } catch (error) {
       console.error("Error liking post:", error);
@@ -345,8 +345,8 @@ export default function DashboardPage() {
                     resData.topic,
                   ],
                 }
-              : post
-          )
+              : post,
+          ),
         );
         setNewComment({ ...newComment, [postId]: "" });
       } catch (error) {
@@ -419,9 +419,9 @@ export default function DashboardPage() {
         posts.map((post) => ({
           ...post,
           discussion_replies: post.discussion_replies.filter(
-            (comment: any) => comment.id !== deletingCommentId
+            (comment: any) => comment.id !== deletingCommentId,
           ),
-        }))
+        })),
       );
 
       // Close dialog and reset state
@@ -474,43 +474,43 @@ export default function DashboardPage() {
   return (
     <div className="max-w-4xl mx-auto space-y-6">
       {/* Quick Stats */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-        <Card className="text-center p-4 bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 border-blue-200 dark:border-blue-800">
-          <Users className="h-8 w-8 mx-auto text-blue-600 dark:text-blue-400 mb-2" />
-          <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-            {stat.alumni.toLocaleString()}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+        <div className="flex items-center gap-3 rounded-2xl border border-blue-100 dark:border-blue-900 bg-blue-50/60 dark:bg-blue-900/20 px-4 py-3">
+          <div className="shrink-0 rounded-xl bg-blue-100 dark:bg-blue-800/40 p-2">
+            <Users className="h-4 w-4 text-blue-600 dark:text-blue-400" />
           </div>
-          <div className="text-sm text-gray-600 dark:text-gray-400">
-            ศิษย์เก่า
+          <div>
+            <div className="text-lg font-bold text-gray-900 dark:text-gray-100 leading-none">{stat.alumni.toLocaleString()}</div>
+            <div className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">ศิษย์เก่า</div>
           </div>
-        </Card>
-        <Card className="text-center p-4 bg-gradient-to-br from-orange-50 to-orange-100 dark:from-orange-900/20 dark:to-orange-800/20 border-orange-200 dark:border-orange-800">
-          <MapPin className="h-8 w-8 mx-auto text-orange-600 dark:text-orange-400 mb-2" />
-          <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-            {stat.province}
+        </div>
+        <div className="flex items-center gap-3 rounded-2xl border border-orange-100 dark:border-orange-900 bg-orange-50/60 dark:bg-orange-900/20 px-4 py-3">
+          <div className="shrink-0 rounded-xl bg-orange-100 dark:bg-orange-800/40 p-2">
+            <MapPin className="h-4 w-4 text-orange-600 dark:text-orange-400" />
           </div>
-          <div className="text-sm text-gray-600 dark:text-gray-400">
-            จังหวัด
+          <div>
+            <div className="text-lg font-bold text-gray-900 dark:text-gray-100 leading-none">{stat.province}</div>
+            <div className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">จังหวัด</div>
           </div>
-        </Card>
-        <Card className="text-center p-4 bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-800/20 border-green-200 dark:border-green-800">
-          <Newspaper className="h-8 w-8 mx-auto text-green-600 dark:text-green-400 mb-2" />
-          <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-            {stat.news}
+        </div>
+        <div className="flex items-center gap-3 rounded-2xl border border-green-100 dark:border-green-900 bg-green-50/60 dark:bg-green-900/20 px-4 py-3">
+          <div className="shrink-0 rounded-xl bg-green-100 dark:bg-green-800/40 p-2">
+            <Newspaper className="h-4 w-4 text-green-600 dark:text-green-400" />
           </div>
-          <div className="text-sm text-gray-600 dark:text-gray-400">
-            ข่าวสาร
+          <div>
+            <div className="text-lg font-bold text-gray-900 dark:text-gray-100 leading-none">{stat.news}</div>
+            <div className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">ข่าวสาร</div>
           </div>
-        </Card>
-        <Card className="text-center p-4 bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-800/20 border-purple-200 dark:border-purple-800">
-          <MessageSquare className="h-8 w-8 mx-auto text-purple-600 dark:text-purple-400 mb-2" />
-          <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-            {stat.discussion}
+        </div>
+        <div className="flex items-center gap-3 rounded-2xl border border-purple-100 dark:border-purple-900 bg-purple-50/60 dark:bg-purple-900/20 px-4 py-3">
+          <div className="shrink-0 rounded-xl bg-purple-100 dark:bg-purple-800/40 p-2">
+            <MessageSquare className="h-4 w-4 text-purple-600 dark:text-purple-400" />
           </div>
-          <div className="text-sm text-gray-600 dark:text-gray-400">
-            กระทู้ศิษย์เก่า
+          <div>
+            <div className="text-lg font-bold text-gray-900 dark:text-gray-100 leading-none">{stat.discussion}</div>
+            <div className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">กระทู้</div>
           </div>
-        </Card>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
@@ -589,9 +589,9 @@ export default function DashboardPage() {
               key={post.id}
               className="bg-white dark:bg-gray-900/80 border-gray-200 dark:border-gray-700 p-0"
             >
-              <CardContent className="p-4">
+              <CardContent className="p-0">
                 {/* Post Header */}
-                <div className="flex items-start justify-between mb-4">
+                <div className="flex items-start justify-between p-4">
                   {post.category_id === "0" ? (
                     <div className="flex items-center space-x-3">
                       <Avatar className="h-12 w-12">
@@ -634,7 +634,7 @@ export default function DashboardPage() {
                               <span>
                                 รุ่นที่{" "}
                                 {AdmitYear(
-                                  post.user?.alumni_profiles[0]?.admit_year
+                                  post.user?.alumni_profiles[0]?.admit_year,
                                 )}
                               </span>
                               <span>•</span>
@@ -689,7 +689,7 @@ export default function DashboardPage() {
                       <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-gray-500 dark:text-gray-400">
                         {discussionCategory
                           .filter(
-                            (category) => category.id === post.category_id
+                            (category) => category.id === post.category_id,
                           )
                           .map((category) => (
                             <div
@@ -739,12 +739,12 @@ export default function DashboardPage() {
                   <img
                     src={post.image}
                     alt="Post image"
-                    className="w-full max-h-100 object-contain rounded border border-gray-200 dark:border-gray-700 mb-4"
+                    className="w-full max-h-100 object-contain border border-gray-200 dark:border-gray-700"
                   />
                 )}
 
                 {/* Post Content */}
-                <div className="text-gray-800 dark:text-gray-200 mb-4 leading-relaxed">
+                <div className="text-gray-800 dark:text-gray-200 p-4 leading-relaxed">
                   <div className="whitespace-pre-wrap">
                     {expandedPosts[post.id] ||
                     !shouldTruncateContent(post.content)
@@ -766,12 +766,12 @@ export default function DashboardPage() {
                   <img
                     src={post.image}
                     alt="Post image"
-                    className="w-full max-h-100 object-contain rounded border border-gray-200 dark:border-gray-700 mb-4"
+                    className="w-full max-h-100 object-contain border border-gray-200 dark:border-gray-700"
                   />
                 )}
 
                 {/* Post Actions */}
-                <div className="flex items-center justify-between pt-4 border-t border-gray-100 dark:border-gray-700">
+                <div className="flex items-center justify-between p-4 border-t border-gray-100 dark:border-gray-700">
                   <div className="flex items-center space-x-6">
                     <div
                       onClick={() => handleLike(post.id)}
@@ -800,7 +800,7 @@ export default function DashboardPage() {
 
                 {/* Comments Section */}
                 {showComments[post.id] && (
-                  <div className="pt-4">
+                  <div className="px-4 pb-4">
                     {/* Existing Comments */}
                     <div className="space-y-3 mb-4">
                       {post.discussion_replies.map((comment: any) => (

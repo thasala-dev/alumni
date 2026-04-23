@@ -12,14 +12,6 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import {
   Select,
   SelectContent,
   SelectItem,
@@ -70,7 +62,7 @@ export default function AdminUsersPage() {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [filterRole, setFilterRole] = useState<"all" | "admin" | "alumni">(
-    "all"
+    "all",
   );
   const [filterStatus, setFilterStatus] = useState<
     | "all"
@@ -128,8 +120,8 @@ export default function AdminUsersPage() {
         // Update local state only if API call succeeds
         setUsers((prevUsers) =>
           prevUsers.map((user) =>
-            user.id === userId ? { ...user, ...updates } : user
-          )
+            user.id === userId ? { ...user, ...updates } : user,
+          ),
         );
       } else {
         console.error("Failed to update user");
@@ -201,7 +193,7 @@ export default function AdminUsersPage() {
     setSelectedUsers((prev) =>
       prev.includes(userId)
         ? prev.filter((id) => id !== userId)
-        : [...prev, userId]
+        : [...prev, userId],
     );
   };
 
@@ -222,8 +214,8 @@ export default function AdminUsersPage() {
         // Update each selected user via API
         await Promise.all(
           selectedUsers.map((userId) =>
-            handleUpdateUser(userId, { status: "APPROVED" })
-          )
+            handleUpdateUser(userId, { status: "APPROVED" }),
+          ),
         );
         setSelectedUsers([]);
         alert(`อนุมัติผู้ใช้สำเร็จ ${selectedUsers.length} คน`);
@@ -243,8 +235,8 @@ export default function AdminUsersPage() {
         // Update each selected user via API
         await Promise.all(
           selectedUsers.map((userId) =>
-            handleUpdateUser(userId, { status: "REJECTED" })
-          )
+            handleUpdateUser(userId, { status: "REJECTED" }),
+          ),
         );
         setSelectedUsers([]);
         alert(`ปฏิเสธผู้ใช้สำเร็จ ${selectedUsers.length} คน`);
@@ -258,7 +250,7 @@ export default function AdminUsersPage() {
   // Approve all pending users
   const handleApproveAll = async () => {
     const pendingUsers = filteredUsers.filter(
-      (user) => user.status === "PENDING_APPROVAL"
+      (user) => user.status === "PENDING_APPROVAL",
     );
     if (
       pendingUsers.length > 0 &&
@@ -268,8 +260,8 @@ export default function AdminUsersPage() {
         // Update all pending users via API
         await Promise.all(
           pendingUsers.map((user) =>
-            handleUpdateUser(user.id, { status: "APPROVED" })
-          )
+            handleUpdateUser(user.id, { status: "APPROVED" }),
+          ),
         );
         alert(`อนุมัติผู้ใช้สำเร็จ ${pendingUsers.length} คน`);
       } catch (error) {
@@ -282,7 +274,7 @@ export default function AdminUsersPage() {
   // Reject all pending users
   const handleRejectAll = async () => {
     const pendingUsers = filteredUsers.filter(
-      (user) => user.status === "PENDING_APPROVAL"
+      (user) => user.status === "PENDING_APPROVAL",
     );
     if (
       pendingUsers.length > 0 &&
@@ -292,8 +284,8 @@ export default function AdminUsersPage() {
         // Update all pending users via API
         await Promise.all(
           pendingUsers.map((user) =>
-            handleUpdateUser(user.id, { status: "REJECTED" })
-          )
+            handleUpdateUser(user.id, { status: "REJECTED" }),
+          ),
         );
         alert(`ปฏิเสธผู้ใช้สำเร็จ ${pendingUsers.length} คน`);
       } catch (error) {
@@ -371,18 +363,18 @@ export default function AdminUsersPage() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       <div>
-        <h1 className="text-3xl font-bold text-[#81B214]">
+        <h1 className="text-2xl sm:text-3xl font-bold text-[#81B214]">
           จัดการบัญชีศิษย์เก่า
         </h1>
-        <p className="text-gray-600 dark:text-gray-400">
+        <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400">
           ยืนยันและจัดการบัญชีศิษย์เก่าที่ลงทะเบียนใหม่
         </p>
       </div>
 
       {/* Quick Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <Card className="dark:bg-gray-900/80 dark:border-gray-700">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
@@ -408,7 +400,7 @@ export default function AdminUsersPage() {
                 <p className="text-2xl font-bold text-green-600 dark:text-green-400">
                   {
                     users.filter(
-                      (u) => u.status === "APPROVED" && u.role === "alumni"
+                      (u) => u.status === "APPROVED" && u.role === "alumni",
                     ).length
                   }
                 </p>
@@ -451,12 +443,12 @@ export default function AdminUsersPage() {
 
       {/* Search and Filter */}
       <Card className="dark:bg-gray-900/80 dark:border-gray-700 shadow-xl border-0 bg-white/90">
-        <CardContent className="p-6">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="relative">
+        <CardContent className="p-4 sm:p-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+            <div className="relative md:col-span-1">
               <Search className="absolute left-3 top-3 h-5 w-5 text-[#81B214] dark:text-[#A3C957]" />
               <Input
-                placeholder="ค้นหาอีเมล ชื่อ นามสกุล สถานที่ทำงาน ตำแหน่งงาน"
+                placeholder="ค้นหาอีเมล / ชื่อ / รหัส"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="pl-11 py-3 rounded-2xl bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-base dark:text-gray-100 dark:placeholder-gray-400 focus:ring-2 focus:ring-[#81B214]/30 focus:border-[#81B214] transition"
@@ -485,7 +477,7 @@ export default function AdminUsersPage() {
                   | "PENDING_APPROVAL"
                   | "APPROVED"
                   | "REJECTED"
-                  | "SUSPENDED"
+                  | "SUSPENDED",
               ) => setFilterStatus(value)}
             >
               <SelectTrigger className="w-full rounded-2xl py-3 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-base dark:text-gray-100 focus:ring-2 focus:ring-[#81B214]/30 focus:border-[#81B214] transition">
@@ -503,18 +495,18 @@ export default function AdminUsersPage() {
 
           {/* Bulk Actions */}
           {selectedUsers.length > 0 && (
-            <div className="flex items-center gap-2 p-3 bg-gradient-to-r from-[#E2F9B8] via-[#F6FFDE] to-[#A3C957]/40 dark:from-[#A3C957]/20 dark:via-[#F6FFDE]/10 dark:to-[#81B214]/10 border border-[#A3C957] dark:border-[#81B214] rounded-2xl mt-6 shadow-sm">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-3 p-3 bg-gradient-to-r from-[#E2F9B8] via-[#F6FFDE] to-[#A3C957]/40 dark:from-[#A3C957]/20 dark:via-[#F6FFDE]/10 dark:to-[#81B214]/10 border border-[#A3C957] dark:border-[#81B214] rounded-2xl mt-4 shadow-sm">
               <span className="text-sm text-[#81B214] dark:text-[#A3C957] font-semibold">
                 เลือกแล้ว {selectedUsers.length} รายการ
               </span>
-              <div className="flex gap-2 ml-auto">
+              <div className="flex flex-wrap gap-2 sm:ml-auto">
                 <Button
                   size="sm"
                   variant="default"
                   onClick={handleBulkApprove}
                   className="rounded-xl bg-gradient-to-r from-[#81B214] to-[#50B003] text-white font-bold shadow hover:from-[#A3C957] hover:to-[#81B214]"
                 >
-                  <CheckCircle className="w-4 h-4 mr-2" />
+                  <CheckCircle className="w-4 h-4 mr-1.5" />
                   อนุมัติทั้งหมด
                 </Button>
                 <Button
@@ -523,7 +515,7 @@ export default function AdminUsersPage() {
                   onClick={handleBulkReject}
                   className="rounded-xl font-bold shadow"
                 >
-                  <XCircle className="w-4 h-4 mr-2" />
+                  <XCircle className="w-4 h-4 mr-1.5" />
                   ปฏิเสธทั้งหมด
                 </Button>
                 <Button
@@ -538,43 +530,45 @@ export default function AdminUsersPage() {
             </div>
           )}
 
-          <div className="mt-6 flex justify-between items-center">
+          <div className="mt-4 flex flex-wrap gap-2 justify-between items-center">
             {/* Bulk Actions for All Pending Users */}
-            <div className="flex gap-2">
+            <div className="flex flex-wrap gap-2">
               <Button
+                size="sm"
                 variant="default"
                 onClick={handleApproveAll}
                 className="rounded-xl bg-gradient-to-r from-[#81B214] to-[#50B003] text-white font-bold shadow hover:from-[#A3C957] hover:to-[#81B214]"
                 disabled={
                   filteredUsers.filter(
-                    (user) => user.status === "PENDING_APPROVAL"
+                    (user) => user.status === "PENDING_APPROVAL",
                   ).length === 0
                 }
               >
-                <CheckCircle className="w-4 h-4 mr-2" />
+                <CheckCircle className="w-4 h-4 mr-1.5" />
                 อนุมัติทั้งหมด (
                 {
                   filteredUsers.filter(
-                    (user) => user.status === "PENDING_APPROVAL"
+                    (user) => user.status === "PENDING_APPROVAL",
                   ).length
                 }
                 )
               </Button>
               <Button
+                size="sm"
                 variant="destructive"
                 onClick={handleRejectAll}
                 className="rounded-xl font-bold shadow"
                 disabled={
                   filteredUsers.filter(
-                    (user) => user.status === "PENDING_APPROVAL"
+                    (user) => user.status === "PENDING_APPROVAL",
                   ).length === 0
                 }
               >
-                <XCircle className="w-4 h-4 mr-2" />
+                <XCircle className="w-4 h-4 mr-1.5" />
                 ปฏิเสธทั้งหมด (
                 {
                   filteredUsers.filter(
-                    (user) => user.status === "PENDING_APPROVAL"
+                    (user) => user.status === "PENDING_APPROVAL",
                   ).length
                 }
                 )
@@ -583,6 +577,7 @@ export default function AdminUsersPage() {
 
             {/* Clear Filters */}
             <Button
+              size="sm"
               variant="outline"
               onClick={() => {
                 setSearchTerm("");
@@ -591,263 +586,210 @@ export default function AdminUsersPage() {
               }}
               className="rounded-xl border-[#A3C957] dark:border-[#81B214] text-[#81B214] dark:text-[#A3C957] font-semibold hover:bg-[#E2F9B8]/60 dark:hover:bg-[#A3C957]/20 bg-white/80 dark:bg-gray-800/80 shadow"
             >
-              <Filter className="mr-2 h-4 w-4" />
+              <Filter className="mr-1.5 h-4 w-4" />
               ล้างตัวกรอง
             </Button>
           </div>
         </CardContent>
       </Card>
 
-      {/* Users Table */}
-      <Card className="dark:bg-gray-900/80 dark:border-gray-700">
-        <CardContent className="p-0">
-          <Table>
-            <TableHeader>
-              <TableRow className="dark:border-gray-700">
-                {/* <TableHead className="w-12 dark:text-gray-300">
-                  <input
-                    type="checkbox"
-                    checked={
-                      selectedUsers.length === filteredUsers.length &&
-                      filteredUsers.length > 0
-                    }
-                    onChange={handleSelectAll}
-                    className="rounded border-gray-300 dark:border-gray-600 dark:bg-gray-700"
+      {/* Users Card Grid */}
+      {filteredUsers.length > 0 ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {filteredUsers.map((user) => (
+            <Card
+              key={user.id}
+              className="dark:bg-gray-900/80 dark:border-gray-700 shadow-md hover:shadow-lg transition-shadow duration-200 overflow-hidden"
+            >
+              {/* Card Header — Avatar + Name + Action */}
+              <div className="flex items-start justify-between p-4 pb-0">
+                <div className="flex items-center gap-3 min-w-0">
+                  <img
+                    src={user.image || "/placeholder-user.jpg"}
+                    alt={user.name}
+                    className="h-12 w-12 rounded-full object-cover shrink-0 border-2 border-[#A3C957]/40"
                   />
-                </TableHead> */}
-                <TableHead className="text-center dark:text-gray-300">
-                  ผู้ใช้งาน
-                </TableHead>
-                <TableHead className="text-center dark:text-gray-300">
-                  ศิษย์เก่า
-                </TableHead>
-                <TableHead className="text-center dark:text-gray-300">
-                  บทบาท
-                </TableHead>
-                <TableHead className="text-center dark:text-gray-300">
-                  สถานะ
-                </TableHead>
-
-                <TableHead className="text-center hidden lg:table-cell dark:text-gray-300">
-                  วันที่สร้าง
-                </TableHead>
-                <TableHead className="text-center dark:text-gray-300">
-                  Action
-                </TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {filteredUsers.length > 0 ? (
-                filteredUsers.map((user) => (
-                  <TableRow key={user.id} className="dark:border-gray-700">
-                    {/* <TableCell>
-                      <input
-                        type="checkbox"
-                        checked={selectedUsers.includes(user.id)}
-                        onChange={() => handleSelectUser(user.id)}
-                        className="rounded border-gray-300 dark:border-gray-600 dark:bg-gray-700"
-                      />
-                    </TableCell> */}
-                    <TableCell className="dark:text-gray-200">
-                      <div className="inline-flex items-center gap-3">
-                        <img
-                          src={user.image || "/placeholder-user.jpg"}
-                          alt={user.name}
-                          className="h-10 w-10 rounded-full"
-                        />
-                        <div>
-                          <div className="font-medium">{user.name}</div>
-                          <div className="text-gray-500 text-sm">
-                            {user.email}
-                          </div>
-                        </div>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      {user.alumni_profiles.length > 0 ? (
-                        user.alumni_profiles.map((profile: any) => (
-                          <div key={profile.id}>
-                            <div>{profile.programname}</div>
-                            <div>
-                              {profile.studentcode} (รุ่นที่{" "}
-                              {AdmitYear(profile.admit_year)})
-                            </div>
-                          </div>
-                        ))
-                      ) : (
-                        <div className="text-gray-500">
-                          ไม่มีข้อมูลศิษย์เก่า
-                        </div>
-                      )}
-                    </TableCell>
-                    <TableCell>
-                      <Badge
-                        variant="secondary"
-                        className={
-                          user.role === "admin"
-                            ? "text-orange-700 bg-orange-200"
-                            : "text-purple-700 bg-purple-200"
-                        }
-                      >
-                        {user.role === "admin" ? "ผู้ดูแลระบบ" : "ศิษย์เก่า"}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex items-center gap-2">
-                        {getStatusIcon(user.status)}
-                        <Badge className={getStatusBadgeVariant(user.status)}>
-                          {user.status === "PENDING_APPROVAL" && "รออนุมัติ"}
-                          {user.status === "APPROVED" && "อนุมัติแล้ว"}
-                          {user.status === "REJECTED" && "ถูกปฏิเสธ"}
-                          {user.status === "SUSPENDED" && "ถูกระงับ"}
-                          {user.status === "UNREGISTERED" &&
-                            "ยังไม่ได้ลงทะเบียน"}
-                        </Badge>
-                      </div>
-                    </TableCell>
-
-                    <TableCell className="hidden lg:table-cell dark:text-gray-300">
-                      {new Date(user.created_at).toLocaleDateString("th-TH")}
-                    </TableCell>
-                    <TableCell className="text-center">
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button
-                            variant="ghost"
-                            className="h-8 w-8 p-0 dark:hover:bg-gray-700"
-                          >
-                            <span className="sr-only">Open menu</span>
-                            <MoreHorizontal className="h-4 w-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent
-                          align="end"
-                          className="dark:bg-gray-900/80 dark:border-gray-700"
-                        >
-                          <DropdownMenuItem
-                            onClick={() =>
-                              setActionDialog({
-                                open: true,
-                                type: "details",
-                                user,
-                              })
-                            }
-                            className="dark:text-gray-200 dark:hover:bg-gray-700"
-                          >
-                            ดูรายละเอียด
-                          </DropdownMenuItem>
-                          <DropdownMenuSeparator className="dark:bg-gray-700" />
-                          {user.status !== "APPROVED" && (
-                            <DropdownMenuItem
-                              onClick={() =>
-                                setActionDialog({
-                                  open: true,
-                                  type: "approve",
-                                  user,
-                                })
-                              }
-                              className="dark:text-gray-200 dark:hover:bg-gray-700"
-                            >
-                              <CheckCircle className="mr-2 h-4 w-4 text-green-600 dark:text-green-400" />{" "}
-                              อนุมัติ
-                            </DropdownMenuItem>
-                          )}
-
-                          {user.status !== "REJECTED" && (
-                            <DropdownMenuItem
-                              onClick={() =>
-                                setActionDialog({
-                                  open: true,
-                                  type: "reject",
-                                  user,
-                                })
-                              }
-                              className="dark:text-gray-200 dark:hover:bg-gray-700"
-                            >
-                              <XCircle className="mr-2 h-4 w-4 text-red-600 dark:text-red-400" />{" "}
-                              ปฏิเสธ
-                            </DropdownMenuItem>
-                          )}
-                          {user.status !== "SUSPENDED" && (
-                            <DropdownMenuItem
-                              onClick={() =>
-                                setActionDialog({
-                                  open: true,
-                                  type: "suspend",
-                                  user,
-                                })
-                              }
-                              className="dark:text-gray-200 dark:hover:bg-gray-700"
-                            >
-                              <Ban className="mr-2 h-4 w-4 text-gray-600 dark:text-gray-400" />{" "}
-                              ระงับ
-                            </DropdownMenuItem>
-                          )}
-                          <DropdownMenuSeparator className="dark:bg-gray-700" />
-                          {user.role === "alumni" && (
-                            <DropdownMenuItem
-                              onClick={() =>
-                                setActionDialog({
-                                  open: true,
-                                  type: "role",
-                                  user,
-                                  newRole: "admin",
-                                })
-                              }
-                              className="dark:text-gray-200 dark:hover:bg-gray-700"
-                            >
-                              <UserCheck className="mr-2 h-4 w-4" /> เปลี่ยนเป็น
-                              Admin
-                            </DropdownMenuItem>
-                          )}
-                          {user.role === "admin" && (
-                            <DropdownMenuItem
-                              onClick={() =>
-                                setActionDialog({
-                                  open: true,
-                                  type: "role",
-                                  user,
-                                  newRole: "alumni",
-                                })
-                              }
-                              className="dark:text-gray-200 dark:hover:bg-gray-700"
-                            >
-                              <UserX className="mr-2 h-4 w-4" /> เปลี่ยนเป็น
-                              ศิษย์เก่า
-                            </DropdownMenuItem>
-                          )}
-                          <DropdownMenuSeparator className="dark:bg-gray-700" />
-                          <DropdownMenuItem
-                            className="text-red-600 dark:text-red-400 dark:hover:bg-gray-700"
-                            onClick={() =>
-                              setActionDialog({
-                                open: true,
-                                type: "delete",
-                                user,
-                              })
-                            }
-                          >
-                            <Trash2 className="mr-2 h-4 w-4" /> ลบผู้ใช้
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </TableCell>
-                  </TableRow>
-                ))
-              ) : (
-                <TableRow className="dark:border-gray-700">
-                  <TableCell
-                    colSpan={8}
-                    className="h-24 text-center text-gray-500 dark:text-gray-400"
+                  <div className="min-w-0">
+                    <div className="font-semibold text-gray-800 dark:text-gray-100 truncate">
+                      {user.name || "—"}
+                    </div>
+                    <div className="text-xs text-gray-500 dark:text-gray-400 truncate">
+                      {user.email}
+                    </div>
+                  </div>
+                </div>
+                {/* Action Dropdown */}
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      className="h-8 w-8 p-0 shrink-0 dark:hover:bg-gray-700"
+                    >
+                      <span className="sr-only">Open menu</span>
+                      <MoreHorizontal className="h-4 w-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent
+                    align="end"
+                    className="dark:bg-gray-900/80 dark:border-gray-700"
                   >
-                    ไม่พบผู้ใช้ที่ตรงกับเงื่อนไข
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card>
+                    <DropdownMenuItem
+                      onClick={() =>
+                        setActionDialog({ open: true, type: "details", user })
+                      }
+                      className="dark:text-gray-200 dark:hover:bg-gray-700"
+                    >
+                      ดูรายละเอียด
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator className="dark:bg-gray-700" />
+                    {user.status !== "APPROVED" && (
+                      <DropdownMenuItem
+                        onClick={() =>
+                          setActionDialog({ open: true, type: "approve", user })
+                        }
+                        className="dark:text-gray-200 dark:hover:bg-gray-700"
+                      >
+                        <CheckCircle className="mr-2 h-4 w-4 text-green-600 dark:text-green-400" />
+                        อนุมัติ
+                      </DropdownMenuItem>
+                    )}
+                    {user.status !== "REJECTED" && (
+                      <DropdownMenuItem
+                        onClick={() =>
+                          setActionDialog({ open: true, type: "reject", user })
+                        }
+                        className="dark:text-gray-200 dark:hover:bg-gray-700"
+                      >
+                        <XCircle className="mr-2 h-4 w-4 text-red-600 dark:text-red-400" />
+                        ปฏิเสธ
+                      </DropdownMenuItem>
+                    )}
+                    {user.status !== "SUSPENDED" && (
+                      <DropdownMenuItem
+                        onClick={() =>
+                          setActionDialog({ open: true, type: "suspend", user })
+                        }
+                        className="dark:text-gray-200 dark:hover:bg-gray-700"
+                      >
+                        <Ban className="mr-2 h-4 w-4 text-gray-600 dark:text-gray-400" />
+                        ระงับ
+                      </DropdownMenuItem>
+                    )}
+                    <DropdownMenuSeparator className="dark:bg-gray-700" />
+                    {user.role === "alumni" && (
+                      <DropdownMenuItem
+                        onClick={() =>
+                          setActionDialog({
+                            open: true,
+                            type: "role",
+                            user,
+                            newRole: "admin",
+                          })
+                        }
+                        className="dark:text-gray-200 dark:hover:bg-gray-700"
+                      >
+                        <UserCheck className="mr-2 h-4 w-4" />
+                        เปลี่ยนเป็น Admin
+                      </DropdownMenuItem>
+                    )}
+                    {user.role === "admin" && (
+                      <DropdownMenuItem
+                        onClick={() =>
+                          setActionDialog({
+                            open: true,
+                            type: "role",
+                            user,
+                            newRole: "alumni",
+                          })
+                        }
+                        className="dark:text-gray-200 dark:hover:bg-gray-700"
+                      >
+                        <UserX className="mr-2 h-4 w-4" />
+                        เปลี่ยนเป็น ศิษย์เก่า
+                      </DropdownMenuItem>
+                    )}
+                    <DropdownMenuSeparator className="dark:bg-gray-700" />
+                    <DropdownMenuItem
+                      className="text-red-600 dark:text-red-400 dark:hover:bg-gray-700"
+                      onClick={() =>
+                        setActionDialog({ open: true, type: "delete", user })
+                      }
+                    >
+                      <Trash2 className="mr-2 h-4 w-4" />
+                      ลบผู้ใช้
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
+
+              {/* Badges Row */}
+              <div className="flex flex-wrap items-center gap-2 px-4 pt-3">
+                <Badge
+                  variant="secondary"
+                  className={
+                    user.role === "admin"
+                      ? "text-orange-700 bg-orange-100 dark:bg-orange-900/40 dark:text-orange-300"
+                      : "text-purple-700 bg-purple-100 dark:bg-purple-900/40 dark:text-purple-300"
+                  }
+                >
+                  {user.role === "admin" ? "ผู้ดูแลระบบ" : "ศิษย์เก่า"}
+                </Badge>
+                <div className="flex items-center gap-1">
+                  {getStatusIcon(user.status)}
+                  <Badge className={getStatusBadgeVariant(user.status)}>
+                    {user.status === "PENDING_APPROVAL" && "รออนุมัติ"}
+                    {user.status === "APPROVED" && "อนุมัติแล้ว"}
+                    {user.status === "REJECTED" && "ถูกปฏิเสธ"}
+                    {user.status === "SUSPENDED" && "ถูกระงับ"}
+                    {user.status === "UNREGISTERED" && "ยังไม่ได้ลงทะเบียน"}
+                  </Badge>
+                </div>
+              </div>
+
+              {/* Alumni Profile Info */}
+              <CardContent className="px-4 pt-3 pb-4">
+                {user.alumni_profiles.length > 0 ? (
+                  <div className="space-y-1">
+                    {user.alumni_profiles.map((profile: any) => (
+                      <div
+                        key={profile.id}
+                        className="text-sm bg-gray-50 dark:bg-gray-800/60 rounded-xl px-3 py-2 border border-gray-100 dark:border-gray-700"
+                      >
+                        <div className="font-medium text-gray-700 dark:text-gray-200 truncate">
+                          {profile.programname}
+                        </div>
+                        <div className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+                          {profile.studentcode} · รุ่นที่{" "}
+                          {AdmitYear(profile.admit_year)}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-sm text-gray-400 dark:text-gray-500 italic">
+                    ไม่มีข้อมูลศิษย์เก่า
+                  </p>
+                )}
+
+                {/* Footer — Date */}
+                <div className="mt-3 pt-3 border-t border-gray-100 dark:border-gray-700 flex items-center justify-between text-xs text-gray-400 dark:text-gray-500">
+                  <span>วันที่สร้าง</span>
+                  <span>
+                    {new Date(user.created_at).toLocaleDateString("th-TH")}
+                  </span>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      ) : (
+        <Card className="dark:bg-gray-900/80 dark:border-gray-700">
+          <CardContent className="flex flex-col items-center justify-center py-16 text-gray-400 dark:text-gray-500">
+            <Users className="h-12 w-12 mb-3 opacity-30" />
+            <p className="text-base font-medium">ไม่พบผู้ใช้ที่ตรงกับเงื่อนไข</p>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Action Dialog */}
       <Dialog
@@ -863,7 +805,7 @@ export default function AdminUsersPage() {
           }
         }}
       >
-        <DialogContent className="dark:bg-gray-900/80 dark:border-gray-700 max-w-2xl">
+        <DialogContent className="dark:bg-gray-900/80 dark:border-gray-700 w-[calc(100%-2rem)] max-w-lg sm:max-w-2xl rounded-2xl">
           <DialogHeader>
             <DialogTitle className="dark:text-gray-200">
               {actionDialog.type === "details" && "รายละเอียดผู้ใช้"}
@@ -873,7 +815,7 @@ export default function AdminUsersPage() {
               {actionDialog.type === "delete" && "ยืนยันการลบ"}
               {actionDialog.type === "role" && "ยืนยันการเปลี่ยนบทบาท"}
             </DialogTitle>
-            <DialogDescription className="dark:text-gray-400">
+            <DialogDescription className="dark:text-gray-400 break-words">
               {actionDialog.type === "details" &&
                 `แสดงรายละเอียดของ ${actionDialog.user?.email}`}
               {actionDialog.type === "approve" &&
@@ -893,7 +835,7 @@ export default function AdminUsersPage() {
 
           {actionDialog.type === "details" && actionDialog.user && (
             <div className="space-y-4 dark:text-gray-200">
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="text-sm font-medium text-gray-600 dark:text-gray-400">
                     อีเมล
@@ -930,7 +872,7 @@ export default function AdminUsersPage() {
                   </label>
                   <p className="text-sm">
                     {new Date(actionDialog.user.created_at).toLocaleDateString(
-                      "th-TH"
+                      "th-TH",
                     )}
                   </p>
                 </div>
@@ -954,9 +896,10 @@ export default function AdminUsersPage() {
             </div>
           )}
 
-          <DialogFooter>
+          <DialogFooter className="flex-col-reverse sm:flex-row gap-2">
             {actionDialog.type === "details" ? (
               <Button
+                className="w-full sm:w-auto"
                 onClick={() => {
                   setActionDialog({
                     open: false,
@@ -975,6 +918,7 @@ export default function AdminUsersPage() {
               <>
                 <Button
                   variant="outline"
+                  className="w-full sm:w-auto"
                   onClick={() => {
                     setActionDialog({
                       open: false,
@@ -994,11 +938,12 @@ export default function AdminUsersPage() {
                     actionDialog.type === "delete" ? "destructive" : "default"
                   }
                   onClick={executeAction}
-                  className={
+                  className={[
+                    "w-full sm:w-auto",
                     actionDialog.type === "approve"
                       ? "bg-green-600 hover:bg-green-700"
-                      : ""
-                  }
+                      : "",
+                  ].join(" ")}
                 >
                   {actionDialog.type === "approve" && "อนุมัติ"}
                   {actionDialog.type === "reject" && "ปฏิเสธ"}
