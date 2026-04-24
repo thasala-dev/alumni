@@ -34,6 +34,7 @@ import {
 } from "lucide-react";
 import { useAuth } from "@/contexts/auth-context";
 import LocationMap from "@/components/location-map-direct";
+import Link from "next/link";
 
 const demoPrivacySettings: any = {
   profile_privacy: "alumni_only",
@@ -237,6 +238,15 @@ export default function SettingsPage() {
             บัญชีของคุณไม่ใช่บัญชีศิษย์เก่า
             จึงไม่สามารถใช้งานหน้าตั้งค่าโปรไฟล์ได้
           </p>
+          <p className="text-lg text-gray-600 dark:text-gray-400 mb-6 max-w-md mx-auto">
+            หากคุณเป็นศิษย์เก่า กรุณากด{" "}
+            <Link href="/auth/verify-identity">
+              <span className="text-blue-600 dark:text-blue-400">
+                /auth/verify-identity
+              </span>
+            </Link>
+            เพื่อลงทะเบียนยืนยันตัวตน
+          </p>
         </div>
       </div>
     );
@@ -253,31 +263,28 @@ export default function SettingsPage() {
       {/* Tabs */}
       <div className="flex flex-wrap gap-2 border-b border-gray-200 dark:border-gray-700 mb-4 bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm rounded-lg p-2">
         <button
-          className={`px-6 py-3 font-medium rounded-lg transition-all duration-200 focus:outline-none transform hover:scale-105 ${
-            tab === "profile"
-              ? "bg-[#81B214] text-white shadow-lg shadow-[#81B214]/25"
-              : "text-gray-600 dark:text-gray-300 hover:text-[#81B214] hover:bg-[#81B214]/10"
-          }`}
+          className={`px-6 py-3 font-medium rounded-lg transition-all duration-200 focus:outline-none transform hover:scale-105 ${tab === "profile"
+            ? "bg-[#81B214] text-white shadow-lg shadow-[#81B214]/25"
+            : "text-gray-600 dark:text-gray-300 hover:text-[#81B214] hover:bg-[#81B214]/10"
+            }`}
           onClick={() => setTab("profile")}
         >
           ข้อมูลโปรไฟล์
         </button>
         <button
-          className={`px-6 py-3 font-medium rounded-lg transition-all duration-200 focus:outline-none transform hover:scale-105 ${
-            tab === "privacy"
-              ? "bg-[#81B214] text-white shadow-lg shadow-[#81B214]/25"
-              : "text-gray-600 dark:text-gray-300 hover:text-[#81B214] hover:bg-[#81B214]/10"
-          }`}
+          className={`px-6 py-3 font-medium rounded-lg transition-all duration-200 focus:outline-none transform hover:scale-105 ${tab === "privacy"
+            ? "bg-[#81B214] text-white shadow-lg shadow-[#81B214]/25"
+            : "text-gray-600 dark:text-gray-300 hover:text-[#81B214] hover:bg-[#81B214]/10"
+            }`}
           onClick={() => setTab("privacy")}
         >
           ความเป็นส่วนตัว
         </button>
         <button
-          className={`px-6 py-3 font-medium rounded-lg transition-all duration-200 focus:outline-none transform hover:scale-105 ${
-            tab === "notification"
-              ? "bg-[#81B214] text-white shadow-lg shadow-[#81B214]/25"
-              : "text-gray-600 dark:text-gray-300 hover:text-[#81B214] hover:bg-[#81B214]/10"
-          }`}
+          className={`px-6 py-3 font-medium rounded-lg transition-all duration-200 focus:outline-none transform hover:scale-105 ${tab === "notification"
+            ? "bg-[#81B214] text-white shadow-lg shadow-[#81B214]/25"
+            : "text-gray-600 dark:text-gray-300 hover:text-[#81B214] hover:bg-[#81B214]/10"
+            }`}
           onClick={() => setTab("notification")}
         >
           การแจ้งเตือน
