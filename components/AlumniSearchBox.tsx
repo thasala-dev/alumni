@@ -43,25 +43,25 @@ export default function AlumniSearchBox() {
     query.trim() === "" || loading
       ? []
       : alumni
-          .filter((a) => {
-            const fullName = `${a.first_name} ${a.last_name}`;
-            const searchQuery = query.toLowerCase();
+        .filter((a) => {
+          const fullName = `${a.first_name} ${a.last_name}`;
+          const searchQuery = query.toLowerCase();
 
-            return (
-              fullName.toLowerCase().includes(searchQuery) ||
-              (a.nickname && a.nickname.toLowerCase().includes(searchQuery)) ||
-              (a.programname &&
-                a.programname.toLowerCase().includes(searchQuery)) ||
-              (a.current_company &&
-                a.current_company.toLowerCase().includes(searchQuery)) ||
-              (a.current_position &&
-                a.current_position.toLowerCase().includes(searchQuery)) ||
-              (a.current_province &&
-                a.current_province.toLowerCase().includes(searchQuery)) ||
-              (a.admit_year && String(a.admit_year).includes(searchQuery))
-            );
-          })
-          .slice(0, 10); // จำกัดผลลัพธ์ไม่เกิน 10 รายการ
+          return (
+            fullName.toLowerCase().includes(searchQuery) ||
+            (a.nickname && a.nickname.toLowerCase().includes(searchQuery)) ||
+            (a.programname &&
+              a.programname.toLowerCase().includes(searchQuery)) ||
+            (a.current_company &&
+              a.current_company.toLowerCase().includes(searchQuery)) ||
+            (a.current_position &&
+              a.current_position.toLowerCase().includes(searchQuery)) ||
+            (a.current_province &&
+              a.current_province.toLowerCase().includes(searchQuery)) ||
+            (a.admit_year && String(a.admit_year).includes(searchQuery))
+          );
+        })
+        .slice(0, 10); // จำกัดผลลัพธ์ไม่เกิน 10 รายการ
 
   return (
     <div className="relative w-full">
@@ -108,11 +108,8 @@ export default function AlumniSearchBox() {
                       `${alumniProfile.programname}`}
                     {alumniProfile.admit_year &&
                       ` • รุ่น ${alumniProfile.admit_year}`}
-                    {alumniProfile.current_company && (
-                      <div className="truncate max-w-64">
-                        {alumniProfile.current_position} •{" "}
-                        {alumniProfile.current_company}
-                      </div>
+                    {alumniProfile.current_position && (
+                      <div>{alumniProfile.current_position}</div>
                     )}
                   </div>
                 </div>
