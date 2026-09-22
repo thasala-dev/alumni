@@ -2,9 +2,8 @@
 
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useTheme } from "next-themes";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   Sheet,
   SheetContent,
@@ -30,14 +29,16 @@ import {
   Menu,
   UserPlus,
   ChevronDown,
-  Bell,
   Sun,
   Moon,
-  Monitor,
   Home,
   ChartSpline,
+  Send,
 } from "lucide-react";
+import { Switch } from "@/components/ui/switch";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useAuth } from "@/contexts/auth-context";
+import { timeAgo } from "@/lib/utils";
 
 export default function NavbarMenuItems() {
   const { user, isLoading, logout } = useAuth();
@@ -51,7 +52,9 @@ export default function NavbarMenuItems() {
     router.push(href);
   };
 
-  const [notifications, setNotifications] = useState([]);
+  const [conversations, setConversations] = useState<any[]>([]);
+  const [totalUnread, setTotalUnread] = useState(0);
+  const dmPollRef = useRef<NodeJS.Timeout | null>(null);
 
   const router = useRouter();
   const pathname = usePathname();
@@ -59,6 +62,24 @@ export default function NavbarMenuItems() {
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  const fetchConversations = async () => {
+    if (!user?.id) return;
+    try {
+      const res = await fetch(`/api/messages?userId=${user.id}`);
+      if (!res.ok) return;
+      const data = await res.json();
+      setConversations(data.conversations || []);
+      setTotalUnread((data.conversations || []).reduce((sum: number, c: any) => sum + c.unread, 0));
+    } catch {}
+  };
+
+  useEffect(() => {
+    if (!user?.id) return;
+    fetchConversations();
+    dmPollRef.current = setInterval(fetchConversations, 10000);
+    return () => { if (dmPollRef.current) clearInterval(dmPollRef.current); };
+  }, [user?.id]);
 
   const navigation = [
     // { name: "หน้าหลัก", href: "/dashboard", icon: Home },
@@ -93,27 +114,8 @@ export default function NavbarMenuItems() {
     router.push("/auth/login");
   };
 
-  const getThemeIcon = () => {
-    if (!mounted)
-      return (
-        <Monitor className="h-5 w-5 text-gray-600 dark:text-gray-300 group-hover:text-[#81B214] dark:group-hover:text-[#81B214] transition-colors duration-300" />
-      );
-
-    switch (theme) {
-      case "light":
-        return (
-          <Sun className="h-5 w-5 text-gray-600 dark:text-gray-300 group-hover:text-[#81B214] dark:group-hover:text-[#81B214] transition-colors duration-300" />
-        );
-      case "dark":
-        return (
-          <Moon className="h-5 w-5 text-gray-600 dark:text-gray-300 group-hover:text-[#81B214] dark:group-hover:text-[#81B214] transition-colors duration-300" />
-        );
-      default:
-        return (
-          <Monitor className="h-5 w-5 text-gray-600 dark:text-gray-300 group-hover:text-[#81B214] dark:group-hover:text-[#81B214] transition-colors duration-300" />
-        );
-    }
-  };
+  const isDark = mounted && theme === "dark";
+  const toggleTheme = () => setTheme(isDark ? "light" : "dark");
 
   return (
     <nav className="sticky top-0 z-50 w-full bg-white/80 dark:bg-gray-900/80 backdrop-blur-lg border-b border-gray-200/50 dark:border-neutral-700/50 shadow-lg supports-[backdrop-filter]:backdrop-blur-lg">
@@ -169,104 +171,94 @@ export default function NavbarMenuItems() {
             );
           })}
 
+          {/* DM Dropdown */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <button className="bg-gray-100 dark:bg-[#252728] relative p-3 rounded-2xl hover:text-[#81B214] hover:bg-[#81B214]/10 transition-all duration-300 group">
-                <Bell className="h-5 w-5 text-gray-600 dark:text-gray-300 group-hover:text-[#81B214] dark:group-hover:text-[#81B214] transition-colors duration-300" />
-                {notifications.length > 0 && (
-                  <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full px-1.5 py-0.5">
-                    {notifications.length}
+                <Send className="h-5 w-5 text-gray-600 dark:text-gray-300 group-hover:text-[#81B214] dark:group-hover:text-[#81B214] transition-colors duration-300" />
+                {totalUnread > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold rounded-full min-w-[18px] h-[18px] flex items-center justify-center px-1">
+                    {totalUnread > 99 ? "99+" : totalUnread}
                   </span>
                 )}
               </button>
             </DropdownMenuTrigger>
             <DropdownMenuContent
               align="end"
-              className="w-80 p-0 rounded-2xl shadow-2xl bg-white/95 dark:bg-[#252728]/95 backdrop-blur-xl border border-gray-200/50 dark:border-neutral-700/50"
+              className="w-80 p-0 rounded-2xl shadow-2xl bg-white/95 dark:bg-[#252728]/95 backdrop-blur-xl border border-gray-200/50 dark:border-neutral-700/50 overflow-hidden"
             >
+              <div className="px-4 py-3 border-b border-gray-100 dark:border-neutral-700 flex items-center justify-between">
+                <span className="font-semibold text-gray-900 dark:text-gray-100">ข้อความ</span>
+                {totalUnread > 0 && (
+                  <span className="text-xs bg-red-100 dark:bg-red-900/40 text-red-600 dark:text-red-400 px-2 py-0.5 rounded-full font-medium">
+                    {totalUnread} ใหม่
+                  </span>
+                )}
+              </div>
               <div className="max-h-80 overflow-y-auto divide-y divide-gray-100 dark:divide-neutral-700">
-                {notifications.map((n: any, inx) => (
-                  <DropdownMenuItem
-                    key={inx}
-                    className="px-6 py-4 text-sm hover:bg-[#81B214]/10/50 dark:hover:bg-neutral-800/50 transition-colors duration-200"
-                  >
-                    <div className="flex items-start gap-3">
-                      <div className="h-2 w-2 mt-2 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full shadow-sm" />
-                      <div className="flex-1">
-                        <p className="text-gray-900 dark:text-gray-100 leading-relaxed">
-                          {n.message}
-                        </p>
-                        <div className="text-xs text-gray-500 dark:text-gray-400 mt-1 flex items-center gap-1">
-                          <div className="h-1 w-1 bg-gray-400 rounded-full"></div>
-                          เมื่อสักครู่
-                        </div>
+                {conversations.map((conv) => (
+                  <DropdownMenuItem key={conv.user.id} asChild>
+                    <Link
+                      href={`/dashboard/messages/${conv.user.id}`}
+                      className="flex items-center gap-3 px-4 py-3 hover:bg-[#81B214]/5 dark:hover:bg-neutral-800/50 transition-colors cursor-pointer"
+                    >
+                      <div className="relative shrink-0">
+                        <Avatar className="h-9 w-9">
+                          <AvatarImage src={conv.user.image} />
+                          <AvatarFallback className="bg-[#81B214] text-white text-sm font-bold">
+                            {conv.user.name?.charAt(0)}
+                          </AvatarFallback>
+                        </Avatar>
+                        {conv.unread > 0 && (
+                          <span className="absolute -top-0.5 -right-0.5 bg-red-500 rounded-full w-2.5 h-2.5 border-2 border-white dark:border-[#252728]" />
+                        )}
                       </div>
-                    </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center justify-between gap-2">
+                          <span className={`text-sm truncate ${conv.unread > 0 ? "font-semibold text-gray-900 dark:text-gray-100" : "font-medium text-gray-700 dark:text-gray-300"}`}>
+                            {conv.user.name}
+                          </span>
+                          <span className="text-[10px] text-gray-400 dark:text-gray-500 shrink-0">
+                            {timeAgo(conv.lastAt)}
+                          </span>
+                        </div>
+                        <p className={`text-xs truncate mt-0.5 ${conv.unread > 0 ? "text-gray-700 dark:text-gray-300" : "text-gray-400 dark:text-gray-500"}`}>
+                          {conv.lastMessage}
+                        </p>
+                      </div>
+                    </Link>
                   </DropdownMenuItem>
                 ))}
-
-                {notifications.length === 0 && (
-                  <div className="px-6 py-6 text-center text-gray-500 dark:text-gray-400">
-                    ไม่มีการแจ้งเตือน
+                {conversations.length === 0 && (
+                  <div className="px-6 py-8 text-center text-gray-400 dark:text-gray-500">
+                    <Send className="h-8 w-8 mx-auto mb-2 opacity-30" />
+                    <p className="text-sm">ยังไม่มีข้อความ</p>
                   </div>
                 )}
               </div>
-              {/* <div className="border-t border-gray-100 dark:border-neutral-700 px-6 py-3 text-center bg-gray-50/50 dark:bg-neutral-800/30">
+              <div className="border-t border-gray-100 dark:border-neutral-700 px-4 py-2.5 bg-gray-50/50 dark:bg-neutral-800/30">
                 <Link
-                  href="/dashboard/news"
-                  className="text-[#81B214] dark:text-[#81B214] hover:text-blue-700 dark:hover:text-blue-300 text-sm font-medium transition-colors duration-200"
+                  href="/dashboard/messages"
+                  className="text-[#81B214] text-sm font-medium flex items-center justify-center gap-1 hover:underline"
                 >
-                  ดูการแจ้งเตือนทั้งหมด →
+                  ดูข้อความทั้งหมด →
                 </Link>
-              </div> */}
+              </div>
             </DropdownMenuContent>
           </DropdownMenu>
 
           {/* Theme Toggle */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <button className="bg-gray-100 dark:bg-[#252728] relative p-3 rounded-2xl hover:text-[#81B214] hover:bg-[#81B214]/10 transition-all duration-300 group">
-                {getThemeIcon()}
-              </button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent
-              align="end"
-              className="w-48 rounded-2xl shadow-2xl bg-white/95 dark:bg-[#252728]/95 backdrop-blur-xl border border-gray-200/50 dark:border-neutral-700/50 p-2"
-            >
-              <DropdownMenuItem
-                onClick={() => setTheme("light")}
-                className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-[#81B214]/10 dark:hover:bg-neutral-800/50 transition-all duration-200"
-              >
-                <Sun className="h-4 w-4 text-gray-600 dark:text-gray-300" />
-                <span className="text-gray-900 dark:text-gray-100">สว่าง</span>
-                {theme === "light" && mounted && (
-                  <div className="ml-auto w-2 h-2 bg-[#81B214] rounded-full"></div>
-                )}
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                onClick={() => setTheme("dark")}
-                className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-[#81B214]/10 dark:hover:bg-neutral-800/50 transition-all duration-200"
-              >
-                <Moon className="h-4 w-4 text-gray-600 dark:text-gray-300" />
-                <span className="text-gray-900 dark:text-gray-100">มืด</span>
-                {theme === "dark" && mounted && (
-                  <div className="ml-auto w-2 h-2 bg-[#81B214] rounded-full"></div>
-                )}
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                onClick={() => setTheme("system")}
-                className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-[#81B214]/10 dark:hover:bg-neutral-800/50 transition-all duration-200"
-              >
-                <Monitor className="h-4 w-4 text-gray-600 dark:text-gray-300" />
-                <span className="text-gray-900 dark:text-gray-100">
-                  ตามระบบ
-                </span>
-                {theme === "system" && mounted && (
-                  <div className="ml-auto w-2 h-2 bg-[#81B214] rounded-full"></div>
-                )}
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <button
+            onClick={toggleTheme}
+            className="bg-gray-100 dark:bg-[#252728] relative p-3 rounded-2xl hover:bg-[#81B214]/10 transition-all duration-300 group"
+            title={isDark ? "เปลี่ยนเป็นโหมดสว่าง" : "เปลี่ยนเป็นโหมดมืด"}
+          >
+            {isDark ? (
+              <Moon className="h-5 w-5 text-gray-600 dark:text-gray-300 group-hover:text-[#81B214] dark:group-hover:text-[#81B214] transition-colors duration-300" />
+            ) : (
+              <Sun className="h-5 w-5 text-gray-600 dark:text-gray-300 group-hover:text-[#81B214] dark:group-hover:text-[#81B214] transition-colors duration-300" />
+            )}
+          </button>
 
           {/* User avatar */}
           <DropdownMenu>
@@ -375,52 +367,15 @@ export default function NavbarMenuItems() {
                 </button>
                 {/* Theme Toggle in Mobile */}
                 <div className="mt-4 pt-4 border-t border-gray-200 dark:border-neutral-700">
-                  <div className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-3 px-4">
-                    ธีมการแสดงผล
-                  </div>
-                  <div className="flex flex-col gap-2">
-                    <button
-                      onClick={() => setTheme("light")}
-                      className={`flex items-center gap-4 px-4 py-3 rounded-2xl font-medium transition-all duration-300 ${
-                        theme === "light" && mounted
-                          ? "bg-blue-50 dark:bg-blue-900/20 text-[#81B214] dark:text-[#81B214]"
-                          : "text-gray-800 dark:text-gray-100 hover:bg-[#81B214]/10 dark:hover:bg-neutral-800/50"
-                      }`}
-                    >
-                      <Sun className="h-5 w-5" />
-                      <span>สว่าง</span>
-                      {theme === "light" && mounted && (
-                        <div className="ml-auto w-2 h-2 bg-[#81B214] rounded-full"></div>
-                      )}
-                    </button>
-                    <button
-                      onClick={() => setTheme("dark")}
-                      className={`flex items-center gap-4 px-4 py-3 rounded-2xl font-medium transition-all duration-300 ${
-                        theme === "dark" && mounted
-                          ? "bg-blue-50 dark:bg-blue-900/20 text-[#81B214] dark:text-[#81B214]"
-                          : "text-gray-800 dark:text-gray-100 hover:bg-[#81B214]/10 dark:hover:bg-neutral-800/50"
-                      }`}
-                    >
-                      <Moon className="h-5 w-5" />
-                      <span>มืด</span>
-                      {theme === "dark" && mounted && (
-                        <div className="ml-auto w-2 h-2 bg-[#81B214] rounded-full"></div>
-                      )}
-                    </button>
-                    <button
-                      onClick={() => setTheme("system")}
-                      className={`flex items-center gap-4 px-4 py-3 rounded-2xl font-medium transition-all duration-300 ${
-                        theme === "system" && mounted
-                          ? "bg-blue-50 dark:bg-blue-900/20 text-[#81B214] dark:text-[#81B214]"
-                          : "text-gray-800 dark:text-gray-100 hover:bg-[#81B214]/10 dark:hover:bg-neutral-800/50"
-                      }`}
-                    >
-                      <Monitor className="h-5 w-5" />
-                      <span>ตามระบบ</span>
-                      {theme === "system" && mounted && (
-                        <div className="ml-auto w-2 h-2 bg-[#81B214] rounded-full"></div>
-                      )}
-                    </button>
+                  <div
+                    onClick={toggleTheme}
+                    className="flex items-center justify-between px-4 py-3 rounded-2xl cursor-pointer hover:bg-[#81B214]/10 dark:hover:bg-neutral-800/50 transition-all duration-300"
+                  >
+                    <div className="flex items-center gap-4 text-gray-800 dark:text-gray-100 font-medium">
+                      {isDark ? <Moon className="h-5 w-5" /> : <Sun className="h-5 w-5" />}
+                      <span>{isDark ? "โหมดมืด" : "โหมดสว่าง"}</span>
+                    </div>
+                    <Switch checked={isDark} onCheckedChange={toggleTheme} className="data-[state=checked]:bg-[#81B214]" />
                   </div>
                 </div>
 

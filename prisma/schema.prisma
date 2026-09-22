@@ -140,6 +140,23 @@ model User {
   news                  news[]
   notification_settings notification_settings[]
   work_history          work_history[]
+  messages_sent         direct_messages[]       @relation("MessagesSent")
+  messages_received     direct_messages[]       @relation("MessagesReceived")
+}
+
+model direct_messages {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  sender_id   String   @db.Uuid
+  receiver_id String   @db.Uuid
+  content     String
+  is_read     Boolean  @default(false)
+  created_at  DateTime @default(now()) @db.Timestamp(6)
+  sender      User     @relation("MessagesSent", fields: [sender_id], references: [id], onDelete: Cascade)
+  receiver    User     @relation("MessagesReceived", fields: [receiver_id], references: [id], onDelete: Cascade)
+
+  @@index([sender_id])
+  @@index([receiver_id])
+  @@index([sender_id, receiver_id])
 }
 
 model Account {

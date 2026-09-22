@@ -203,6 +203,16 @@ export default function AlumniDetailPage() {
                   </div>
 
                   <div className="flex flex-wrap gap-2">
+                    {alumni.user_id && (
+                      <Button
+                        size="sm"
+                        onClick={() => router.push(`/dashboard/messages/${alumni.user_id}`)}
+                        className="bg-[#81B214] hover:bg-[#50B003] text-white"
+                      >
+                        <MessageCircle className="mr-2 h-4 w-4" />
+                        ส่งข้อความ
+                      </Button>
+                    )}
                     {alumni.email && (
                       <Button
                         size="sm"
@@ -465,14 +475,12 @@ export default function AlumniDetailPage() {
                 </p>
               </div>
 
-              {/* <div>
-                <p className="text-sm text-gray-500 dark:text-gray-400">
-                  ปีที่จบการศึกษา
-                </p>
+              <div>
+                <p className="text-sm text-gray-500 dark:text-gray-400">รุ่น</p>
                 <p className="text-gray-900 dark:text-white font-medium">
-                  {alumni.graduation_year}
+                  รุ่นที่ {AdmitYear(alumni.admit_year)}
                 </p>
-              </div> */}
+              </div>
 
               <div>
                 <p className="text-sm text-gray-500 dark:text-gray-400">คณะ</p>

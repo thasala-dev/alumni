@@ -173,6 +173,7 @@ export default function DashboardPage() {
   const [deleteCommentLoading, setDeleteCommentLoading] = useState(false);
 
   const [latestNews, setLatestNews] = useState([]);
+  const [latestUsers, setLatestUsers] = useState<any[]>([]);
 
   useEffect(() => {
     const fetchStat = async () => {
@@ -188,6 +189,7 @@ export default function DashboardPage() {
         const statData = await statRes.json();
         setStat(statData.stat);
         setLatestNews(statData.latestNews || []);
+        setLatestUsers(statData.latestUsers || []);
       } catch (error) {
         console.error("Error fetching statistics:", error);
       }
@@ -991,7 +993,7 @@ export default function DashboardPage() {
                       className="w-16 h-16 object-cover rounded-lg"
                     />
                     <div className="flex-1">
-                      <a href={`/news/${news.id}`}>
+                      <a href={`/dashboard/news/${news.id}`}>
                         <h4 className="font-medium text-sm text-gray-900 dark:text-gray-100  mb-1 line-clamp-2">
                           {news.title}
                         </h4>
@@ -1006,6 +1008,62 @@ export default function DashboardPage() {
                   </div>
                 </div>
               ))}
+            </CardContent>
+          </Card>
+
+          {/* Latest Users */}
+          <Card className="bg-white dark:bg-gray-900/80 border-gray-200 dark:border-gray-700">
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <h3 className="text-lg font-semibold flex items-center gap-2">
+                  <Users className="h-5 w-5 text-[#81B214]" />
+                  ผู้ใช้งานล่าสุด
+                </h3>
+              </div>
+            </CardHeader>
+            <CardContent className="px-4 pb-4 pt-0">
+              <div className="divide-y divide-gray-100 dark:divide-gray-800">
+                {latestUsers.map((u: any) => (
+                  <div key={u.id} className="flex items-center gap-3 py-2.5 group">
+                    <div className="relative shrink-0">
+                      <Avatar className="h-9 w-9">
+                        <AvatarImage src={u.image} className="object-cover" />
+                        <AvatarFallback className="bg-[#81B214] text-white text-sm font-bold">
+                          {u.name?.charAt(0)}
+                        </AvatarFallback>
+                      </Avatar>
+                      {u.role === "admin" && (
+                        <ShieldCheck className="h-3.5 w-3.5 text-blue-500 absolute -bottom-0.5 -right-0.5 bg-white dark:bg-gray-900 rounded-full" />
+                      )}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      {u.alumni_profiles?.length > 0 ? (
+                        <a
+                          href={`/dashboard/alumni/${u.alumni_profiles[0].id}`}
+                          className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate block hover:text-[#81B214] transition-colors"
+                        >
+                          {u.name}
+                        </a>
+                      ) : (
+                        <div className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">
+                          {u.name}
+                        </div>
+                      )}
+                      <div className="flex items-center gap-1 text-xs text-gray-400 dark:text-gray-500 mt-0.5">
+                        <GraduationCap className="h-3 w-3 shrink-0" />
+                        <span>
+                          {u.alumni_profiles?.length > 0 && u.alumni_profiles[0].admit_year
+                            ? `รุ่นที่ ${AdmitYear(u.alumni_profiles[0].admit_year)}`
+                            : "—"}
+                        </span>
+                        <span className="mx-0.5">·</span>
+                        <Clock className="h-3 w-3 shrink-0" />
+                        <span>{timeAgo(u.updated_at)}</span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </CardContent>
           </Card>
         </div>

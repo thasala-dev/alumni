@@ -3,7 +3,7 @@ import { prisma } from "@/lib/prisma";
 
 // GET /api/alumniProfile - get all alumni profiles or by id
 export async function GET(req: Request) {
-  const [alumni, discussion, news, latestNews, province] = await Promise.all([
+  const [alumni, discussion, news, latestNews, province, latestUsers] = await Promise.all([
     prisma.alumni_profiles.count({}),
     prisma.discussion_topics.count({
       where: {
@@ -36,6 +36,32 @@ export async function GET(req: Request) {
       },
       by: ["current_province"],
     }),
+    prisma.user.findMany({
+      where: {
+        status: "APPROVED",
+      },
+      orderBy: {
+        created_at: "desc",
+      },
+      take: 6,
+      select: {
+        id: true,
+        name: true,
+        image: true,
+        created_at: true,
+        updated_at: true,
+        role: true,
+        alumni_profiles: {
+          select: {
+            id: true,
+            admit_year: true,
+            programname: true,
+            current_position: true,
+          },
+          take: 1,
+        },
+      },
+    }),
   ]);
 
   // const province = 56;
@@ -47,5 +73,6 @@ export async function GET(req: Request) {
       province: province.length || 0,
     },
     latestNews,
+    latestUsers,
   });
 }
