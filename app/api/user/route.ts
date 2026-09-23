@@ -7,7 +7,7 @@ export async function GET() {
     include: {
       alumni_profiles: true,
     },
-    orderBy: { created_at: "desc" },
+    orderBy: { updated_at: "desc" },
   });
   return NextResponse.json(users);
 }

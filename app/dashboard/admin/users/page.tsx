@@ -324,6 +324,17 @@ export default function AdminUsersPage() {
     );
   }
 
+  const formatThaiDate = (date: string | Date | null | undefined) => {
+    if (!date) return "—";
+    return new Date(date).toLocaleString("th-TH", {
+      day: "numeric",
+      month: "numeric",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  };
+
   const getStatusBadgeVariant = (status: any["status"]) => {
     switch (status) {
       case "APPROVED":
@@ -771,12 +782,16 @@ export default function AdminUsersPage() {
                   </p>
                 )}
 
-                {/* Footer — Date */}
-                <div className="mt-3 pt-3 border-t border-gray-100 dark:border-gray-700 flex items-center justify-between text-xs text-gray-400 dark:text-gray-500">
-                  <span>วันที่สร้าง</span>
-                  <span>
-                    {new Date(user.created_at).toLocaleDateString("th-TH")}
-                  </span>
+                {/* Footer — Dates */}
+                <div className="mt-3 pt-3 border-t border-gray-100 dark:border-gray-700 space-y-1 text-xs text-gray-400 dark:text-gray-500">
+                  <div className="flex items-center justify-between">
+                    <span>วันที่สร้าง</span>
+                    <span>{formatThaiDate(user.created_at)}</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span>ใช้งานล่าสุด</span>
+                    <span>{formatThaiDate(user.updated_at)}</span>
+                  </div>
                 </div>
               </CardContent>
             </Card>
@@ -873,9 +888,15 @@ export default function AdminUsersPage() {
                     วันที่สร้าง
                   </label>
                   <p className="text-sm">
-                    {new Date(actionDialog.user.created_at).toLocaleDateString(
-                      "th-TH",
-                    )}
+                    {formatThaiDate(actionDialog.user.created_at)}
+                  </p>
+                </div>
+                <div>
+                  <label className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                    ใช้งานล่าสุด
+                  </label>
+                  <p className="text-sm">
+                    {formatThaiDate(actionDialog.user.updated_at)}
                   </p>
                 </div>
               </div>

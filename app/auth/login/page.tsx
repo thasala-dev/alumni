@@ -41,7 +41,7 @@ export default function LoginPage() {
         router.push("/auth/verify-identity");
       }
     }
-  }, [router, isLoading, user]);
+  }, [router, isLoading, isLoggedIn, user]);
 
   const handleEmailLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -54,10 +54,9 @@ export default function LoginPage() {
     });
     if (res?.error) {
       setError(res.error);
-    } else {
-      router.push("/dashboard");
+      setLoading(false);
     }
-    setLoading(false);
+    // On success, useEffect will redirect based on user.status
   };
 
   const handleGoogleLogin = async () => {

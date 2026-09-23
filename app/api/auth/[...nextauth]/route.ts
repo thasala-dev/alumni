@@ -256,6 +256,15 @@ export const authOptions: NextAuthOptions = {
           }
 
           if (userInDb) {
+            // Touch updated_at at most once every 5 minutes to track activity
+            const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000);
+            if (!userInDb.updated_at || userInDb.updated_at < fiveMinutesAgo) {
+              await prisma.user.update({
+                where: { id: userInDb.id },
+                data: { updated_at: new Date() },
+              });
+            }
+
             session.user.id = userInDb.id;
             session.user.role = userInDb.role;
             session.user.status = userInDb.status;

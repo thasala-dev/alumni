@@ -27,6 +27,12 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
     } else if (user && user.status === "UNREGISTERED") {
       router.push("/auth/verify-identity");
       return;
+    } else if (user && user.status === "REJECTED") {
+      router.push("/auth/rejected");
+      return;
+    } else if (user && user.status === "SUSPENDED") {
+      router.push("/auth/suspended");
+      return;
     }
   }, [user, isLoading, router]);
 
