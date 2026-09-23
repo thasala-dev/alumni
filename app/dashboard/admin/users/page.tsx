@@ -51,6 +51,7 @@ import {
   UserMinus,
   AlertCircle,
   ShieldQuestion,
+  RefreshCw,
 } from "lucide-react";
 import { getCurrentUser, type User } from "@/lib/auth";
 
@@ -80,6 +81,16 @@ export default function AdminUsersPage() {
     user?: any;
     newRole?: "admin" | "alumni";
   }>({ open: false, type: "details" });
+
+  const [syncDialog, setSyncDialog] = useState<{ open: boolean; user?: any }>({
+    open: false,
+  });
+  const [syncSearch, setSyncSearch] = useState("");
+  const [syncProfiles, setSyncProfiles] = useState<any[]>([]);
+  const [syncLoading, setSyncLoading] = useState(false);
+  const [syncSelected, setSyncSelected] = useState<string | null>(null);
+  const [syncSubmitting, setSyncSubmitting] = useState(false);
+
   const router = useRouter();
 
   // Fix body pointer-events issue when dialog closes
@@ -131,6 +142,46 @@ export default function AdminUsersPage() {
       console.error("Error updating user:", error);
       alert("เกิดข้อผิดพลาดในการเชื่อมต่อ API");
     }
+  };
+
+  const openSyncDialog = (user: any) => {
+    setSyncDialog({ open: true, user });
+    setSyncSearch("");
+    setSyncProfiles([]);
+    setSyncSelected(null);
+    fetchUnlinkedProfiles("");
+  };
+
+  const fetchUnlinkedProfiles = async (q: string) => {
+    setSyncLoading(true);
+    try {
+      const res = await fetch(`/api/admin/unlinked-alumni?q=${encodeURIComponent(q)}`);
+      if (res.ok) setSyncProfiles(await res.json());
+    } catch {}
+    setSyncLoading(false);
+  };
+
+  const handleSyncSubmit = async () => {
+    if (!syncDialog.user || !syncSelected) return;
+    setSyncSubmitting(true);
+    try {
+      const res = await fetch("/api/admin/sync-alumni", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId: syncDialog.user.id, alumniProfileId: syncSelected }),
+      });
+      if (res.ok) {
+        const updated = await res.json();
+        setUsers((prev) => prev.map((u) => (u.id === updated.id ? updated : u)));
+        setSyncDialog({ open: false });
+      } else {
+        const err = await res.json();
+        alert(err.error ?? "เกิดข้อผิดพลาด");
+      }
+    } catch {
+      alert("เกิดข้อผิดพลาดในการเชื่อมต่อ API");
+    }
+    setSyncSubmitting(false);
   };
 
   const handleDeleteUser = async (userId: string) => {
@@ -652,6 +703,15 @@ export default function AdminUsersPage() {
                     >
                       ดูรายละเอียด
                     </DropdownMenuItem>
+                    {user.alumni_profiles.length === 0 && (
+                      <DropdownMenuItem
+                        onClick={() => openSyncDialog(user)}
+                        className="text-blue-600 dark:text-blue-400 dark:hover:bg-gray-700"
+                      >
+                        <RefreshCw className="mr-2 h-4 w-4" />
+                        Sync ข้อมูลศิษย์เก่า
+                      </DropdownMenuItem>
+                    )}
                     <DropdownMenuSeparator className="dark:bg-gray-700" />
                     {user.status !== "APPROVED" && (
                       <DropdownMenuItem
@@ -807,6 +867,119 @@ export default function AdminUsersPage() {
           </CardContent>
         </Card>
       )}
+
+      {/* Sync Dialog */}
+      <Dialog
+        open={syncDialog.open}
+        onOpenChange={(open) => {
+          if (!open) setSyncDialog({ open: false });
+        }}
+      >
+        <DialogContent className="dark:bg-gray-900/80 dark:border-gray-700 w-[calc(100%-2rem)] max-w-lg rounded-2xl">
+          <DialogHeader>
+            <DialogTitle className="dark:text-gray-200 flex items-center gap-2">
+              <RefreshCw className="h-5 w-5 text-blue-500" />
+              Sync ข้อมูลศิษย์เก่า
+            </DialogTitle>
+            <DialogDescription className="dark:text-gray-400">
+              เชื่อม <span className="font-medium">{syncDialog.user?.email}</span> กับข้อมูลศิษย์เก่าที่ยังไม่ได้ลิงก์
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-3">
+            {/* Search input */}
+            <div className="relative">
+              <Search className="absolute left-3 top-2.5 h-4 w-4 text-gray-400" />
+              <Input
+                placeholder="ค้นหาชื่อ / รหัสนักศึกษา / เลขบัตร"
+                className="pl-9 rounded-xl"
+                value={syncSearch}
+                onChange={(e) => {
+                  setSyncSearch(e.target.value);
+                  fetchUnlinkedProfiles(e.target.value);
+                  setSyncSelected(null);
+                }}
+              />
+            </div>
+
+            {/* Results list */}
+            <div className="max-h-64 overflow-y-auto space-y-1.5 pr-1">
+              {syncLoading && (
+                <p className="text-sm text-center text-gray-400 py-4">กำลังโหลด...</p>
+              )}
+              {!syncLoading && syncProfiles.length === 0 && (
+                <p className="text-sm text-center text-gray-400 py-4">ไม่พบข้อมูลที่ยังไม่ได้ลิงก์</p>
+              )}
+              {!syncLoading &&
+                syncProfiles.map((profile) => (
+                  <button
+                    key={profile.id}
+                    type="button"
+                    onClick={() => setSyncSelected(profile.id)}
+                    className={[
+                      "w-full text-left px-3 py-2.5 rounded-xl border transition-all",
+                      syncSelected === profile.id
+                        ? "border-blue-500 bg-blue-50 dark:bg-blue-900/30 dark:border-blue-400"
+                        : "border-gray-200 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-600 hover:bg-gray-50 dark:hover:bg-gray-800",
+                    ].join(" ")}
+                  >
+                    <div className="flex items-center gap-3">
+                      {profile.profile_image_url ? (
+                        <img
+                          src={profile.profile_image_url}
+                          alt=""
+                          className="h-9 w-9 rounded-full object-cover shrink-0 border border-gray-200"
+                        />
+                      ) : (
+                        <div className="h-9 w-9 rounded-full bg-gray-200 dark:bg-gray-700 shrink-0 flex items-center justify-center text-gray-400 text-sm font-bold">
+                          {profile.first_name?.[0] ?? "?"}
+                        </div>
+                      )}
+                      <div className="min-w-0">
+                        <div className="font-medium text-sm text-gray-800 dark:text-gray-100 truncate">
+                          {profile.first_name} {profile.last_name}
+                        </div>
+                        <div className="text-xs text-gray-500 dark:text-gray-400 truncate">
+                          {profile.studentcode ?? "—"} · {profile.programname ?? "—"}
+                        </div>
+                      </div>
+                      {syncSelected === profile.id && (
+                        <CheckCircle className="ml-auto h-4 w-4 text-blue-500 shrink-0" />
+                      )}
+                    </div>
+                  </button>
+                ))}
+            </div>
+          </div>
+
+          <DialogFooter className="gap-2">
+            <Button
+              variant="outline"
+              onClick={() => setSyncDialog({ open: false })}
+              className="rounded-xl"
+            >
+              ยกเลิก
+            </Button>
+            <Button
+              disabled={!syncSelected || syncSubmitting}
+              onClick={handleSyncSubmit}
+              className="rounded-xl bg-blue-600 hover:bg-blue-700 text-white"
+            >
+              {syncSubmitting ? (
+                <div className="flex items-center gap-2">
+                  <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  กำลัง Sync...
+                </div>
+              ) : (
+                <div className="flex items-center gap-2">
+                  <RefreshCw className="h-4 w-4" />
+                  Sync
+                </div>
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {/* Action Dialog */}
       <Dialog

@@ -140,7 +140,7 @@ export default function ChatPage() {
               </>
             )}
             <Clock className="h-3 w-3 shrink-0" />
-            <span>{timeAgo(profile?.updated_at ?? otherUser?.created_at)}</span>
+            <span>{timeAgo(otherUser?.updated_at ?? otherUser?.created_at)}</span>
           </div>
         </div>
       </div>

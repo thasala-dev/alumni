@@ -41,9 +41,9 @@ export async function GET(req: Request) {
         status: "APPROVED",
       },
       orderBy: {
-        created_at: "desc",
+        updated_at: "desc",
       },
-      take: 6,
+      take: 10,
       select: {
         id: true,
         name: true,

@@ -35,6 +35,7 @@ export async function GET(
       image: true,
       status: true,
       created_at: true,
+      updated_at: true,
       alumni_profiles: {
         select: { id: true, first_name: true, last_name: true, profile_image_url: true, admit_year: true, current_position: true, updated_at: true },
         take: 1,
